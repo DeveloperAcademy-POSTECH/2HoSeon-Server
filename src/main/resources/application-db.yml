@@ -1,0 +1,27 @@
+spring:
+  h2:
+    console:
+      enabled: true
+    path: /h2-console
+  datasource:
+    driver-class-name: ${datasource.driver-class-name}
+    url: ${datasource.url}
+    username: ${datasource.username}
+#    password: ${datasource.password}
+
+  sql:
+    init:
+      schema-locations: classpath:static/schema.sql
+      mode: always
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+
+    properties:
+      hibernate:
+        show_sql: true
+        format_sql: true
+
+    open-in-view: false
+    defer-datasource-initialization: true

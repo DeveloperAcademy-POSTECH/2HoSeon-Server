@@ -1,0 +1,11 @@
+spring:
+  application:
+    name: twoHoSeon
+  profiles:
+    include: server, db, config, security
+
+logging:
+  level:
+    root: info
+    org.springframework.security.oauth2: debug
+    com.twohoseon.app: debug
