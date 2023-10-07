@@ -1,0 +1,121 @@
+package com.twohoseon.app.util;
+
+import com.twohoseon.app.dto.TokenDTO;
+import com.twohoseon.app.entity.RefreshToken;
+import com.twohoseon.app.repository.member.RefreshTokenRepository;
+import io.jsonwebtoken.*;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
+
+import java.util.Date;
+import java.util.Optional;
+
+/**
+ * @author : hyunwoopark
+ * @version : 1.0.0
+ * @package : twohoseon
+ * @name : JwtTokenProvider
+ * @date : 2023/10/07 3:50 PM
+ * @modifyed : $
+ **/
+@Component
+@Slf4j
+@RequiredArgsConstructor
+public class JwtTokenProvider {
+    private RefreshTokenRepository refreshTokenRepository;
+
+    @Value("${jwt.secret.key}")
+    private String jwtSecret;
+
+    @Value("${jwt.expiration.access-token}")
+    private int jwtExpirationMs;
+    @Value("${jwt.expiration.refresh-token}")
+    private int jwtRefreshExpirationMs;
+
+    public TokenDTO createAllToken(String username){
+        String accessToken = generateToken(username, true);
+        String refreshToken = generateToken(username, false);
+        return TokenDTO.builder()
+                .accessToken(accessToken)
+                .refreshToken(refreshToken)
+                .build();
+    }
+    public String generateToken(String email, boolean isAccessToken) {
+
+        Date now = new Date();
+        long expiryDuration = isAccessToken ? jwtExpirationMs : jwtRefreshExpirationMs;
+
+
+        Claims claims = Jwts.claims().setSubject(email);
+        claims.put("type", isAccessToken ? "access" : "refresh");
+
+        return Jwts.builder()
+                .setClaims(claims)
+                .setIssuedAt(now)
+                .setExpiration(new Date(now.getTime() + expiryDuration))
+                .signWith(SignatureAlgorithm.HS256, jwtSecret)
+                .compact();
+    }
+
+    public String getProviderIdFromToken(String token) {
+        Claims claims = Jwts.parser()
+                .setSigningKey(jwtSecret)
+                .parseClaimsJws(token)
+                .getBody();
+
+        return claims.getSubject();
+    }
+    public boolean tokenValidation(String token, boolean isAccessToken) {
+        try {
+            Jwts.parser().setSigningKey(jwtSecret).parseClaimsJws(token);
+            Claims claims = Jwts.parser()
+                    .setSigningKey(jwtSecret)
+                    .parseClaimsJws(token)
+                    .getBody();
+            String type = claims.get("type", String.class);
+            return type != null && type.equals(isAccessToken ? "access" : "refresh");
+        } catch (SignatureException ex) {
+            log.info("Invalid JWT signature");
+        } catch (MalformedJwtException ex) {
+            log.info("Invalid JWT token");
+        } catch (ExpiredJwtException ex) {
+            log.info("Expired JWT token");
+        } catch (UnsupportedJwtException ex) {
+            log.info("Unsupported JWT token");
+        } catch (IllegalArgumentException ex) {
+            log.info("JWT claims string is empty");
+        }
+        return false;
+    }
+
+    public Boolean refreshTokenValidate(String token){
+        if(!tokenValidation(token, false)){
+            return false;
+        }
+        Optional<RefreshToken> refreshToken = refreshTokenRepository.findByOAuthId(getProviderIdFromToken(token));
+
+        return refreshToken.isPresent() && refreshToken.get().getRefreshToken().equals(token);
+    }
+
+    public String getHeaderToken(HttpServletRequest request, String type) {
+        log.info("getHeaderToken", request.getHeader("Authorization"));
+        log.info(request.getHeader("Authorization"));
+        String result = type.equals("Access") ? request.getHeader("Authorization") :request.getHeader("Refresh_Token");
+        if(result!=null)
+            return result.replace("Bearer ", "");
+        else
+            return null;
+    }
+
+    public void setHeaderAccessToken(HttpServletResponse response, String accessToken){
+        response.setHeader("Access_Token", accessToken);
+    }
+    public void setHeaderRefreshToken(HttpServletResponse response, String refreshToken){
+        response.setHeader("Refresh_Token", refreshToken);
+    }
+}
+
