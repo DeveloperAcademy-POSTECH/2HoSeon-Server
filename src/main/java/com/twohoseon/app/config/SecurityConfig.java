@@ -1,8 +1,8 @@
 package com.twohoseon.app.config;
 
+import com.twohoseon.app.repository.oauth2.CustomAuthorizationRequestRepository;
 import com.twohoseon.app.security.JwtAuthenticationFilter;
 import com.twohoseon.app.security.OAuth2AuthenticationSuccessHandler;
-import com.twohoseon.app.repository.oauth2.CustomAuthorizationRequestRepository;
 import com.twohoseon.app.service.oauth2.CustomOAuth2UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -13,7 +13,7 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.oauth2.client.endpoint.OAuth2AccessTokenResponseClient;
 import org.springframework.security.oauth2.client.endpoint.OAuth2AuthorizationCodeGrantRequest;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 
 /**
  * @author : hyunwoopark
@@ -51,10 +51,12 @@ public class SecurityConfig {
                 .sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 
-        http.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
+        http.addFilterBefore(jwtAuthenticationFilter, BasicAuthenticationFilter.class);
+
         http.authorizeHttpRequests()
-                .requestMatchers("/login/**", "/user", "/oauth2/**", "/auth/**", "/h2-console/**").permitAll()
+                .requestMatchers("/login/**", "/user", "/oauth2/**", "/auth/**", "/h2-console/**", "/swagger-ui", "/swagger-ui/**", "/api-docs*", "/api-docs/**").permitAll()
                 .anyRequest().authenticated();
+
         return http.build();
     }
 
