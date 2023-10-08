@@ -2,8 +2,7 @@ spring:
   application:
     name: twoHoSeon
   profiles:
-    include: server, db, config, security
-
+    include: server, db, security, common, config
 logging:
   level:
     root: info
