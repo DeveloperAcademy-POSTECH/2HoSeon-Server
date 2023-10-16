@@ -1,5 +1,8 @@
 spring:
   datasource:
+    driver-class-name: ${datasource.prod-driver-class-name}
+    username: ${datasource.prod-username}
+    password: ${datasource.prod-password}
     url: ${datasource.prod-url}
 oauth:
   apple:
