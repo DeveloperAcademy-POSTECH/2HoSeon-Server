@@ -7,7 +7,6 @@ spring:
     url: ${datasource.dev-url}
     username: ${datasource.dev-username}
     password: ${datasource.dev-password}
-
 oauth:
   apple:
     client-id: com.twohosun.service

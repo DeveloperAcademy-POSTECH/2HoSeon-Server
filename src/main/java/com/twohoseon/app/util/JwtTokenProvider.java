@@ -63,7 +63,7 @@ public class JwtTokenProvider {
                 .OAuthId(username)
                 .expirationTime(refreshExpiration.getTime())
                 .build());
-
+        );
         return TokenDTO.builder()
                 .accessToken(accessToken)
                 .accessExpirationTime(accessExpiration.getTime())
@@ -121,7 +121,6 @@ public class JwtTokenProvider {
         }
         return false;
     }
-
 
     public String getHeaderToken(HttpServletRequest request, String type) {
         log.info("getHeaderToken", request.getHeader("Authorization"));
