@@ -1,0 +1,6 @@
+spring:
+  datasource:
+    url: ${datasource.prod-url}
+oauth:
+  apple:
+    client-id: com.twohosun.TwoHoSun
