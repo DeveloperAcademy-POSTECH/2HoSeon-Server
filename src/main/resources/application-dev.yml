@@ -1,6 +1,12 @@
 spring:
+  h2:
+    console:
+      enabled: true
   datasource:
+    driver-class-name: ${datasource.dev-driver-class-name}
     url: ${datasource.dev-url}
+    username: ${datasource.dev-username}
+    password: ${datasource.dev-password}
 oauth:
   apple:
     client-id: com.twohosun.service

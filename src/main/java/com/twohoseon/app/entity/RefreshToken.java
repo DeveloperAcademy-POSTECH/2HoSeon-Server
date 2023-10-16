@@ -31,6 +31,9 @@ public class RefreshToken {
     @Column(nullable = false)
     private String OAuthId;
 
+    @Column(nullable = false)
+    private long expirationTime;
+
     public RefreshToken updateToken(String refreshToken) {
         this.refreshToken = refreshToken;
         return this;
