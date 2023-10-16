@@ -42,9 +42,6 @@ public class Member {
     private String userNickname;
 
     @Column(nullable = true)
-    private String userPhone;
-
-    @Column(nullable = true)
     private String userProfileImage;
 
     @Column(nullable = true)
@@ -61,6 +58,13 @@ public class Member {
     @Enumerated(EnumType.STRING)
     @Column(length = 15, nullable = false)
     private UserRole role;
+
+    public void updateAdditionalUserInfo(String userProfileImage, String userNickname, School school, Integer grade) {
+        this.userProfileImage = userProfileImage;
+        this.userNickname = userNickname;
+        this.school = school;
+        this.grade = grade;
+    }
 
     protected Member() {
     }
