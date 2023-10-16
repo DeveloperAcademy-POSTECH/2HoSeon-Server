@@ -1,5 +1,6 @@
 package com.twohoseon.app.service.member;
 
+import com.twohoseon.app.dto.ProfileRequestDTO;
 import com.twohoseon.app.entity.Member;
 import org.springframework.security.core.userdetails.UserDetailsService;
 
@@ -14,5 +15,9 @@ import java.util.Optional;
  * @modifyed : $
  **/
 public interface MemberService extends UserDetailsService {
+    void setUserProfile(ProfileRequestDTO profileRequestDTO);
+
+    boolean validateDuplicateUserNickname(String userNickname);
+
     Optional<Member> findByProviderId(String providerId);
 }

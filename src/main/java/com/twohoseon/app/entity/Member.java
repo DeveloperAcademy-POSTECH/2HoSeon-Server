@@ -42,19 +42,29 @@ public class Member {
     private String userNickname;
 
     @Column(nullable = true)
-    private String userPhone;
-
-    @Column(nullable = true)
     private String userProfileImage;
 
     @Column(nullable = true)
     private LocalDate userBirth;
 
+    @Embedded
+    @Column(nullable = true)
+    private School school;
+
+    @Column(nullable = true)
+    private Integer grade;
 
 
     @Enumerated(EnumType.STRING)
     @Column(length = 15, nullable = false)
     private UserRole role;
+
+    public void updateAdditionalUserInfo(String userProfileImage, String userNickname, School school, Integer grade) {
+        this.userProfileImage = userProfileImage;
+        this.userNickname = userNickname;
+        this.school = school;
+        this.grade = grade;
+    }
 
     protected Member() {
     }
