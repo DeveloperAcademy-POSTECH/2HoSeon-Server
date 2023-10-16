@@ -2,9 +2,26 @@ spring:
   application:
     name: twoHoSeon
   profiles:
-    include: server, db, security, common, config
+    active: local
+    group:
+      local:
+        - dev
+        - common
+        - config
+        - server
+        - db
+        - security
+      prod:
+        - prod
+        - common
+        - config
+        - server
+        - db
+        - security
+
 logging:
   level:
     root: info
-    org.springframework.security.oauth2: debug
+    org.springframework.security: debug
+    org.springframework.web: debug
     com.twohoseon.app: debug
