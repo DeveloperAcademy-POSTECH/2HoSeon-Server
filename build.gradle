@@ -17,6 +17,10 @@ configurations {
     }
 }
 
+bootJar {
+    mainClass = 'com.twohoseon.app.Application'
+}
+
 repositories {
     mavenCentral()
 }
@@ -41,14 +45,24 @@ dependencies {
     implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.0.2'
     implementation 'org.springframework.boot:spring-boot-starter-validation'
 
-    implementation 'com.h2database:h2:2.1.214'
     runtimeOnly 'com.mysql:mysql-connector-j'
 
     compileOnly 'org.projectlombok:lombok'
     annotationProcessor 'org.projectlombok:lombok'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'org.springframework.security:spring-security-test'
-    testImplementation 'com.h2database:h2:2.1.214'
+
+    //apns push notification
+    implementation 'com.eatthepath:pushy:0.15.2'
+
+    runtimeOnly('com.oracle.database.jdbc:ojdbc8:21.10.0.0') {
+        exclude group: "com.oracle.ojdbc", module: "simplefan"
+        exclude group: "com.oracle.jdbc", module: "ons"
+    }
+    implementation 'com.oracle.database.jdbc:ucp:21.10.0.0'
+    implementation 'com.oracle.database.security:oraclepki:21.10.0.0'
+    implementation 'com.oracle.database.security:osdt_core:21.10.0.0'
+    implementation 'com.oracle.database.security:osdt_cert:21.10.0.0'
 }
 
 tasks.named('test') {

@@ -11,14 +11,12 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
-import java.util.Map;
 
 /**
  * @author : hyunwoopark
@@ -35,8 +33,7 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
 
     private final JwtTokenProvider jwtTokenProvider;
     private final MemberRepository memberRepository;
-    @Value("${base-uri}")
-    private String baseURI;
+
 
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException {
@@ -47,9 +44,6 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
         log.info("oAuth2UserName = {}", oAuth2User.getName());
         log.info("oAuth2UserAttribute = {}", oAuth2User.getAttributes());
         String providerId = oAuth2User.getName();
-        // 서비스 제공 플랫폼이 어디인지 가져온다.
-        String provider = oAuth2User.getAttribute("provider");
-        Map<String, Object> oAuth2Attributes = oAuth2User.getAttributes();
 
         // 회원이 존재하는지 체크
         boolean memberIsExist = memberRepository.existsByProviderId(providerId);
@@ -62,6 +56,7 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
                     .data(token)
                     .build();
             log.info("jwtToken = {}", token.getAccessToken());
+
             //token 발급
             response.setContentType("application/json;charset=UTF-8");
             response.setStatus(200);

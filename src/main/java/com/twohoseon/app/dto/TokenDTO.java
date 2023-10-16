@@ -15,5 +15,7 @@ import lombok.Getter;
 @Getter
 public class TokenDTO {
     private String accessToken;
+    private long accessExpirationTime;
     private String refreshToken;
+    private long refreshExpirationTime;
 }
