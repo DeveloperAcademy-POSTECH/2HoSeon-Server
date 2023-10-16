@@ -12,7 +12,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.util.Date;
-import java.util.Optional;
 
 /**
  * @author : hyunwoopark
@@ -60,9 +59,10 @@ public class JwtTokenProvider {
                 .compact();
 
         refreshTokenRepository.save(RefreshToken.builder()
-                .OAuthId(username)
                 .refreshToken(refreshToken)
-                .build()
+                .OAuthId(username)
+                .expirationTime(refreshExpiration.getTime())
+                .build());
         );
         return TokenDTO.builder()
                 .accessToken(accessToken)
@@ -120,15 +120,6 @@ public class JwtTokenProvider {
             log.info("JWT claims string is empty");
         }
         return false;
-    }
-
-    public Boolean refreshTokenValidate(String token) {
-        if (!tokenValidation(token, false)) {
-            return false;
-        }
-        Optional<RefreshToken> refreshToken = refreshTokenRepository.findByOAuthId(getProviderIdFromToken(token));
-
-        return refreshToken.isPresent() && refreshToken.get().getRefreshToken().equals(token);
     }
 
     public String getHeaderToken(HttpServletRequest request, String type) {

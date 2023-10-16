@@ -40,7 +40,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         String accessToken = jwtTokenProvider.getHeaderToken(request, "Access");
 
-        String refreshToken = jwtTokenProvider.getHeaderToken(request, "Refresh");
 
         if (accessToken != null) {
             // 어세스 토큰값이 유효하다면 setAuthentication를 통해
@@ -48,33 +47,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             if (jwtTokenProvider.tokenValidation(accessToken, true)) {
                 log.info("ProviderId : ", jwtTokenProvider.getProviderIdFromToken(accessToken));
                 setAuthentication(jwtTokenProvider.getProviderIdFromToken(accessToken));
-            }
-            // 어세스 토큰이 만료된 상황 && 리프레시 토큰 또한 존재하는 상황
-            else if (refreshToken != null) {
-                // 리프레시 토큰 검증 && 리프레시 토큰 DB에서  토큰 존재유무 확인
-                boolean isRefreshToken = jwtTokenProvider.refreshTokenValidate(refreshToken);
-                // 리프레시 토큰이 유효하고 리프레시 토큰이 DB와 비교했을때 똑같다면
-                if (isRefreshToken) {
-                    // 리프레시 토큰으로 아이디 정보 가져오기
-                    String loginId = jwtTokenProvider.getProviderIdFromToken(refreshToken);
-                    // 새로운 어세스 토큰 발급
-                    String newAccessToken = jwtTokenProvider.generateToken(loginId, true);
-                    // 헤더에 어세스 토큰 추가
-                    jwtTokenProvider.setHeaderAccessToken(response, newAccessToken);
-                    // Security context에 인증 정보 넣기
-                    setAuthentication(jwtTokenProvider.getProviderIdFromToken(newAccessToken));
-                }
-                // 리프레시 토큰이 만료 || 리프레시 토큰이 DB와 비교했을때 똑같지 않다면
-                else {
-
-                    jwtExceptionHandler(response,
-                            ResultDTO.builder()
-                                    .status(StatusEnum.BAD_REQUEST)
-                                    .message("RefreshToken Expired")
-                                    .build()
-                    );
-                    return;
-                }
             } else {
                 jwtExceptionHandler(response,
                         ResultDTO.builder()

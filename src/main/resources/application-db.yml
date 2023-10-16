@@ -1,6 +1,4 @@
 spring:
-
-
   sql:
     init:
       schema-locations: classpath:static/schema.sql
