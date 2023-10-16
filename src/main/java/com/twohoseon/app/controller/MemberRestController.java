@@ -35,7 +35,7 @@ public class MemberRestController {
     public ResponseEntity<ResultDTO> checkNicknameDuplicate(String userNickname) {
 
         Map<String, Boolean> result = new HashMap<>();
-        result.put("isExist", memberService.validateDuplicateMember(userNickname));
+        result.put("isExist", memberService.validateDuplicateUserNickname(userNickname));
         ResultDTO resultDTO = ResultDTO.builder()
                 .status(StatusEnum.OK)
                 .message("생공")
