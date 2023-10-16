@@ -50,6 +50,12 @@ public class Member {
     @Column(nullable = true)
     private LocalDate userBirth;
 
+    @Embedded
+    @Column(nullable = true)
+    private School school;
+
+    @Column(nullable = true)
+    private Integer grade;
 
 
     @Enumerated(EnumType.STRING)
