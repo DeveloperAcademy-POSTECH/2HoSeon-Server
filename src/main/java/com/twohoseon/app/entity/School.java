@@ -11,10 +11,14 @@ public class School {
 
     private String schoolRegion;
 
-    protected School() {}
+    private String schoolType;
 
-    public School(String schoolName, String schoolRegion) {
+    protected School() {
+    }
+
+    public School(String schoolName, String schoolRegion, String schoolType) {
         this.schoolName = schoolName;
         this.schoolRegion = schoolRegion;
+        this.schoolType = schoolType;
     }
 }
