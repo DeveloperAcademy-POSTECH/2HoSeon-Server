@@ -1,9 +1,12 @@
 package com.twohoseon.app.service.member;
 
+import com.twohoseon.app.dto.ProfileRequestDTO;
 import com.twohoseon.app.entity.Member;
 import com.twohoseon.app.repository.member.MemberRepository;
 import com.twohoseon.app.security.MemberDetails;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
@@ -29,10 +32,34 @@ public class MemberServiceImpl implements MemberService {
         if (memberOptional.isPresent()) {
             return new MemberDetails(memberOptional.get());
         }
-
         //TODO member not found exception handling
         return null;
+    }
 
+    @Override
+    public void setUserProfile(ProfileRequestDTO profileRequestDTO) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String providerId = authentication.getName();
+        //TODO Exception Handler 추가되면 오류 발생시 Exception 발생시키기
+
+        Member member = memberRepository.findByProviderId(providerId)
+                .orElseThrow(() -> new IllegalArgumentException("wrong access"));
+
+        member.updateAdditionalUserInfo(profileRequestDTO.getUserProfileImage(),
+                profileRequestDTO.getUserNickname(),
+                profileRequestDTO.getSchool(),
+                profileRequestDTO.getGrade());
+
+        memberRepository.save(member);
+    }
+
+    @Override
+    public boolean validateDuplicateUserNickname(String userNickname) {
+        Optional<Member> findNickname = memberRepository.findByUserNickname(userNickname);
+
+        System.out.println("findNickname = " + findNickname);
+
+        return findNickname.isPresent();
     }
 
     public Optional<Member> findByProviderId(String providerId) {
