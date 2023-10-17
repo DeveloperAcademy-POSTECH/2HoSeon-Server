@@ -35,7 +35,7 @@ public class Post extends BaseTimeEntity {
     @Column(name = "id", nullable = false)
     private Long id;
 
-    @ManyToOne(cascade = CascadeType.ALL, optional = false)
+    @ManyToOne(cascade = CascadeType.REMOVE, optional = false)
     @JoinColumn(name = "author_id", nullable = false)
     @Comment("작성자")
     private Member author;

@@ -1,10 +1,9 @@
 package com.twohoseon.app.repository.handler;
 
-import com.twohoseon.app.entity.Member;
 import com.twohoseon.app.entity.post.Post;
+import com.twohoseon.app.security.MemberDetails;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.rest.core.annotation.HandleBeforeCreate;
-import org.springframework.data.rest.core.annotation.HandleBeforeSave;
 import org.springframework.data.rest.core.annotation.RepositoryEventHandler;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -20,21 +19,12 @@ import org.springframework.stereotype.Component;
  **/
 @Slf4j
 @Component
-@RepositoryEventHandler
+@RepositoryEventHandler(Post.class)
 public class PostEventHandler {
-    @HandleBeforeCreate(Post.class)
+    @HandleBeforeCreate
     public void handlePostCreate(Post post) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        Member member = (Member) authentication.getPrincipal();
-        log.debug("member : {}", member);
-        log.info("제발 되라");
-    }
-
-    @HandleBeforeSave(Post.class)
-    public void handlePostSave(Post post) {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        Member member = (Member) authentication.getPrincipal();
-        log.debug("member : {}", member);
-        log.info("제발 되라");
+        MemberDetails memberDetails = (MemberDetails) authentication.getPrincipal();
+        post.setAuthor(memberDetails.getMember());
     }
 }
