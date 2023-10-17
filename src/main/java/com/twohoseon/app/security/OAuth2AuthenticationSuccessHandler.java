@@ -3,6 +3,7 @@ package com.twohoseon.app.security;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.twohoseon.app.dto.ResultDTO;
 import com.twohoseon.app.dto.TokenDTO;
+import com.twohoseon.app.entity.Member;
 import com.twohoseon.app.enums.StatusEnum;
 import com.twohoseon.app.repository.member.MemberRepository;
 import com.twohoseon.app.security.oauth2.user.CustomOAuth2User;
@@ -45,25 +46,34 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
         log.info("oAuth2UserAttribute = {}", oAuth2User.getAttributes());
         String providerId = oAuth2User.getName();
 
+        Member member = memberRepository.findByProviderId(providerId).orElseThrow(() -> new IllegalArgumentException("존재하지 않는 회원입니다."));
         // 회원이 존재하는지 체크
         boolean memberIsExist = memberRepository.existsByProviderId(providerId);
+        ResultDTO resultDTO;
+        TokenDTO token = jwtTokenProvider.createAllToken(providerId);
         // 회원이 존재할경우
-        if (memberIsExist) {
+        if (member.getSchool() == null) {
+            log.debug("member.getSchool() = {}", member.getSchool());
             // 회원이 존재하면 jwt token 발행을 시작한다.
-            TokenDTO token = jwtTokenProvider.createAllToken(providerId);
-            ResultDTO resultDTO = ResultDTO.builder()
-                    .status(StatusEnum.OK)
+            resultDTO = ResultDTO.builder()
+                    .status(StatusEnum.CONFLICT)
+                    .message("UNREGISTERED_USER")
                     .data(token)
                     .build();
-            log.info("jwtToken = {}", token.getAccessToken());
-
-            //token 발급
-            response.setContentType("application/json;charset=UTF-8");
-            response.setStatus(200);
-            response.getWriter().write(new ObjectMapper().writeValueAsString(resultDTO));//            getRedirectStrategy().sendRedirect(request, response, targetUrl);
         } else {
-            //TODO 회원이 존재하지 않을경우 로직
+            resultDTO = ResultDTO.builder()
+                    .status(StatusEnum.OK)
+                    .message("SUCCESS")
+                    .data(token)
+                    .build();
         }
+
+        log.info("jwtToken = {}", token.getAccessToken());
+
+        //token 발급
+        response.setContentType("application/json;charset=UTF-8");
+        response.setStatus(200);
+        response.getWriter().write(new ObjectMapper().writeValueAsString(resultDTO));
     }
 
 }

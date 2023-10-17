@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.twohoseon.app.dto.ResultDTO;
 import com.twohoseon.app.entity.Member;
 import com.twohoseon.app.enums.StatusEnum;
+import com.twohoseon.app.enums.UserRole;
 import com.twohoseon.app.repository.member.MemberRepository;
 import com.twohoseon.app.service.member.MemberService;
 import com.twohoseon.app.util.JwtTokenProvider;
@@ -53,8 +54,12 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 Member member = memberRepository.findByProviderId(providerId)
                         .orElseThrow(() -> new IllegalArgumentException("Member Not Found"));
                 log.info("ProviderId : ", providerId);
+
                 setAuthentication(jwtTokenProvider.getProviderIdFromToken(accessToken));
-                if (member.getSchool() == null) {
+
+                if (member.getRole() == UserRole.ROLE_ADMIN) {
+                    log.info("ROLE_ADMIN");
+                } else if (member.getSchool() == null) {
                     jwtExceptionHandler(response,
                             ResultDTO.builder()
                                     .status(StatusEnum.CONFLICT)
