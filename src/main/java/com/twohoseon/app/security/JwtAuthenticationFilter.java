@@ -1,7 +1,7 @@
 package com.twohoseon.app.security;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.twohoseon.app.dto.ResultDTO;
+import com.twohoseon.app.dto.GeneralResponseDTO;
 import com.twohoseon.app.entity.Member;
 import com.twohoseon.app.enums.StatusEnum;
 import com.twohoseon.app.enums.UserRole;
@@ -61,7 +61,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                     log.info("ROLE_ADMIN");
                 } else if (member.getSchool() == null) {
                     jwtExceptionHandler(response,
-                            ResultDTO.builder()
+                            GeneralResponseDTO.builder()
                                     .status(StatusEnum.CONFLICT)
                                     .message("UNREGISTERED_USER")
                                     .build());
@@ -69,7 +69,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 }
             } else {
                 jwtExceptionHandler(response,
-                        ResultDTO.builder()
+                        GeneralResponseDTO.builder()
                                 .status(StatusEnum.BAD_REQUEST)
                                 .message("Invalid JWT signature")
                                 .build());
@@ -87,7 +87,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     }
 
     // Jwt 예외처리
-    public void jwtExceptionHandler(HttpServletResponse response, ResultDTO result) throws IOException {
+    public void jwtExceptionHandler(HttpServletResponse response, GeneralResponseDTO result) throws IOException {
 
         response.setContentType("application/json;charset=UTF-8");
         response.setStatus(result.getStatus().getStatusCode());
