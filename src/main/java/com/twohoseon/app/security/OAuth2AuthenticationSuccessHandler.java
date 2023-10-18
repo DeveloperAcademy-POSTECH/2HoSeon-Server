@@ -1,7 +1,7 @@
 package com.twohoseon.app.security;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.twohoseon.app.dto.ResultDTO;
+import com.twohoseon.app.dto.GeneralResponseDTO;
 import com.twohoseon.app.dto.TokenDTO;
 import com.twohoseon.app.entity.Member;
 import com.twohoseon.app.enums.StatusEnum;
@@ -49,19 +49,19 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
         Member member = memberRepository.findByProviderId(providerId).orElseThrow(() -> new IllegalArgumentException("존재하지 않는 회원입니다."));
         // 회원이 존재하는지 체크
         boolean memberIsExist = memberRepository.existsByProviderId(providerId);
-        ResultDTO resultDTO;
+        GeneralResponseDTO generalResponseDTO;
         TokenDTO token = jwtTokenProvider.createAllToken(providerId);
         // 회원이 존재할경우
         if (member.getSchool() == null) {
             log.debug("member.getSchool() = {}", member.getSchool());
             // 회원이 존재하면 jwt token 발행을 시작한다.
-            resultDTO = ResultDTO.builder()
+            generalResponseDTO = GeneralResponseDTO.builder()
                     .status(StatusEnum.CONFLICT)
                     .message("UNREGISTERED_USER")
                     .data(token)
                     .build();
         } else {
-            resultDTO = ResultDTO.builder()
+            generalResponseDTO = GeneralResponseDTO.builder()
                     .status(StatusEnum.OK)
                     .message("SUCCESS")
                     .data(token)
@@ -73,7 +73,7 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
         //token 발급
         response.setContentType("application/json;charset=UTF-8");
         response.setStatus(200);
-        response.getWriter().write(new ObjectMapper().writeValueAsString(resultDTO));
+        response.getWriter().write(new ObjectMapper().writeValueAsString(generalResponseDTO));
     }
 
 }

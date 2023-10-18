@@ -62,7 +62,7 @@ public class JwtTokenProvider {
 
         refreshTokenRepository.save(RefreshToken.builder()
                 .refreshToken(refreshToken)
-                .OAuthId(username)
+                .providerId(username)
                 .expirationTime(refreshExpiration.getTime())
                 .build());
         return TokenDTO.builder()
