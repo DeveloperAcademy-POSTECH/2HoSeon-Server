@@ -1,8 +1,8 @@
 package com.twohoseon.app.security;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.twohoseon.app.dto.GeneralResponseDTO;
-import com.twohoseon.app.dto.TokenDTO;
+import com.twohoseon.app.dto.response.GeneralResponseDTO;
+import com.twohoseon.app.dto.response.TokenDTO;
 import com.twohoseon.app.entity.Member;
 import com.twohoseon.app.enums.StatusEnum;
 import com.twohoseon.app.repository.member.MemberRepository;

@@ -1,4 +1,4 @@
-package com.twohoseon.app.dto;
+package com.twohoseon.app.dto.request;
 
 import com.twohoseon.app.entity.School;
 import lombok.Getter;

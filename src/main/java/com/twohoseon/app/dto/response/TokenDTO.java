@@ -1,4 +1,4 @@
-package com.twohoseon.app.dto;
+package com.twohoseon.app.dto.response;
 
 import lombok.Builder;
 import lombok.Getter;

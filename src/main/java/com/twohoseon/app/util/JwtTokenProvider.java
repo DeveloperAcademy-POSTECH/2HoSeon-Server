@@ -1,6 +1,6 @@
 package com.twohoseon.app.util;
 
-import com.twohoseon.app.dto.TokenDTO;
+import com.twohoseon.app.dto.response.TokenDTO;
 import com.twohoseon.app.entity.RefreshToken;
 import com.twohoseon.app.repository.member.RefreshTokenRepository;
 import io.jsonwebtoken.*;

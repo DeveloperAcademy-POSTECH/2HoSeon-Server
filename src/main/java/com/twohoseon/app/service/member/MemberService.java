@@ -1,6 +1,6 @@
 package com.twohoseon.app.service.member;
 
-import com.twohoseon.app.dto.ProfileRequestDTO;
+import com.twohoseon.app.dto.request.ProfileRequestDTO;
 import com.twohoseon.app.entity.Member;
 import org.springframework.security.core.userdetails.UserDetailsService;
 
