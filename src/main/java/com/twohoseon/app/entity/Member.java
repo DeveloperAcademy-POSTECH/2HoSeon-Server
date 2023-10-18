@@ -9,7 +9,6 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
-import lombok.ToString;
 
 import java.time.LocalDate;
 import java.util.LinkedHashSet;
@@ -27,7 +26,6 @@ import java.util.Set;
 @Entity
 @Getter
 @Builder
-@ToString
 @AllArgsConstructor
 public class Member extends BaseTimeEntity {
 

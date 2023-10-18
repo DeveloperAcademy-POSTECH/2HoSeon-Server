@@ -55,11 +55,7 @@ public class MemberServiceImpl implements MemberService {
 
     @Override
     public boolean validateDuplicateUserNickname(String userNickname) {
-        Optional<Member> findNickname = memberRepository.findByUserNickname(userNickname);
-
-        System.out.println("findNickname = " + findNickname);
-
-        return findNickname.isPresent();
+        return memberRepository.existsByUserNickname(userNickname);
     }
 
     public Optional<Member> findByProviderId(String providerId) {
