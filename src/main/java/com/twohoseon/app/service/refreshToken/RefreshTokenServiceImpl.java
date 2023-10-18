@@ -24,7 +24,7 @@ public class RefreshTokenServiceImpl implements RefreshTokenService {
     @Override
     public void saveRefreshToken(String refreshToken, String identifier, long expirationTime) {
         RefreshToken refreshTokenEntity = RefreshToken.builder()
-                .OAuthId(identifier)
+                .providerId(identifier)
                 .refreshToken(refreshToken)
                 .expirationTime(expirationTime)
                 .build();
@@ -34,10 +34,11 @@ public class RefreshTokenServiceImpl implements RefreshTokenService {
     @Override
     public TokenDTO renewToken(String refreshToken, String identifier) {
 
-        RefreshToken refreshTokenEntity = refreshTokenRepository.findByOAuthIdAndRefreshToken(identifier, refreshToken)
-                .orElseThrow(() -> new IllegalArgumentException("Refresh Token이 존재하지 않습니다."));
-        refreshTokenRepository.delete(refreshTokenEntity);
-        return jwtTokenProvider.createAllToken(identifier);
+//        RefreshToken refreshTokenEntity = refreshTokenRepository.findByProviderIdAndRefreshToken(identifier, refreshToken)
+//                .orElseThrow(() -> new IllegalArgumentException("Refresh Token이 존재하지 않습니다."));
+//        refreshTokenRepository.delete(refreshTokenEntity);
+//        return jwtTokenProvider.createAllToken(identifier);
+        return null;
     }
 
 }

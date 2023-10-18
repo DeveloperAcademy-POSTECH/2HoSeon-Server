@@ -30,10 +30,10 @@ public class RefreshToken extends BaseTimeEntity {
     private String refreshToken;
 
     @Column(nullable = false)
-    private String OAuthId;
+    private String providerId;
 
     @Column(nullable = false)
-    private long expirationTime;
+    private Long expirationTime;
 
     public RefreshToken updateToken(String refreshToken) {
         this.refreshToken = refreshToken;
