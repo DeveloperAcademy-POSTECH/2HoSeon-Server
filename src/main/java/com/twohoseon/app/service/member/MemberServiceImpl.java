@@ -1,6 +1,6 @@
 package com.twohoseon.app.service.member;
 
-import com.twohoseon.app.dto.ProfileRequestDTO;
+import com.twohoseon.app.dto.request.ProfileRequestDTO;
 import com.twohoseon.app.entity.Member;
 import com.twohoseon.app.repository.member.MemberRepository;
 import com.twohoseon.app.security.MemberDetails;
@@ -55,11 +55,7 @@ public class MemberServiceImpl implements MemberService {
 
     @Override
     public boolean validateDuplicateUserNickname(String userNickname) {
-        Optional<Member> findNickname = memberRepository.findByUserNickname(userNickname);
-
-        System.out.println("findNickname = " + findNickname);
-
-        return findNickname.isPresent();
+        return memberRepository.existsByUserNickname(userNickname);
     }
 
     public Optional<Member> findByProviderId(String providerId) {

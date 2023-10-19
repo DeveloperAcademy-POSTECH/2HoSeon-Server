@@ -1,8 +1,11 @@
 package com.twohoseon.app.security;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.twohoseon.app.dto.ResultDTO;
+import com.twohoseon.app.dto.response.GeneralResponseDTO;
+import com.twohoseon.app.entity.Member;
 import com.twohoseon.app.enums.StatusEnum;
+import com.twohoseon.app.enums.UserRole;
+import com.twohoseon.app.repository.member.MemberRepository;
 import com.twohoseon.app.service.member.MemberService;
 import com.twohoseon.app.util.JwtTokenProvider;
 import jakarta.servlet.FilterChain;
@@ -34,6 +37,7 @@ import java.io.IOException;
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private final JwtTokenProvider jwtTokenProvider;
+    private final MemberRepository memberRepository;
     private final MemberService memberService;
 
     @Override
@@ -45,11 +49,27 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             // 어세스 토큰값이 유효하다면 setAuthentication를 통해
             // security context에 인증 정보저장
             if (jwtTokenProvider.tokenValidation(accessToken, true)) {
-                log.info("ProviderId : ", jwtTokenProvider.getProviderIdFromToken(accessToken));
+                String providerId = jwtTokenProvider.getProviderIdFromToken(accessToken);
+
+                Member member = memberRepository.findByProviderId(providerId)
+                        .orElseThrow(() -> new IllegalArgumentException("Member Not Found"));
+                log.info("ProviderId : ", providerId);
+
                 setAuthentication(jwtTokenProvider.getProviderIdFromToken(accessToken));
+
+                if (member.getRole() == UserRole.ROLE_ADMIN) {
+                    log.info("ROLE_ADMIN");
+                } else if (member.getSchool() == null) {
+                    jwtExceptionHandler(response,
+                            GeneralResponseDTO.builder()
+                                    .status(StatusEnum.CONFLICT)
+                                    .message("UNREGISTERED_USER")
+                                    .build());
+                    return;
+                }
             } else {
                 jwtExceptionHandler(response,
-                        ResultDTO.builder()
+                        GeneralResponseDTO.builder()
                                 .status(StatusEnum.BAD_REQUEST)
                                 .message("Invalid JWT signature")
                                 .build());
@@ -67,7 +87,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     }
 
     // Jwt 예외처리
-    public void jwtExceptionHandler(HttpServletResponse response, ResultDTO result) throws IOException {
+    public void jwtExceptionHandler(HttpServletResponse response, GeneralResponseDTO result) throws IOException {
 
         response.setContentType("application/json;charset=UTF-8");
         response.setStatus(result.getStatus().getStatusCode());

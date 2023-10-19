@@ -3,8 +3,9 @@ package com.twohoseon.app.entity;
 import jakarta.persistence.Embeddable;
 import lombok.Getter;
 
-@Embeddable
+
 @Getter
+@Embeddable
 public class School {
 
     private String schoolName;

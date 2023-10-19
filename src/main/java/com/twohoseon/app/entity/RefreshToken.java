@@ -1,5 +1,6 @@
 package com.twohoseon.app.entity;
 
+import com.twohoseon.app.common.BaseTimeEntity;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -16,10 +17,10 @@ import lombok.NoArgsConstructor;
  **/
 @Entity
 @Getter
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
-public class RefreshToken {
+public class RefreshToken extends BaseTimeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     @Column
@@ -29,10 +30,10 @@ public class RefreshToken {
     private String refreshToken;
 
     @Column(nullable = false)
-    private String OAuthId;
+    private String providerId;
 
     @Column(nullable = false)
-    private long expirationTime;
+    private Long expirationTime;
 
     public RefreshToken updateToken(String refreshToken) {
         this.refreshToken = refreshToken;

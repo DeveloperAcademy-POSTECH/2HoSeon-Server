@@ -1,4 +1,4 @@
-package com.twohoseon.app.dto;
+package com.twohoseon.app.dto.request;
 
 import lombok.Getter;
 

@@ -1,8 +1,8 @@
 package com.twohoseon.app.controller;
 
-import com.twohoseon.app.dto.ResultDTO;
-import com.twohoseon.app.dto.TokenDTO;
-import com.twohoseon.app.dto.TokenRefreshDTO;
+import com.twohoseon.app.dto.request.TokenRefreshDTO;
+import com.twohoseon.app.dto.response.GeneralResponseDTO;
+import com.twohoseon.app.dto.response.TokenDTO;
 import com.twohoseon.app.enums.StatusEnum;
 import com.twohoseon.app.service.refreshToken.RefreshTokenService;
 import lombok.RequiredArgsConstructor;
@@ -29,16 +29,16 @@ public class AuthRestController {
     private final RefreshTokenService refreshTokenService;
 
     @PostMapping("refresh")
-    public ResponseEntity<ResultDTO> tokenRefresh(@RequestBody TokenRefreshDTO tokenRefreshDTO) {
+    public ResponseEntity<GeneralResponseDTO> tokenRefresh(@RequestBody TokenRefreshDTO tokenRefreshDTO) {
         log.debug("token refresh request.");
         log.debug("refresh token : {}", tokenRefreshDTO.getRefreshToken());
         log.debug("identifier : {}", tokenRefreshDTO.getIdentifier());
         TokenDTO renewToken = refreshTokenService.renewToken(tokenRefreshDTO.getRefreshToken(), tokenRefreshDTO.getIdentifier());
-        ResultDTO resultDTO = ResultDTO.builder()
+        GeneralResponseDTO generalResponseDTO = GeneralResponseDTO.builder()
                 .status(StatusEnum.OK)
                 .message("token renew success.")
                 .data(renewToken)
                 .build();
-        return ResponseEntity.ok(resultDTO);
+        return ResponseEntity.ok(generalResponseDTO);
     }
 }

@@ -1,13 +1,18 @@
 package com.twohoseon.app.entity;
 
 import com.google.common.base.Objects;
+import com.twohoseon.app.common.BaseTimeEntity;
+import com.twohoseon.app.entity.post.Post;
 import com.twohoseon.app.enums.OAuth2Provider;
 import com.twohoseon.app.enums.UserRole;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
-import lombok.ToString;
 
 import java.time.LocalDate;
+import java.util.LinkedHashSet;
+import java.util.Set;
 
 /**
  * @author : hyunwoopark
@@ -17,10 +22,12 @@ import java.time.LocalDate;
  * @date : 2023/10/07 1:28 PM
  * @modifyed : $
  **/
+
 @Entity
-@ToString
 @Getter
-public class Member {
+@Builder
+@AllArgsConstructor
+public class Member extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -59,6 +66,20 @@ public class Member {
     @Column(length = 15, nullable = false)
     private UserRole role;
 
+    @OneToMany(mappedBy = "author", orphanRemoval = true)
+    private Set<Post> posts = new LinkedHashSet<>();
+
+    public void setPosts(Set<Post> posts) {
+        this.posts = posts;
+    }
+
+//    @OneToMany(mappedBy = "member", orphanRemoval = true)
+//    private Set<PostComment> postComments = new LinkedHashSet<>();
+//
+//    public void setPostComments(Set<PostComment> postComments) {
+//        this.postComments = postComments;
+//    }
+
     public void updateAdditionalUserInfo(String userProfileImage, String userNickname, School school, Integer grade) {
         this.userProfileImage = userProfileImage;
         this.userNickname = userNickname;
@@ -67,20 +88,6 @@ public class Member {
     }
 
     protected Member() {
-    }
-
-    public Member(OAuth2Provider provider, String providerId, String userEmail, String userName) {
-
-        this(null, provider, providerId, UserRole.ROLE_USER, userEmail, userName);
-    }
-
-    private Member(Long id, OAuth2Provider provider, String providerId, UserRole role, String userEmail, String userName) {
-        this.id = id;
-        this.provider = provider;
-        this.providerId = providerId;
-        this.role = role;
-        this.userEmail = userEmail;
-        this.userName = userName;
     }
 
     @Override

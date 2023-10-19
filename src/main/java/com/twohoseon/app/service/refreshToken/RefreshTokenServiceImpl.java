@@ -1,6 +1,6 @@
 package com.twohoseon.app.service.refreshToken;
 
-import com.twohoseon.app.dto.TokenDTO;
+import com.twohoseon.app.dto.response.TokenDTO;
 import com.twohoseon.app.entity.RefreshToken;
 import com.twohoseon.app.repository.member.RefreshTokenRepository;
 import com.twohoseon.app.util.JwtTokenProvider;
@@ -24,7 +24,7 @@ public class RefreshTokenServiceImpl implements RefreshTokenService {
     @Override
     public void saveRefreshToken(String refreshToken, String identifier, long expirationTime) {
         RefreshToken refreshTokenEntity = RefreshToken.builder()
-                .OAuthId(identifier)
+                .providerId(identifier)
                 .refreshToken(refreshToken)
                 .expirationTime(expirationTime)
                 .build();
@@ -34,10 +34,11 @@ public class RefreshTokenServiceImpl implements RefreshTokenService {
     @Override
     public TokenDTO renewToken(String refreshToken, String identifier) {
 
-        RefreshToken refreshTokenEntity = refreshTokenRepository.findByOAuthIdAndRefreshToken(identifier, refreshToken)
-                .orElseThrow(() -> new IllegalArgumentException("Refresh Token이 존재하지 않습니다."));
-        refreshTokenRepository.delete(refreshTokenEntity);
-        return jwtTokenProvider.createAllToken(identifier);
+//        RefreshToken refreshTokenEntity = refreshTokenRepository.findByProviderIdAndRefreshToken(identifier, refreshToken)
+//                .orElseThrow(() -> new IllegalArgumentException("Refresh Token이 존재하지 않습니다."));
+//        refreshTokenRepository.delete(refreshTokenEntity);
+//        return jwtTokenProvider.createAllToken(identifier);
+        return null;
     }
 
 }

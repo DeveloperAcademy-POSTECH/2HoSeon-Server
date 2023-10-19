@@ -1,6 +1,6 @@
 package com.twohoseon.app.util;
 
-import com.twohoseon.app.dto.TokenDTO;
+import com.twohoseon.app.dto.response.TokenDTO;
 import com.twohoseon.app.entity.RefreshToken;
 import com.twohoseon.app.repository.member.RefreshTokenRepository;
 import io.jsonwebtoken.*;
@@ -40,18 +40,20 @@ public class JwtTokenProvider {
         Date accessExpiration = new Date(now.getTime() + jwtExpirationMs);
         Date refreshExpiration = new Date(now.getTime() + jwtRefreshExpirationMs);
 
-        Claims claims = Jwts.claims().setSubject(username);
+        Claims claims = Jwts.claims().setSubject("providerId");
         claims.put("type", "access");
         String accessToken = Jwts.builder()
+                .setHeaderParam("providerId", username)
                 .setClaims(claims)
                 .setIssuedAt(now)
                 .setExpiration(accessExpiration)
                 .signWith(SignatureAlgorithm.HS256, jwtSecret)
                 .compact();
 
-        claims = Jwts.claims().setSubject(username);
+        claims = Jwts.claims().setSubject("providerId");
         claims.put("type", "refresh");
         String refreshToken = Jwts.builder()
+                .setHeaderParam("providerId", username)
                 .setClaims(claims)
                 .setIssuedAt(now)
                 .setExpiration(refreshExpiration)
@@ -60,10 +62,9 @@ public class JwtTokenProvider {
 
         refreshTokenRepository.save(RefreshToken.builder()
                 .refreshToken(refreshToken)
-                .OAuthId(username)
+                .providerId(username)
                 .expirationTime(refreshExpiration.getTime())
                 .build());
-        );
         return TokenDTO.builder()
                 .accessToken(accessToken)
                 .accessExpirationTime(accessExpiration.getTime())
@@ -73,30 +74,12 @@ public class JwtTokenProvider {
 
     }
 
-    public String generateToken(String email, boolean isAccessToken) {
-
-        Date now = new Date();
-        long expiryDuration = isAccessToken ? jwtExpirationMs : jwtRefreshExpirationMs;
-
-
-        Claims claims = Jwts.claims().setSubject(email);
-        claims.put("type", isAccessToken ? "access" : "refresh");
-        log.info("jwtSecret" + jwtSecret + "???");
-        return Jwts.builder()
-                .setClaims(claims)
-                .setIssuedAt(now)
-                .setExpiration(new Date(now.getTime() + expiryDuration))
-                .signWith(SignatureAlgorithm.HS256, jwtSecret)
-                .compact();
-    }
-
     public String getProviderIdFromToken(String token) {
-        Claims claims = Jwts.parser()
+        JwsHeader<?> header = Jwts.parser()
                 .setSigningKey(jwtSecret)
                 .parseClaimsJws(token)
-                .getBody();
-
-        return claims.getSubject();
+                .getHeader();
+        return (String) header.get("providerId");
     }
 
     public boolean tokenValidation(String token, boolean isAccessToken) {

@@ -1,10 +1,11 @@
 package com.twohoseon.app.service.oauth2;
 
-import com.twohoseon.app.security.oauth2.userinfo.CustomOAuth2UserInfo;
-import com.twohoseon.app.security.oauth2.userinfo.CustomOAuth2UserInfoFactory;
 import com.twohoseon.app.entity.Member;
 import com.twohoseon.app.enums.OAuth2Provider;
+import com.twohoseon.app.enums.UserRole;
 import com.twohoseon.app.repository.member.MemberRepository;
+import com.twohoseon.app.security.oauth2.userinfo.CustomOAuth2UserInfo;
+import com.twohoseon.app.security.oauth2.userinfo.CustomOAuth2UserInfoFactory;
 
 import java.util.Map;
 
@@ -28,7 +29,13 @@ public interface CustomOAuth2Service {
         System.out.println("userName = " + userName);
         return memberRepository.findByProviderId(providerId)
                 .orElseGet(() -> {
-                    Member member = new Member(provider, providerId, userEmail, userName);
+                    Member member = Member.builder()
+                            .provider(provider)
+                            .providerId(providerId)
+                            .userEmail(userEmail)
+                            .userName(userName)
+                            .role(UserRole.ROLE_USER)
+                            .build();
                     System.out.println("member = " + member);
                     return memberRepository.save(member);
                 });
