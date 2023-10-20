@@ -31,7 +31,7 @@ public class PostComment extends BaseTimeEntity {
     @Column(name = "id", nullable = false)
     private Long id;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "post_id")
     private Post post;
 
@@ -49,4 +49,17 @@ public class PostComment extends BaseTimeEntity {
     // 대댓글 리스트
     @OneToMany(mappedBy = "parentComment", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<PostComment> childComments = new ArrayList<>();
+
+    public void updateParent(PostComment parentComment) {
+        this.parentComment = parentComment;
+    }
+
+    public void addChildComment(PostComment childComment) {
+        this.childComments.add(childComment);
+    }
+
+    public boolean validateMember(Member author) {
+        return !this.author.equals(author);
+    }
+
 }
