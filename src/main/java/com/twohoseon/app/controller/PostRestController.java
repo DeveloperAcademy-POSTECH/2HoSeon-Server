@@ -65,7 +65,32 @@ public class PostRestController {
     }
 
     //TODO 좋아요
-    //TODO 좋아요 취소
+    @PostMapping("/api/postLikes/insert")
+    public ResponseEntity<GeneralResponseDTO> insertPostLike(@RequestBody Map<String, Long> postLikeRequest) {
 
-    //TODO 조회수
+        postLikeService.insert(postLikeRequest.get("postId"));
+
+        GeneralResponseDTO.GeneralResponseDTOBuilder responseDTOBuilder = GeneralResponseDTO.builder();
+
+        responseDTOBuilder
+                .status(StatusEnum.OK)
+                .message("check success");
+
+        return ResponseEntity.ok(responseDTOBuilder.build());
+    }
+
+    //TODO 좋아요 취소
+    @DeleteMapping("/api/postLikes/delete")
+    public ResponseEntity<GeneralResponseDTO> deletePostLike(@RequestBody Map<String, Long> postLikeRequest) {
+
+        postLikeService.delete(postLikeRequest.get("postId"));
+
+        GeneralResponseDTO.GeneralResponseDTOBuilder responseDTOBuilder = GeneralResponseDTO.builder();
+
+        responseDTOBuilder
+                .status(StatusEnum.OK)
+                .message("delete success");
+
+        return ResponseEntity.ok(responseDTOBuilder.build());
+    }
 }

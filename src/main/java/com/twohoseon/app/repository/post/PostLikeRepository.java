@@ -1,8 +1,12 @@
 package com.twohoseon.app.repository.post;
 
+import com.twohoseon.app.entity.Member;
+import com.twohoseon.app.entity.post.Post;
 import com.twohoseon.app.entity.post.PostLike;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
+
+import java.util.Optional;
 
 /**
  * @author : hyunwoopark
@@ -14,4 +18,6 @@ import org.springframework.stereotype.Repository;
  **/
 @Repository
 public interface PostLikeRepository extends JpaRepository<PostLike, Long> {
+
+    Optional<PostLike> findByMemberAndPost(Member author, Post post);
 }
