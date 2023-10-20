@@ -86,8 +86,8 @@ public class PostRestController {
     }
 
     @Operation(summary = "댓글 작성")
-    @PostMapping("/create")
-    public ResponseEntity<GeneralResponseDTO> createPostComment(@RequestBody PostCommentRequestDTO postCommentRequestDTO) {
+    @PostMapping("/{postId}/create")
+    public ResponseEntity<GeneralResponseDTO> createPostComment(@PathVariable Long postId, @RequestBody PostCommentRequestDTO postCommentRequestDTO) {
 
         postCommentService.commentCreate(postCommentRequestDTO);
 
