@@ -6,6 +6,7 @@ import com.twohoseon.app.entity.post.PostLike;
 import com.twohoseon.app.repository.member.MemberRepository;
 import com.twohoseon.app.repository.post.PostLikeRepository;
 import com.twohoseon.app.repository.post.PostRepository;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
@@ -32,6 +33,7 @@ public class PostLikeServiceImpl implements PostLikeService {
     private final PostRepository postRepository;
 
     @Override
+    @Transactional
     public void insert(Long postId) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String providerId = authentication.getName();
@@ -58,6 +60,7 @@ public class PostLikeServiceImpl implements PostLikeService {
     }
 
     @Override
+    @Transactional
     public void delete(Long postId) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String providerId = authentication.getName();
