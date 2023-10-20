@@ -1,8 +1,7 @@
-package com.twohoseon.app.entity;
+package com.twohoseon.app.entity.member;
 
 import com.google.common.base.Objects;
 import com.twohoseon.app.common.BaseTimeEntity;
-import com.twohoseon.app.entity.post.Post;
 import com.twohoseon.app.enums.OAuth2Provider;
 import com.twohoseon.app.enums.UserRole;
 import jakarta.persistence.*;
@@ -11,8 +10,6 @@ import lombok.Builder;
 import lombok.Getter;
 
 import java.time.LocalDate;
-import java.util.LinkedHashSet;
-import java.util.Set;
 
 /**
  * @author : hyunwoopark
@@ -66,12 +63,9 @@ public class Member extends BaseTimeEntity {
     @Column(length = 15, nullable = false)
     private UserRole role;
 
-    @OneToMany(mappedBy = "author", orphanRemoval = true)
-    private Set<Post> posts = new LinkedHashSet<>();
+//    @OneToMany(mappedBy = "author", orphanRemoval = true)
+//    private Set<Post> posts = new LinkedHashSet<>();
 
-    public void setPosts(Set<Post> posts) {
-        this.posts = posts;
-    }
 
 //    @OneToMany(mappedBy = "member", orphanRemoval = true)
 //    private Set<PostComment> postComments = new LinkedHashSet<>();
