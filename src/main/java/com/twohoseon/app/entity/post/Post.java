@@ -1,20 +1,22 @@
 package com.twohoseon.app.entity.post;
 
 import com.twohoseon.app.common.BaseTimeEntity;
-import com.twohoseon.app.entity.Member;
+import com.twohoseon.app.entity.member.Member;
 import com.twohoseon.app.entity.post.enums.PostStatus;
 import com.twohoseon.app.entity.post.enums.PostType;
+import com.twohoseon.app.entity.post.vote.Vote;
+import com.twohoseon.app.entity.post.vote.VoteId;
+import com.twohoseon.app.enums.VoteType;
 import jakarta.annotation.Nullable;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.hibernate.annotations.Comment;
 
 import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * @author : hyunwoopark
@@ -27,7 +29,8 @@ import java.util.List;
 @Entity
 @Getter
 @Builder
-@NoArgsConstructor
+@EqualsAndHashCode(of = "id", callSuper = false)
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 public class Post extends BaseTimeEntity {
     @Id
@@ -35,7 +38,7 @@ public class Post extends BaseTimeEntity {
     @Column(name = "id", nullable = false)
     private Long id;
 
-    @ManyToOne(cascade = CascadeType.REMOVE, optional = false)
+    @ManyToOne(optional = false)
     @JoinColumn(name = "author_id", nullable = false)
     @Comment("작성자")
     private Member author;
@@ -46,10 +49,11 @@ public class Post extends BaseTimeEntity {
     private PostType postType;
 
     @NotNull
-    @Enumerated
-    @Column(length = 10, columnDefinition = "VARCHAR(10) DEFAULT 'ACTIVE'")
+    @Enumerated(EnumType.STRING)
+    @Column
     @Comment("게시글 상태")
-    private PostStatus postStatus;
+    @Builder.Default
+    private PostStatus postStatus = PostStatus.ACTIVE;
 
     @NotNull
     @Column
@@ -74,25 +78,55 @@ public class Post extends BaseTimeEntity {
     @NotNull
     @Column
     @Comment("좋아요 수")
+    @Builder.Default
     private Integer likeCount = 0;
 
     @NotNull
     @Column
     @Comment("조회수")
+    @Builder.Default
     private Integer viewCount = 0;
 
     @NotNull
     @Column
     @Comment("댓글 수")
+    @Builder.Default
     private Integer commentCount = 0;
 
-    @ElementCollection
+    @ElementCollection(fetch = FetchType.EAGER)
     @Column
     @Comment("태그 리스트")
+    @Builder.Default
     private List<String> postTagList = new ArrayList<>();
 
+    @OneToMany(mappedBy = "id.post", orphanRemoval = true, fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @Builder.Default
+    private Set<Vote> votes = new LinkedHashSet<>();
 
     public void setAuthor(Member author) {
         this.author = author;
+    }
+
+    public void addLike() {
+        this.likeCount += 1;
+    }
+
+    public void cancelLike() {
+        int restLikeCount = this.likeCount - 1;
+        if (restLikeCount < 0) {
+            throw new IllegalStateException("Don't cancel post like");
+        }
+        this.likeCount -= 1;
+    }
+
+    public void createVote(Member voter, VoteType voteType) {
+        Vote vote = Vote.builder()
+                .id(VoteId.builder()
+                        .voter(voter)
+                        .post(this)
+                        .build())
+                .isAgree(voteType == VoteType.AGREE)
+                .build();
+        this.votes.add(vote);
     }
 }

@@ -1,8 +1,10 @@
 package com.twohoseon.app.repository.post;
 
 import com.twohoseon.app.entity.post.Post;
+import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.stereotype.Repository;
+
+import java.util.List;
 
 /**
  * @author : hyunwoopark
@@ -12,6 +14,14 @@ import org.springframework.stereotype.Repository;
  * @date : 10/17/23 8:17 PM
  * @modifyed : $
  **/
-@Repository
-public interface PostRepository extends JpaRepository<Post, Long> {
+
+public interface PostRepository extends JpaRepository<Post, Long>, PostCustomRepository {
+//    Page<Post> findAllBy(Pageable pageable);
+
+//    List<PostDto> findAllBy();
+
+//    List<PostInfo> findAllBy(Pageable pageable);
+
+    @EntityGraph(attributePaths = "author")
+    List<Post> findAllBy();
 }

@@ -1,7 +1,7 @@
 package com.twohoseon.app.entity.post;
 
 import com.twohoseon.app.common.BaseTimeEntity;
-import com.twohoseon.app.entity.Member;
+import com.twohoseon.app.entity.member.Member;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;

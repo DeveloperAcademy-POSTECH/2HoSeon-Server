@@ -1,4 +1,4 @@
-package com.twohoseon.app.entity;
+package com.twohoseon.app.entity.member;
 
 import jakarta.persistence.Embeddable;
 import lombok.Getter;

@@ -1,7 +1,7 @@
 package com.twohoseon.app.entity.post;
 
 import com.twohoseon.app.common.BaseTimeEntity;
-import com.twohoseon.app.entity.Member;
+import com.twohoseon.app.entity.member.Member;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -31,7 +31,7 @@ public class PostComment extends BaseTimeEntity {
     @Column(name = "id", nullable = false)
     private Long id;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "post_id")
     private Post post;
 
@@ -47,6 +47,20 @@ public class PostComment extends BaseTimeEntity {
     private PostComment parentComment;
 
     // 대댓글 리스트
+    @Builder.Default
     @OneToMany(mappedBy = "parentComment", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<PostComment> childComments = new ArrayList<>();
+
+    public void updateParent(PostComment parentComment) {
+        this.parentComment = parentComment;
+    }
+
+    public void addChildComment(PostComment childComment) {
+        this.childComments.add(childComment);
+    }
+
+    public boolean validateMember(Member author) {
+        return !this.author.equals(author);
+    }
+
 }

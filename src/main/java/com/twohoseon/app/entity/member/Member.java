@@ -1,4 +1,4 @@
-package com.twohoseon.app.entity;
+package com.twohoseon.app.entity.member;
 
 import com.google.common.base.Objects;
 import com.twohoseon.app.common.BaseTimeEntity;
@@ -9,6 +9,7 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.ToString;
 
 import java.time.LocalDate;
 import java.util.LinkedHashSet;
@@ -24,6 +25,7 @@ import java.util.Set;
  **/
 
 @Entity
+@ToString
 @Getter
 @Builder
 @AllArgsConstructor
@@ -66,6 +68,7 @@ public class Member extends BaseTimeEntity {
     @Column(length = 15, nullable = false)
     private UserRole role;
 
+    @Builder.Default
     @OneToMany(mappedBy = "author", orphanRemoval = true)
     private Set<Post> posts = new LinkedHashSet<>();
 

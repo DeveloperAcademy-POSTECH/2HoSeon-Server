@@ -2,7 +2,7 @@ package com.twohoseon.app.service.oauth2;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.twohoseon.app.entity.Member;
+import com.twohoseon.app.entity.member.Member;
 import com.twohoseon.app.enums.OAuth2Provider;
 import com.twohoseon.app.repository.member.MemberRepository;
 import com.twohoseon.app.security.oauth2.user.CustomOAuth2User;
