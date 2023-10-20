@@ -111,12 +111,24 @@ public class Post extends BaseTimeEntity {
         this.likeCount += 1;
     }
 
+    public void addComment() {
+        this.commentCount += 1;
+    }
+
     public void cancelLike() {
         int restLikeCount = this.likeCount - 1;
         if (restLikeCount < 0) {
             throw new IllegalStateException("Don't cancel post like");
         }
-        this.likeCount -= 1;
+        this.likeCount = restLikeCount;
+    }
+
+    public void deleteComment() {
+        int restCommentCount = this.commentCount - 1;
+        if (restCommentCount < 0) {
+            throw new IllegalStateException("Don't cancel post comment");
+        }
+        this.commentCount = restCommentCount;
     }
 
     public void createVote(Member voter, VoteType voteType) {
