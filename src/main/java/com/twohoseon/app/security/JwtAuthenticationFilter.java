@@ -2,7 +2,7 @@ package com.twohoseon.app.security;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.twohoseon.app.dto.response.GeneralResponseDTO;
-import com.twohoseon.app.entity.Member;
+import com.twohoseon.app.entity.member.Member;
 import com.twohoseon.app.enums.StatusEnum;
 import com.twohoseon.app.enums.UserRole;
 import com.twohoseon.app.repository.member.MemberRepository;
@@ -18,6 +18,8 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
+import org.springframework.security.web.util.matcher.RequestMatcher;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
@@ -43,7 +45,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         String accessToken = jwtTokenProvider.getHeaderToken(request, "Access");
-
+        //특정 url 요청시
+        RequestMatcher skipPath = new AntPathRequestMatcher("/api/profiles/**");
 
         if (accessToken != null) {
             // 어세스 토큰값이 유효하다면 setAuthentication를 통해
@@ -56,7 +59,10 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 log.info("ProviderId : ", providerId);
 
                 setAuthentication(jwtTokenProvider.getProviderIdFromToken(accessToken));
-
+                if (skipPath.matches(request)) {
+                    filterChain.doFilter(request, response);
+                    return;
+                }
                 if (member.getRole() == UserRole.ROLE_ADMIN) {
                     log.info("ROLE_ADMIN");
                 } else if (member.getSchool() == null) {

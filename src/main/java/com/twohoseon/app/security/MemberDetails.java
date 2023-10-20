@@ -1,6 +1,6 @@
 package com.twohoseon.app.security;
 
-import com.twohoseon.app.entity.Member;
+import com.twohoseon.app.entity.member.Member;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;

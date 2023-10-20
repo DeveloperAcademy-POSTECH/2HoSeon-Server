@@ -2,9 +2,9 @@ package com.twohoseon.app.security.oauth2.user;
 
 import com.google.common.base.Objects;
 import com.google.common.base.Preconditions;
-import com.twohoseon.app.entity.Member;
-import com.twohoseon.app.enums.UserRole;
 import com.twohoseon.app.common.Id;
+import com.twohoseon.app.entity.member.Member;
+import com.twohoseon.app.enums.UserRole;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 
@@ -30,7 +30,7 @@ public class CustomOAuth2User implements OAuth2User, Serializable {
 
     private final String providerId;
 
-    public CustomOAuth2User(Long id, UserRole role, String providerId ,OAuth2User oAuth2User) {
+    public CustomOAuth2User(Long id, UserRole role, String providerId, OAuth2User oAuth2User) {
         Preconditions.checkArgument(id != null, "id must be provided.");
         Preconditions.checkArgument(role != null, "role must be provided.");
         Preconditions.checkArgument(oAuth2User != null, "oAuth2User must be provided.");

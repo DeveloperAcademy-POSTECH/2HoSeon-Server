@@ -1,6 +1,6 @@
 package com.twohoseon.app.service.oauth2;
 
-import com.twohoseon.app.entity.Member;
+import com.twohoseon.app.entity.member.Member;
 import com.twohoseon.app.enums.OAuth2Provider;
 import com.twohoseon.app.enums.UserRole;
 import com.twohoseon.app.repository.member.MemberRepository;

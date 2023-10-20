@@ -1,12 +1,11 @@
 package com.twohoseon.app.entity.post;
 
 import com.twohoseon.app.common.BaseTimeEntity;
-import com.twohoseon.app.entity.Member;
+import com.twohoseon.app.entity.member.Member;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,7 +22,6 @@ import java.util.List;
 @Entity
 @Getter
 @Builder
-@NoArgsConstructor
 @AllArgsConstructor
 public class PostComment extends BaseTimeEntity {
     @Id
@@ -48,5 +46,10 @@ public class PostComment extends BaseTimeEntity {
 
     // 대댓글 리스트
     @OneToMany(mappedBy = "parentComment", cascade = CascadeType.ALL, orphanRemoval = true)
+    @Builder.Default
     private List<PostComment> childComments = new ArrayList<>();
+
+    protected PostComment() {
+
+    }
 }

@@ -1,7 +1,7 @@
 package com.twohoseon.app.service.refreshToken;
 
 import com.twohoseon.app.dto.response.TokenDTO;
-import com.twohoseon.app.entity.RefreshToken;
+import com.twohoseon.app.entity.member.RefreshToken;
 import com.twohoseon.app.repository.member.RefreshTokenRepository;
 import com.twohoseon.app.util.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
@@ -34,11 +34,13 @@ public class RefreshTokenServiceImpl implements RefreshTokenService {
     @Override
     public TokenDTO renewToken(String refreshToken, String identifier) {
 
-//        RefreshToken refreshTokenEntity = refreshTokenRepository.findByProviderIdAndRefreshToken(identifier, refreshToken)
-//                .orElseThrow(() -> new IllegalArgumentException("Refresh Token이 존재하지 않습니다."));
-//        refreshTokenRepository.delete(refreshTokenEntity);
-//        return jwtTokenProvider.createAllToken(identifier);
-        return null;
+        RefreshToken refreshTokenEntity = refreshTokenRepository.findByRefreshToken(refreshToken)
+                .orElseThrow(() -> new IllegalArgumentException("Refresh Token이 존재하지 않습니다."));
+        if (!refreshTokenEntity.getProviderId().equals(identifier)) {
+            throw new IllegalArgumentException("Refresh Token의 소유자가 아닙니다.");
+        }
+        refreshTokenRepository.delete(refreshTokenEntity);
+        return jwtTokenProvider.createAllToken(identifier);
     }
 
 }
