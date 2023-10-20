@@ -6,6 +6,7 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,6 +23,7 @@ import java.util.List;
 @Entity
 @Getter
 @Builder
+@NoArgsConstructor
 @AllArgsConstructor
 public class PostComment extends BaseTimeEntity {
     @Id
@@ -29,7 +31,7 @@ public class PostComment extends BaseTimeEntity {
     @Column(name = "id", nullable = false)
     private Long id;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "post_id")
     private Post post;
 
@@ -45,11 +47,20 @@ public class PostComment extends BaseTimeEntity {
     private PostComment parentComment;
 
     // 대댓글 리스트
-    @OneToMany(mappedBy = "parentComment", cascade = CascadeType.ALL, orphanRemoval = true)
     @Builder.Default
+    @OneToMany(mappedBy = "parentComment", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<PostComment> childComments = new ArrayList<>();
 
-    protected PostComment() {
-
+    public void updateParent(PostComment parentComment) {
+        this.parentComment = parentComment;
     }
+
+    public void addChildComment(PostComment childComment) {
+        this.childComments.add(childComment);
+    }
+
+    public boolean validateMember(Member author) {
+        return !this.author.equals(author);
+    }
+
 }

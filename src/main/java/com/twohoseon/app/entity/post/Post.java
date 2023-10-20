@@ -10,9 +10,7 @@ import com.twohoseon.app.enums.VoteType;
 import jakarta.annotation.Nullable;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
+import lombok.*;
 import org.hibernate.annotations.Comment;
 
 import java.util.ArrayList;
@@ -31,6 +29,8 @@ import java.util.Set;
 @Entity
 @Getter
 @Builder
+@EqualsAndHashCode(of = "id", callSuper = false)
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 public class Post extends BaseTimeEntity {
     @Id
@@ -49,7 +49,7 @@ public class Post extends BaseTimeEntity {
     private PostType postType;
 
     @NotNull
-    @Enumerated
+    @Enumerated(EnumType.STRING)
     @Column
     @Comment("게시글 상태")
     @Builder.Default
@@ -107,7 +107,16 @@ public class Post extends BaseTimeEntity {
         this.author = author;
     }
 
-    protected Post() {
+    public void addLike() {
+        this.likeCount += 1;
+    }
+
+    public void cancelLike() {
+        int restLikeCount = this.likeCount - 1;
+        if (restLikeCount < 0) {
+            throw new IllegalStateException("Don't cancel post like");
+        }
+        this.likeCount -= 1;
     }
 
     public void createVote(Member voter, VoteType voteType) {
