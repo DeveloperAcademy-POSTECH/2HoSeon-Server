@@ -12,9 +12,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.webjars.NotFoundException;
-
-import java.util.List;
 
 /**
  * @author : yongjukim
@@ -53,7 +52,6 @@ public class PostCommentServiceImpl implements PostCommentService {
 
 
             if (parentPostComment.getPost() != post) {
-
                 throw new NotFoundException("Not equal id");
             }
         }
@@ -76,17 +74,4 @@ public class PostCommentServiceImpl implements PostCommentService {
             postCommentRepository.save(parentPostComment);
         }
     }
-
-    @Override
-    public List<PostComment> commentRead(Long postId) {
-
-        Post post = postRepository.findById(postId)
-                .orElseThrow(() -> new NotFoundException("Could not found post id : " + postId));
-
-        postCommentRepository.findPostCommentsByPost(post);
-
-        return postCommentRepository.findPostCommentsByPost(post)
-                .orElseThrow(() -> new NotFoundException("Not found comment at this post"));
-    }
-
 }

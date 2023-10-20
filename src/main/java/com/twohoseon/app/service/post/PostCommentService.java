@@ -1,9 +1,6 @@
 package com.twohoseon.app.service.post;
 
 import com.twohoseon.app.dto.request.PostCommentRequestDTO;
-import com.twohoseon.app.entity.post.PostComment;
-
-import java.util.List;
 
 /**
  * @author : yongjukim
@@ -16,6 +13,4 @@ import java.util.List;
 public interface PostCommentService {
 
     void commentCreate(PostCommentRequestDTO postCommentRequestDTO);
-
-    List<PostComment> commentRead(Long postId);
 }
