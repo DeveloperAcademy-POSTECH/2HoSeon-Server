@@ -4,9 +4,11 @@ import com.twohoseon.app.dto.request.PostCommentRequestDTO;
 import com.twohoseon.app.dto.request.PostCreateRequestDTO;
 import com.twohoseon.app.dto.request.VoteCreateRequestDTO;
 import com.twohoseon.app.dto.response.GeneralResponseDTO;
+import com.twohoseon.app.dto.response.PostCommentInfoDTO;
+import com.twohoseon.app.dto.response.PostCommentResponseDTO;
 import com.twohoseon.app.dto.response.PostResponseDTO;
-import com.twohoseon.app.entity.post.PostComment;
 import com.twohoseon.app.enums.StatusEnum;
+import com.twohoseon.app.repository.post.PostRepository;
 import com.twohoseon.app.service.post.PostCommentService;
 import com.twohoseon.app.service.post.PostLikeService;
 import com.twohoseon.app.service.post.PostService;
@@ -22,7 +24,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Map;
 
 import static org.springframework.http.ResponseEntity.ok;
 
@@ -44,6 +45,7 @@ public class PostRestController {
     private final PostService postService;
     private final PostLikeService postLikeService;
     private final PostCommentService postCommentService;
+    private final PostRepository postRepository;
 
     @Operation(summary = "게시글 작성")
     @PostMapping
@@ -83,8 +85,8 @@ public class PostRestController {
         return ok(responseDTO);
     }
 
-    //TODO 댓글 작성
-    @PostMapping("/api/postComments/create")
+    @Operation(summary = "댓글 작성")
+    @PostMapping("/create")
     public ResponseEntity<GeneralResponseDTO> createPostComment(@RequestBody PostCommentRequestDTO postCommentRequestDTO) {
 
         postCommentService.commentCreate(postCommentRequestDTO);
@@ -113,11 +115,11 @@ public class PostRestController {
         return ok(postCommentResponseDTO);
     }
 
-    //TODO 좋아요
-    @PostMapping("/api/postLikes/insert")
-    public ResponseEntity<GeneralResponseDTO> insertPostLike(@RequestBody Map<String, Long> postLikeRequest) {
+    @Operation(summary = "좋아요 등록")
+    @PostMapping("/{postId}/like/insert")
+    public ResponseEntity<GeneralResponseDTO> insertPostLike(@PathVariable Long postId) {
 
-        postLikeService.insert(postLikeRequest.get("postId"));
+        postLikeService.insert(postId);
 
         GeneralResponseDTO.GeneralResponseDTOBuilder responseDTOBuilder = GeneralResponseDTO.builder();
 
@@ -128,11 +130,11 @@ public class PostRestController {
         return ResponseEntity.ok(responseDTOBuilder.build());
     }
 
-    //TODO 좋아요 취소
-    @DeleteMapping("/api/postLikes/delete")
-    public ResponseEntity<GeneralResponseDTO> deletePostLike(@RequestBody Map<String, Long> postLikeRequest) {
+    @Operation(summary = "좋아요 취소")
+    @DeleteMapping("/{postId}/like/delete")
+    public ResponseEntity<GeneralResponseDTO> deletePostLike(@PathVariable Long postId) {
 
-        postLikeService.delete(postLikeRequest.get("postId"));
+        postLikeService.delete(postId);
 
         GeneralResponseDTO.GeneralResponseDTOBuilder responseDTOBuilder = GeneralResponseDTO.builder();
 
