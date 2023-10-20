@@ -14,17 +14,17 @@ public interface PostProjection {
 
     String getTitle();
 
-    String getContent();
-
-    String getAuthor();
-
-    String getCreatedAt();
-
-    String getUpdatedAt();
-
-    String getStatus();
-
-    Long getLikeCount();
-
-    Long getCommentCount();
+//    String getContent();
+//
+//    Long getAuthorId();
+//
+//    String getCreatedAt();
+//
+//    String getUpdatedAt();
+//
+//    String getStatus();
+//
+//    Long getLikeCount();
+//
+//    Long getCommentCount();
 }

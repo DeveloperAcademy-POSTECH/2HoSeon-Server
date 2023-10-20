@@ -5,6 +5,8 @@ import com.twohoseon.app.dto.response.GeneralResponseDTO;
 import com.twohoseon.app.dto.response.TokenDTO;
 import com.twohoseon.app.enums.StatusEnum;
 import com.twohoseon.app.service.refreshToken.RefreshTokenService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -25,10 +27,12 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/auth/")
+@Tag(name = "Auth", description = "인증 관련 API")
 public class AuthRestController {
     private final RefreshTokenService refreshTokenService;
 
     @PostMapping("refresh")
+    @Operation(summary = "토큰 재발급", description = "토큰 재발급")
     public ResponseEntity<GeneralResponseDTO> tokenRefresh(@RequestBody TokenRefreshDTO tokenRefreshDTO) {
         log.debug("token refresh request.");
         log.debug("refresh token : {}", tokenRefreshDTO.getRefreshToken());
