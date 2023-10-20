@@ -1,8 +1,12 @@
 package com.twohoseon.app.dto.response;
 
-import com.twohoseon.app.entity.member.Member;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.twohoseon.app.common.StatusEnumSerializer;
+import com.twohoseon.app.enums.StatusEnum;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;
-import lombok.Getter;
+import lombok.Data;
 
 import java.util.List;
 
@@ -15,10 +19,18 @@ import java.util.List;
  * @modifyed : $
  **/
 
-@Getter
+@Data
 @Builder
+@JsonInclude(JsonInclude.Include.NON_NULL)
+@Schema(name = "PostCommentResponseDTO", description = "댓글 응답 DTO")
 public class PostCommentResponseDTO {
-    private Long postId;
-    private Member member;
-    private List<CommentInfoDTO> commentInfoDTOList;
+    @Schema(name = "status", type = "int", description = "응답 상태")
+    @JsonSerialize(using = StatusEnumSerializer.class)
+    private StatusEnum status;
+
+    @Schema(name = "message", description = "응답 메시지")
+    private String message;
+
+    @Schema(name = "data", description = "응답 데이터")
+    private List<PostCommentInfoDTO> data;
 }
