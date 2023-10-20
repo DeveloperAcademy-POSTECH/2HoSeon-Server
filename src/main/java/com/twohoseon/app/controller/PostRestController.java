@@ -98,20 +98,19 @@ public class PostRestController {
         return ResponseEntity.ok(responseDTOBuilder.build());
     }
 
-    //TODO 댓글 조회
-    @GetMapping("/api/postComments/read")
-    public ResponseEntity<GeneralResponseDTO> readPostComment(@RequestBody Map<String, Long> postCommentRequest) {
+    @Operation(summary = "댓글 조회")
+    @GetMapping("/{postId}/read")
+    public ResponseEntity<PostCommentResponseDTO> readPostComment(@PathVariable Long postId) {
 
-        List<PostComment> postCommentList = postCommentService.commentRead(postCommentRequest.get("postId"));
+        List<PostCommentInfoDTO> postCommentLists = postRepository.getAllCommentsFromPost(postId);
 
-        GeneralResponseDTO.GeneralResponseDTOBuilder responseDTOBuilder = GeneralResponseDTO.builder();
-
-        responseDTOBuilder
+        PostCommentResponseDTO postCommentResponseDTO = PostCommentResponseDTO.builder()
                 .status(StatusEnum.OK)
-                .message("create success")
-                .data(postCommentList);
+                .message("success")
+                .data(postCommentLists)
+                .build();
 
-        return ResponseEntity.ok(responseDTOBuilder.build());
+        return ok(postCommentResponseDTO);
     }
 
     //TODO 좋아요

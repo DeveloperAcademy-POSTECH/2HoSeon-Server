@@ -3,6 +3,7 @@ package com.twohoseon.app.repository.post;
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.twohoseon.app.dto.response.AuthorInfoDTO;
+import com.twohoseon.app.dto.response.PostCommentInfoDTO;
 import com.twohoseon.app.dto.response.PostInfoDTO;
 import com.twohoseon.app.dto.response.VoteInfoDTO;
 import lombok.RequiredArgsConstructor;
@@ -13,6 +14,7 @@ import java.util.List;
 
 import static com.twohoseon.app.entity.member.QMember.member;
 import static com.twohoseon.app.entity.post.QPost.post;
+import static com.twohoseon.app.entity.post.QPostComment.postComment;
 import static com.twohoseon.app.entity.post.vote.QVote.vote;
 
 
@@ -29,7 +31,6 @@ import static com.twohoseon.app.entity.post.vote.QVote.vote;
 public class PostCustomRepositoryImpl implements PostCustomRepository {
 
     private final JPAQueryFactory jpaQueryFactory;
-
 
     @Override
     public List<PostInfoDTO> findAllPostsInMainPage(Pageable pageable) {
@@ -64,4 +65,54 @@ public class PostCustomRepositoryImpl implements PostCustomRepository {
                 .limit(pageable.getPageSize())
                 .fetch();
     }
+
+    @Override
+    public List<PostCommentInfoDTO> getAllCommentsFromPost(Long postId) {
+        List<PostCommentInfoDTO> postCommentInfoDTOS = jpaQueryFactory.select(Projections.constructor(
+                        PostCommentInfoDTO.class,
+                        postComment.id,
+                        postComment.createDate,
+                        postComment.modifiedDate,
+                        postComment.content,
+                        Projections.constructor(
+                                AuthorInfoDTO.class,
+                                member.id,
+                                member.userNickname,
+                                member.userProfileImage
+                        )
+                ))
+                .from(postComment)
+                .leftJoin(postComment.author, member)
+
+                .where(postComment.parentComment.isNull())
+                .fetch();
+
+        for (PostCommentInfoDTO comments : postCommentInfoDTOS) {
+            comments.setChildComments(getChildComments(comments.getCommentId()));
+        }
+
+        return postCommentInfoDTOS;
+    }
+
+    private List<PostCommentInfoDTO> getChildComments(Long parentId) {
+        return jpaQueryFactory.select(Projections.constructor(
+                        PostCommentInfoDTO.class,
+                        postComment.id,
+                        postComment.createDate,
+                        postComment.modifiedDate,
+                        postComment.content,
+                        Projections.constructor(
+                                AuthorInfoDTO.class,
+                                member.id,
+                                member.userNickname,
+                                member.userProfileImage
+                        )
+                ))
+                .from(postComment)
+                .leftJoin(postComment.author, member)
+
+                .where(postComment.parentComment.id.eq(parentId))
+                .fetch();
+    }
+
 }
