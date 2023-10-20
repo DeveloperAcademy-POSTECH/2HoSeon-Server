@@ -46,10 +46,11 @@ public class Post extends BaseTimeEntity {
     private PostType postType;
 
     @NotNull
-    @Enumerated
-    @Column(length = 10, columnDefinition = "VARCHAR(10) DEFAULT 'ACTIVE'")
+    @Enumerated(EnumType.STRING)
+    @Column
     @Comment("게시글 상태")
-    private PostStatus postStatus;
+    @Builder.Default
+    private PostStatus postStatus = PostStatus.ACTIVE;
 
     @NotNull
     @Column
@@ -94,5 +95,17 @@ public class Post extends BaseTimeEntity {
 
     public void setAuthor(Member author) {
         this.author = author;
+    }
+
+    public void addLike() {
+        this.likeCount += 1;
+    }
+
+    public void cancelLike() {
+        int restLikeCount = this.likeCount - 1;
+        if (restLikeCount < 0) {
+            throw new IllegalStateException("Don't cancel post like");
+        }
+        this.likeCount -= 1;
     }
 }
