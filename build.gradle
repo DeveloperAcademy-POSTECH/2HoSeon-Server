@@ -83,6 +83,9 @@ sourceSets {
 //tasks.withType(JavaCompile) {
 //    options.annotationProcessorGeneratedSourcesDirectory = file(querydslDir)
 //}
+tasks.withType(Test) {
+    useJUnitPlatform()
+}
 
 clean.doLast {
     file(querydslDir).deleteDir()
