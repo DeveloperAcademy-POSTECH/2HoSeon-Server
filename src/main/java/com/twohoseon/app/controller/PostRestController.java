@@ -1,6 +1,7 @@
 package com.twohoseon.app.controller;
 
 import com.twohoseon.app.dto.request.PostCommentRequestDTO;
+import com.twohoseon.app.dto.request.PostCommentUpdateRequestDTO;
 import com.twohoseon.app.dto.request.PostCreateRequestDTO;
 import com.twohoseon.app.dto.request.VoteCreateRequestDTO;
 import com.twohoseon.app.dto.response.GeneralResponseDTO;
@@ -24,7 +25,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Map;
 
 import static org.springframework.http.ResponseEntity.ok;
 
@@ -120,9 +120,9 @@ public class PostRestController {
     @PutMapping("/{postId}/comments/{commentId}")
     public ResponseEntity<GeneralResponseDTO> updatePostComment(@PathVariable(value = "postId") Long postId,
                                                                 @PathVariable(value = "commentId") Long postCommentId,
-                                                                @RequestBody Map<String, String> postComment) {
+                                                                @RequestBody PostCommentUpdateRequestDTO postCommentUpdateRequestDTO) {
 
-        postCommentService.updateComment(postId, postCommentId, postComment.get("postComment"));
+        postCommentService.updateComment(postId, postCommentId, postCommentUpdateRequestDTO.getContent());
 
         GeneralResponseDTO generalResponseDTO = GeneralResponseDTO
                 .builder()
