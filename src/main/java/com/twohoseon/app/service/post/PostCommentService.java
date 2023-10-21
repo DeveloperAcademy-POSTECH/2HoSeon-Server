@@ -16,11 +16,11 @@ public interface PostCommentService extends CommonService {
 
 
     @Transactional
-    void createComment(PostCommentRequestDTO postCommentRequestDTO);
+    void createComment(Long postId, PostCommentRequestDTO postCommentRequestDTO);
 
     @Transactional
     void removeComment(Long postId, Long postCommentId);
 
     @Transactional
-    void updateComment(Long postId, Long postCommentId, String comment);
+    void updateComment(Long postId, Long postCommentId, String content);
 }

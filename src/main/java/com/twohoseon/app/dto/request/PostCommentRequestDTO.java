@@ -15,5 +15,4 @@ import lombok.Getter;
 public class PostCommentRequestDTO {
     private String content;
     private Long parentId;
-    private Long postId;
 }

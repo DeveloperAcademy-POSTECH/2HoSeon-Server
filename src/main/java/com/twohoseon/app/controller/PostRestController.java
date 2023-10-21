@@ -90,7 +90,7 @@ public class PostRestController {
     @PostMapping("/{postId}/comments")
     public ResponseEntity<GeneralResponseDTO> createPostComment(@PathVariable Long postId, @RequestBody PostCommentRequestDTO postCommentRequestDTO) {
 
-        postCommentService.createComment(postCommentRequestDTO);
+        postCommentService.createComment(postId, postCommentRequestDTO);
 
         GeneralResponseDTO.GeneralResponseDTOBuilder responseDTOBuilder = GeneralResponseDTO.builder();
 
