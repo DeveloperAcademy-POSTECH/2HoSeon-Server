@@ -14,8 +14,9 @@ import org.springframework.transaction.annotation.Transactional;
  **/
 public interface PostCommentService extends CommonService {
 
+
     @Transactional
-    void commentCreate(PostCommentRequestDTO postCommentRequestDTO);
+    void createComment(PostCommentRequestDTO postCommentRequestDTO);
 
     @Transactional
     void removeComment(Long postId, Long postCommentId);

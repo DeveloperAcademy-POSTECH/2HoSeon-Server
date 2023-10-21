@@ -90,7 +90,7 @@ public class PostRestController {
     @PostMapping("/{postId}/comments")
     public ResponseEntity<GeneralResponseDTO> createPostComment(@PathVariable Long postId, @RequestBody PostCommentRequestDTO postCommentRequestDTO) {
 
-        postCommentService.commentCreate(postCommentRequestDTO);
+        postCommentService.createComment(postCommentRequestDTO);
 
         GeneralResponseDTO.GeneralResponseDTOBuilder responseDTOBuilder = GeneralResponseDTO.builder();
 
@@ -150,9 +150,9 @@ public class PostRestController {
 
     @Operation(summary = "좋아요 등록")
     @PostMapping("/{postId}/likes")
-    public ResponseEntity<GeneralResponseDTO> insertPostLike(@PathVariable Long postId) {
+    public ResponseEntity<GeneralResponseDTO> likePost(@PathVariable Long postId) {
 
-        postLikeService.insert(postId);
+        postLikeService.likePost(postId);
 
         GeneralResponseDTO.GeneralResponseDTOBuilder responseDTOBuilder = GeneralResponseDTO.builder();
 
@@ -165,9 +165,9 @@ public class PostRestController {
 
     @Operation(summary = "좋아요 취소")
     @DeleteMapping("/{postId}/likes")
-    public ResponseEntity<GeneralResponseDTO> deletePostLike(@PathVariable Long postId) {
+    public ResponseEntity<GeneralResponseDTO> unlikePost(@PathVariable Long postId) {
 
-        postLikeService.delete(postId);
+        postLikeService.unlikePost(postId);
 
         GeneralResponseDTO.GeneralResponseDTOBuilder responseDTOBuilder = GeneralResponseDTO.builder();
 

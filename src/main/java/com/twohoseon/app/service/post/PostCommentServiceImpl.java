@@ -35,7 +35,7 @@ public class PostCommentServiceImpl implements PostCommentService {
 
     @Override
     @Transactional
-    public void commentCreate(PostCommentRequestDTO postCommentRequestDTO) {
+    public void createComment(PostCommentRequestDTO postCommentRequestDTO) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String providerId = authentication.getName();
 
