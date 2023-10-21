@@ -1,6 +1,5 @@
 package com.twohoseon.app.dto.response;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.twohoseon.app.common.StatusEnumSerializer;
 import com.twohoseon.app.enums.StatusEnum;
@@ -21,7 +20,6 @@ import lombok.Setter;
 @Getter
 @Schema(name = "GeneralResponseDTO", description = "공통 응답 DTO")
 @Builder
-@JsonInclude(JsonInclude.Include.NON_NULL)
 public class GeneralResponseDTO<T> {
     @Schema(name = "status", type = "int", description = "응답 상태")
     @JsonSerialize(using = StatusEnumSerializer.class)
