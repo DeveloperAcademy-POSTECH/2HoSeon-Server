@@ -100,6 +100,21 @@ public class PostRestController {
         return ResponseEntity.ok(responseDTOBuilder.build());
     }
 
+    @Operation(summary = "댓글 삭제")
+    @DeleteMapping("/{postId}/comments/{commentId}")
+    public ResponseEntity<GeneralResponseDTO> deletePostComment(@PathVariable(value = "postId") Long postId, @PathVariable(value = "commentId") Long postCommentId) {
+
+        postCommentService.removeComment(postId, postCommentId);
+
+        GeneralResponseDTO generalResponseDTO = GeneralResponseDTO
+                .builder()
+                .status(StatusEnum.OK)
+                .message("delete success")
+                .build();
+
+        return ok(generalResponseDTO);
+    }
+
     @Operation(summary = "댓글 조회")
     @GetMapping("/{postId}/comments")
     public ResponseEntity<PostCommentResponseDTO> readPostComment(@PathVariable Long postId) {

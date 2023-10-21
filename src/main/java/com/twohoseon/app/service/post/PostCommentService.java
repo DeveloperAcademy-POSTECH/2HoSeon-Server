@@ -1,6 +1,8 @@
 package com.twohoseon.app.service.post;
 
 import com.twohoseon.app.dto.request.PostCommentRequestDTO;
+import com.twohoseon.app.service.CommonService;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * @author : yongjukim
@@ -10,7 +12,12 @@ import com.twohoseon.app.dto.request.PostCommentRequestDTO;
  * @date : 2023/10/18
  * @modifyed : $
  **/
-public interface PostCommentService {
+public interface PostCommentService extends CommonService {
 
+    @Transactional
     void commentCreate(PostCommentRequestDTO postCommentRequestDTO);
+
+    @Transactional
+    void removeComment(Long postId, Long postCommentId);
+
 }

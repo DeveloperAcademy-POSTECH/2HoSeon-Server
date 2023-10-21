@@ -33,6 +33,7 @@ public class PostCommentServiceImpl implements PostCommentService {
     private final PostRepository postRepository;
 
     @Override
+    @Transactional
     public void commentCreate(PostCommentRequestDTO postCommentRequestDTO) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String providerId = authentication.getName();
@@ -75,5 +76,26 @@ public class PostCommentServiceImpl implements PostCommentService {
             parentPostComment.addChildComment(postComment);
             postCommentRepository.save(parentPostComment);
         }
+    }
+
+    @Override
+    @Transactional
+    public void removeComment(Long postId, Long postCommentId) {
+        Post post = postRepository.findById(postId)
+                .orElseThrow(() -> new NotFoundException("Not found postId" + postId));
+
+        PostComment postComment = postCommentRepository.findById(postCommentId)
+                .orElseThrow(() -> new NotFoundException("Not found comment id" + postCommentId));
+
+        if (postComment.getPost().getId() != post.getId()) {
+            throw new IllegalStateException("Not equal post id");
+        } else if (postComment.getAuthor().getProviderId() != getProviderIdFromRequest()) {
+            throw new IllegalStateException("Not equal provider id");
+        }
+
+        postCommentRepository.delete(postComment);
+
+        post.deleteComment();
+        postRepository.save(post);
     }
 }
