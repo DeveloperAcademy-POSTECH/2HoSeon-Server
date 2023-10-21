@@ -12,6 +12,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.webjars.NotFoundException;
 
 /**
@@ -97,5 +98,24 @@ public class PostCommentServiceImpl implements PostCommentService {
 
         post.deleteComment();
         postRepository.save(post);
+    }
+
+    @Override
+    @Transactional
+    public void updateComment(Long postId, Long postCommentId, String comment) {
+        Post post = postRepository.findById(postId)
+                .orElseThrow(() -> new NotFoundException("Not found post id" + postId));
+
+        PostComment postComment = postCommentRepository.findById(postCommentId)
+                .orElseThrow(() -> new NotFoundException("Not found post comment id" + postCommentId));
+
+        if (postComment.getPost().getId() != post.getId()) {
+            throw new IllegalStateException("Not equal post id");
+        } else if (postComment.getAuthor().getProviderId() != getProviderIdFromRequest()) {
+            throw new IllegalStateException("Not equal provider id");
+        }
+
+        postComment.updateContent(comment);
+        postCommentRepository.save(postComment);
     }
 }

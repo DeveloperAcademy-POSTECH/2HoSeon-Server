@@ -24,6 +24,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 import static org.springframework.http.ResponseEntity.ok;
 
@@ -110,6 +111,23 @@ public class PostRestController {
                 .builder()
                 .status(StatusEnum.OK)
                 .message("delete success")
+                .build();
+
+        return ok(generalResponseDTO);
+    }
+
+    @Operation(summary = "댓글 수정")
+    @PutMapping("/{postId}/comments/{commentId}")
+    public ResponseEntity<GeneralResponseDTO> updatePostComment(@PathVariable(value = "postId") Long postId,
+                                                                @PathVariable(value = "commentId") Long postCommentId,
+                                                                @RequestBody Map<String, String> postComment) {
+
+        postCommentService.updateComment(postId, postCommentId, postComment.get("postComment"));
+
+        GeneralResponseDTO generalResponseDTO = GeneralResponseDTO
+                .builder()
+                .status(StatusEnum.OK)
+                .message("update success")
                 .build();
 
         return ok(generalResponseDTO);

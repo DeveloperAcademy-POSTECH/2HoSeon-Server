@@ -20,4 +20,6 @@ public interface PostCommentService extends CommonService {
     @Transactional
     void removeComment(Long postId, Long postCommentId);
 
+    @Transactional
+    void updateComment(Long postId, Long postCommentId, String comment);
 }
