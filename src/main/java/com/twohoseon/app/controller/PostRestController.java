@@ -86,7 +86,7 @@ public class PostRestController {
     }
 
     @Operation(summary = "댓글 작성")
-    @PostMapping("/{postId}/create")
+    @PostMapping("/{postId}/comments")
     public ResponseEntity<GeneralResponseDTO> createPostComment(@PathVariable Long postId, @RequestBody PostCommentRequestDTO postCommentRequestDTO) {
 
         postCommentService.commentCreate(postCommentRequestDTO);
@@ -101,7 +101,7 @@ public class PostRestController {
     }
 
     @Operation(summary = "댓글 조회")
-    @GetMapping("/{postId}/read")
+    @GetMapping("/{postId}/comments")
     public ResponseEntity<PostCommentResponseDTO> readPostComment(@PathVariable Long postId) {
 
         List<PostCommentInfoDTO> postCommentLists = postRepository.getAllCommentsFromPost(postId);
@@ -116,7 +116,7 @@ public class PostRestController {
     }
 
     @Operation(summary = "좋아요 등록")
-    @PostMapping("/{postId}/like/insert")
+    @PostMapping("/{postId}/likes")
     public ResponseEntity<GeneralResponseDTO> insertPostLike(@PathVariable Long postId) {
 
         postLikeService.insert(postId);
@@ -131,7 +131,7 @@ public class PostRestController {
     }
 
     @Operation(summary = "좋아요 취소")
-    @DeleteMapping("/{postId}/like/delete")
+    @DeleteMapping("/{postId}/likes")
     public ResponseEntity<GeneralResponseDTO> deletePostLike(@PathVariable Long postId) {
 
         postLikeService.delete(postId);
