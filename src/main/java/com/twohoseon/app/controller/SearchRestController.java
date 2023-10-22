@@ -1,6 +1,6 @@
 package com.twohoseon.app.controller;
 
-import com.twohoseon.app.dto.response.PostResponseDTO;
+import com.twohoseon.app.dto.response.PostListResponseDTO;
 import com.twohoseon.app.enums.StatusEnum;
 import com.twohoseon.app.service.search.SearchService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -28,16 +28,16 @@ import static org.springframework.http.ResponseEntity.ok;
 @RestController
 @RequiredArgsConstructor
 @Tag(name = "Search", description = "검색 관련 API")
-@RequestMapping("/api/search")
+@RequestMapping("/api/posts/search")
 public class SearchRestController {
 
     private final SearchService searchService;
 
     @Operation(summary = "검색")
     @GetMapping
-    public ResponseEntity<PostResponseDTO> searchKeyword(@RequestParam(defaultValue = "") String keyword) {
+    public ResponseEntity<PostListResponseDTO> searchKeyword(@RequestParam(defaultValue = "") String keyword) {
 
-        PostResponseDTO responseDTO = PostResponseDTO.builder()
+        PostListResponseDTO responseDTO = PostListResponseDTO.builder()
                 .status(StatusEnum.OK)
                 .message("search success")
                 .data(searchService.getSearchByKeyword(keyword))
