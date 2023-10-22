@@ -5,6 +5,7 @@ import com.twohoseon.app.dto.response.PostInfoDTO;
 import com.twohoseon.app.dto.response.VoteCountsDTO;
 import com.twohoseon.app.entity.member.Member;
 import com.twohoseon.app.entity.post.Post;
+import com.twohoseon.app.entity.post.enums.PostStatus;
 import com.twohoseon.app.entity.post.vote.VoteRepository;
 import com.twohoseon.app.enums.VoteType;
 import com.twohoseon.app.exception.MemberNotFoundException;
@@ -54,9 +55,9 @@ public class PostServiceImpl implements PostService {
 
     @Override
     @Transactional
-    public List<PostInfoDTO> fetchPosts(Pageable pageable) {
+    public List<PostInfoDTO> fetchPosts(Pageable pageable, PostStatus postStatus) {
         Member member = getMemberFromRequest();
-        return postRepository.findAllPostsInMainPage(pageable, member.getId());
+        return postRepository.findAllPosts(pageable, postStatus, member.getId());
     }
 
     @Override
