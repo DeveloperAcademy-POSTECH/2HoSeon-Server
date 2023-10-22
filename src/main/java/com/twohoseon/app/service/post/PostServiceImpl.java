@@ -37,9 +37,8 @@ public class PostServiceImpl implements PostService {
 
     @Override
     public void createPost(PostCreateRequestDTO postCreateRequestDTO) {
-        String providerId = getProviderIdFromRequest();
-        Member author = memberRepository.findByProviderId(providerId)
-                .orElseThrow(() -> new IllegalAccessError("잘못된 요청 입니다."));
+
+        Member author = getMemberFromRequest();
         Post post = Post.builder()
                 .author(author)
                 .postType(postCreateRequestDTO.getPostType())
@@ -48,6 +47,7 @@ public class PostServiceImpl implements PostService {
                 .image(postCreateRequestDTO.getImage())
                 .externalURL(postCreateRequestDTO.getExternalURL())
                 .postTagList(postCreateRequestDTO.getPostTagList())
+                .postCategoryType(postCreateRequestDTO.getPostCategoryType())
                 .build();
         postRepository.save(post);
     }
@@ -62,8 +62,8 @@ public class PostServiceImpl implements PostService {
     @Override
     public PostInfoDTO fetchPost(Long postId) {
         Member member = getMemberFromRequest();
-
-        return null;
+        PostInfoDTO postInfoDTO = postRepository.findPostById(postId, member.getId());
+        return postInfoDTO;
     }
 
     @Override

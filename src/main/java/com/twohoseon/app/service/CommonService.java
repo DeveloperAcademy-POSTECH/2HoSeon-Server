@@ -1,6 +1,7 @@
 package com.twohoseon.app.service;
 
 import com.twohoseon.app.entity.member.Member;
+import com.twohoseon.app.exception.MemberNotFoundException;
 import com.twohoseon.app.security.MemberDetails;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -21,7 +22,7 @@ public interface CommonService {
         return providerId;
     }
 
-    default Member getMemberFromRequest() {
+    default Member getMemberFromRequest() throws MemberNotFoundException {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         MemberDetails memberDetails = (MemberDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         return memberDetails.getMember();
