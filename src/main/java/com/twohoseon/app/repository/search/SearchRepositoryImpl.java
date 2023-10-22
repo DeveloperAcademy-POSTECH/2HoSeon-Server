@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import static com.twohoseon.app.entity.member.QMember.member;
@@ -30,6 +31,7 @@ public class SearchRepositoryImpl implements SearchRepository {
 
     @Override
     public List<PostInfoDTO> findAllPostsByKeyword(Pageable pageable, String keyword) {
+        LocalDateTime oneDayAgo = LocalDateTime.now().minusDays(1);
         return jpaQueryFactory
                 .select(Projections.constructor(
                         PostInfoDTO.class,
@@ -37,7 +39,7 @@ public class SearchRepositoryImpl implements SearchRepository {
                         post.createDate,
                         post.modifiedDate,
                         post.postType,
-                        post.postStatus,
+                        post.createDate.after(oneDayAgo),
                         Projections.constructor(AuthorInfoDTO.class,
                                 member.id,
                                 member.userNickname,
