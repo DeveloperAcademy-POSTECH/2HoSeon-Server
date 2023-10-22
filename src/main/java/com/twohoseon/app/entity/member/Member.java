@@ -48,6 +48,7 @@ public class Member extends BaseTimeEntity {
     @Column(nullable = true)
     private String userName;
 
+    @Enumerated(EnumType.STRING)
     @Column(nullable = true)
     private GenderType userGender;
 
