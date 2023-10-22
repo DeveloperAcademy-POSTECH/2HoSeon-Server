@@ -1,21 +1,5 @@
 package com.twohoseon.app.controller;
 
-import com.twohoseon.app.dto.request.PostCommentRequestDTO;
-import com.twohoseon.app.dto.request.PostCommentUpdateRequestDTO;
-import com.twohoseon.app.dto.request.PostCreateRequestDTO;
-import com.twohoseon.app.dto.request.VoteCreateRequestDTO;
-import com.twohoseon.app.dto.response.GeneralResponseDTO;
-import com.twohoseon.app.dto.response.PostCommentInfoDTO;
-import com.twohoseon.app.dto.response.PostCommentResponseDTO;
-import com.twohoseon.app.dto.response.PostResponseDTO;
-import com.twohoseon.app.enums.StatusEnum;
-import com.twohoseon.app.repository.post.PostRepository;
-import com.twohoseon.app.service.post.PostCommentService;
-import com.twohoseon.app.service.post.PostLikeService;
-import com.twohoseon.app.service.post.PostService;
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -23,10 +7,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
-
-import static org.springframework.http.ResponseEntity.ok;
 
 /**
  * @author : hyunwoopark
@@ -46,7 +26,6 @@ public class PostRestController {
     private final PostService postService;
     private final PostLikeService postLikeService;
     private final PostCommentService postCommentService;
-    private final PostRepository postRepository;
 
     @Operation(summary = "게시글 작성")
     @PostMapping
@@ -85,6 +64,10 @@ public class PostRestController {
                 .build();
         return ok(responseDTO);
     }
+
+
+    //TODO 좋아요
+    //TODO 좋아요 취소
 
     @Operation(summary = "댓글 작성")
     @PostMapping("/{postId}/comments")
