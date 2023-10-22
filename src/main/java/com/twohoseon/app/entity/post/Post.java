@@ -138,6 +138,11 @@ public class Post extends BaseTimeEntity {
                         .post(this)
                         .build())
                 .isAgree(voteType == VoteType.AGREE)
+                .gender(voter.getUserGender())
+                .grade(voter.getGrade())
+                .regionType(voter.getSchool().getSchoolRegion())
+                .schoolType(voter.getSchool().getSchoolType())
+                .grade(voter.getGrade())
                 .build();
         this.votes.add(vote);
     }

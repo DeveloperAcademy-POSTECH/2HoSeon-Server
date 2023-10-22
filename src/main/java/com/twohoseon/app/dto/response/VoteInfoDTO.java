@@ -1,5 +1,8 @@
 package com.twohoseon.app.dto.response;
 
+import com.twohoseon.app.enums.GenderType;
+import com.twohoseon.app.enums.RegionType;
+import com.twohoseon.app.enums.SchoolType;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -16,6 +19,9 @@ import lombok.Data;
 @Schema(name = "VoteInfoDTO", description = "투표 정보 DTO")
 @AllArgsConstructor
 public class VoteInfoDTO {
-    Long agreeCount;
-    Long disagreeCount;
+    boolean isAgree;
+    int grade;
+    RegionType regionType;
+    SchoolType schoolType;
+    GenderType gender;
 }

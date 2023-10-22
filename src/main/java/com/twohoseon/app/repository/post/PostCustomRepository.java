@@ -2,6 +2,7 @@ package com.twohoseon.app.repository.post;
 
 import com.twohoseon.app.dto.response.PostCommentInfoDTO;
 import com.twohoseon.app.dto.response.PostInfoDTO;
+import com.twohoseon.app.dto.response.VoteCountsDTO;
 import org.springframework.data.domain.Pageable;
 
 import java.util.List;
@@ -15,9 +16,14 @@ import java.util.List;
  * @modifyed : $
  **/
 public interface PostCustomRepository {
-    public List<PostInfoDTO> findAllPostsInMainPage(Pageable pageable);
+    List<PostInfoDTO> findAllPostsInMainPage(Pageable pageable, long memberId);
+
+//    PostInfoDTO findPostById(long postId);
+
+    PostInfoDTO findPostById(long postId, long memberId);
 
     List<PostCommentInfoDTO> getAllCommentsFromPost(Long postId);
 
-    
+
+    VoteCountsDTO getVoteInfo(long postId);
 }

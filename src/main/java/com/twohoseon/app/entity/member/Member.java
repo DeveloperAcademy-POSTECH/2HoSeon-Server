@@ -3,6 +3,7 @@ package com.twohoseon.app.entity.member;
 import com.google.common.base.Objects;
 import com.twohoseon.app.common.BaseTimeEntity;
 import com.twohoseon.app.entity.post.Post;
+import com.twohoseon.app.enums.GenderType;
 import com.twohoseon.app.enums.OAuth2Provider;
 import com.twohoseon.app.enums.UserRole;
 import jakarta.persistence.*;
@@ -48,6 +49,9 @@ public class Member extends BaseTimeEntity {
     private String userName;
 
     @Column(nullable = true)
+    private GenderType userGender;
+
+    @Column(nullable = true)
     private String userNickname;
 
     @Column(nullable = true)
@@ -83,9 +87,10 @@ public class Member extends BaseTimeEntity {
 //        this.postComments = postComments;
 //    }
 
-    public void updateAdditionalUserInfo(String userProfileImage, String userNickname, School school, Integer grade) {
+    public void updateAdditionalUserInfo(String userProfileImage, String userNickname, GenderType userGender, School school, Integer grade) {
         this.userProfileImage = userProfileImage;
         this.userNickname = userNickname;
+        this.userGender = userGender;
         this.school = school;
         this.grade = grade;
     }

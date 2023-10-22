@@ -12,15 +12,15 @@ import lombok.Data;
  * @author : hyunwoopark
  * @version : 1.0.0
  * @package : twohoseon
- * @name : PostResponseDTO
- * @date : 10/20/23 12:43 AM
+ * @name : VoteResultResponseDTO
+ * @date : 10/22/23 6:26 AM
  * @modifyed : $
  **/
 @Data
-@Schema(name = "PostResponseDTO", description = "게시글 응답 DTO")
+@Schema(name = "PostListResponseDTO", description = "게시글 응답 DTO")
 @Builder
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class PostResponseDTO {
+public class VoteResultResponseDTO {
     @Schema(name = "status", type = "int", description = "응답 상태")
     @JsonSerialize(using = StatusEnumSerializer.class)
     private StatusEnum status;
@@ -29,5 +29,5 @@ public class PostResponseDTO {
     private String message;
 
     @Schema(name = "data", description = "응답 데이터")
-    private PostInfoDTO data;
+    private VoteCountsDTO data;
 }
