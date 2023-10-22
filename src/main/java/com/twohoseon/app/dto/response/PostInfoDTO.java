@@ -57,12 +57,27 @@ public class PostInfoDTO {
     @Schema(name = "isMine", type = "boolean", description = "내가 쓴 글인지 여부")
     boolean isMine;
 
-    public PostInfoDTO(Long postId, LocalDateTime createDate, LocalDateTime modifiedDate, PostType postType, PostStatus postStatus, AuthorInfoDTO author, String title, String contents, String image, String externalURL, int likeCount, int viewCount, int commentCount) {
+    public PostInfoDTO(Long postId, LocalDateTime createDate, LocalDateTime modifiedDate, PostType postType, AuthorInfoDTO author, String title, String contents, String image, String externalURL, int likeCount, int viewCount, int commentCount) {
         this.postId = postId;
         this.createDate = createDate;
         this.modifiedDate = modifiedDate;
         this.postType = postType;
-        this.postStatus = postStatus;
+        this.author = author;
+        this.title = title;
+        this.contents = contents;
+        this.image = image;
+        this.externalURL = externalURL;
+        this.likeCount = likeCount;
+        this.viewCount = viewCount;
+        this.commentCount = commentCount;
+    }
+
+    public PostInfoDTO(Long postId, LocalDateTime createDate, LocalDateTime modifiedDate, PostType postType, boolean isActive, AuthorInfoDTO author, String title, String contents, String image, String externalURL, int likeCount, int viewCount, int commentCount) {
+        this.postId = postId;
+        this.createDate = createDate;
+        this.modifiedDate = modifiedDate;
+        this.postType = postType;
+        this.postStatus = isActive ? PostStatus.ACTIVE : PostStatus.COMPLETE;
         this.author = author;
         this.title = title;
         this.contents = contents;
@@ -87,6 +102,10 @@ public class PostInfoDTO {
 
     public void setIsMine(boolean isMine) {
         this.isMine = isMine;
+    }
+
+    public void setPostStatus(PostStatus postStatus) {
+        this.postStatus = postStatus;
     }
 
 }
