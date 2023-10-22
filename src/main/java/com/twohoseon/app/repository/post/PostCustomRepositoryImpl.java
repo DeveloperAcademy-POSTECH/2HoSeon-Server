@@ -1,11 +1,9 @@
 package com.twohoseon.app.repository.post;
 
 import com.querydsl.core.types.Projections;
+import com.querydsl.core.types.dsl.CaseBuilder;
 import com.querydsl.jpa.impl.JPAQueryFactory;
-import com.twohoseon.app.dto.response.AuthorInfoDTO;
-import com.twohoseon.app.dto.response.PostCommentInfoDTO;
-import com.twohoseon.app.dto.response.PostInfoDTO;
-import com.twohoseon.app.dto.response.VoteInfoDTO;
+import com.twohoseon.app.dto.response.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
@@ -33,10 +31,9 @@ public class PostCustomRepositoryImpl implements PostCustomRepository {
     private final JPAQueryFactory jpaQueryFactory;
 
     @Override
-    public List<PostInfoDTO> findAllPostsInMainPage(Pageable pageable) {
-        return jpaQueryFactory
-                .select(Projections.constructor(
-                        PostInfoDTO.class,
+    public List<PostInfoDTO> findAllPostsInMainPage(Pageable pageable, long memberId) {
+        List<PostInfoDTO> postInfoList = jpaQueryFactory
+                .select(Projections.constructor(PostInfoDTO.class,
                         post.id.as("post_id"),
                         post.createDate,
                         post.modifiedDate,
@@ -52,11 +49,7 @@ public class PostCustomRepositoryImpl implements PostCustomRepository {
                         post.externalURL,
                         post.likeCount,
                         post.viewCount,
-                        post.commentCount,
-                        Projections.constructor(VoteInfoDTO.class,
-                                vote.isAgree.eq(true).count(),
-                                vote.isAgree.eq(false).count()
-                        )
+                        post.commentCount
                 ))
                 .from(post)
                 .leftJoin(post.author, member)
@@ -64,6 +57,42 @@ public class PostCustomRepositoryImpl implements PostCustomRepository {
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
                 .fetch();
+        for (PostInfoDTO postInfoDTO : postInfoList) {
+            postInfoDTO.setVoteCounts(getVoteInfo(postInfoDTO.getPostId()));
+            postInfoDTO.setIsVoted(getIsVotedPost(postInfoDTO.getPostId(), memberId));
+        }
+        return postInfoList;
+    }
+
+    @Override
+    public PostInfoDTO findPostById(long postId, long memberId) {
+        PostInfoDTO postInfo = jpaQueryFactory
+                .select(Projections.constructor(PostInfoDTO.class,
+                        post.id.as("post_id"),
+                        post.createDate,
+                        post.modifiedDate,
+                        post.postType,
+                        post.postStatus,
+                        Projections.constructor(AuthorInfoDTO.class,
+                                member.id,
+                                member.userNickname,
+                                member.userProfileImage),
+                        post.title,
+                        post.contents,
+                        post.image,
+                        post.externalURL,
+                        post.likeCount,
+                        post.viewCount,
+                        post.commentCount
+                ))
+                .from(post)
+                .leftJoin(post.author, member)
+                .leftJoin(post.votes, vote)
+                .fetchOne();
+        postInfo.setVoteCounts(getVoteInfo(postInfo.getPostId()));
+        postInfo.setIsVoted(getIsVotedPost(postInfo.getPostId(), memberId));
+        postInfo.setVoteInfoList(getVoteInfoList(postId));
+        return postInfo;
     }
 
     @Override
@@ -114,5 +143,52 @@ public class PostCustomRepositoryImpl implements PostCustomRepository {
                 .where(postComment.parentComment.id.eq(parentId))
                 .fetch();
     }
+
+    @Override
+    public VoteCountsDTO getVoteInfo(long postId) {
+        VoteCountsDTO result = jpaQueryFactory
+                .select(
+                        Projections.constructor(VoteCountsDTO.class,
+                                new CaseBuilder()
+                                        .when(vote.isAgree.eq(true))
+                                        .then(1)
+                                        .otherwise(0)
+                                        .sum().as("agree_count"),
+                                new CaseBuilder()
+                                        .when(vote.isAgree.eq(false))
+                                        .then(1)
+                                        .otherwise(0)
+                                        .sum().as("disagree_count")
+                        )
+                )
+                .from(vote)
+                .groupBy(vote.id.post.id)
+                .where(vote.id.post.id.eq(postId))
+                .fetchOne();
+        return result == null ? new VoteCountsDTO(0, 0) : result;
+    }
+
+    private boolean getIsVotedPost(long postId, long memberId) {
+        return jpaQueryFactory
+                .select(vote)
+                .from(vote)
+                .where(vote.id.post.id.eq(postId)
+                        .and(vote.id.voter.id.eq(memberId)))
+                .fetchOne() != null;
+    }
+
+    private List<VoteInfoDTO> getVoteInfoList(long postId) {
+        return jpaQueryFactory
+                .select(
+                        Projections.constructor(VoteInfoDTO.class,
+                                vote.isAgree,
+                                vote.grade,
+                                vote.schoolType,
+                                vote.gender))
+                .from(vote)
+                .where(vote.id.post.id.eq(postId))
+                .fetch();
+    }
+
 
 }

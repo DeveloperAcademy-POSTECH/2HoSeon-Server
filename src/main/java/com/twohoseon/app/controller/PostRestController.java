@@ -4,10 +4,7 @@ import com.twohoseon.app.dto.request.PostCommentRequestDTO;
 import com.twohoseon.app.dto.request.PostCommentUpdateRequestDTO;
 import com.twohoseon.app.dto.request.PostCreateRequestDTO;
 import com.twohoseon.app.dto.request.VoteCreateRequestDTO;
-import com.twohoseon.app.dto.response.GeneralResponseDTO;
-import com.twohoseon.app.dto.response.PostCommentInfoDTO;
-import com.twohoseon.app.dto.response.PostCommentResponseDTO;
-import com.twohoseon.app.dto.response.PostResponseDTO;
+import com.twohoseon.app.dto.response.*;
 import com.twohoseon.app.enums.StatusEnum;
 import com.twohoseon.app.repository.post.PostRepository;
 import com.twohoseon.app.service.post.PostCommentService;
@@ -64,24 +61,38 @@ public class PostRestController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "게시글 조회 성공", useReturnTypeSchema = true),
     })
-    public ResponseEntity<PostResponseDTO> fetchPosts(@RequestParam(defaultValue = "0") int page,
-                                                      @RequestParam(defaultValue = "10") int size) {
+    public ResponseEntity<PostListResponseDTO> fetchPosts(@RequestParam(defaultValue = "0") int page,
+                                                          @RequestParam(defaultValue = "10") int size) {
         Pageable pageable = PageRequest.of(page, size);
 
-        PostResponseDTO responseDTO = PostResponseDTO.builder()
+        PostListResponseDTO responseDTO = PostListResponseDTO.builder()
                 .status(StatusEnum.OK)
-                .message("")
+                .message("success")
                 .data(postService.fetchPosts(pageable))
                 .build();
         return ok(responseDTO);
     }
 
-    @PostMapping("/{postId}/votes")
-    public ResponseEntity<GeneralResponseDTO> vote(@PathVariable Long postId, @RequestBody VoteCreateRequestDTO voteCreateRequestDTO) {
-        postService.createVote(postId, voteCreateRequestDTO.getVoteType());
-        GeneralResponseDTO responseDTO = GeneralResponseDTO.builder()
+    @Operation(summary = "게시글 상세 조회")
+    @GetMapping("/{postId}")
+    public ResponseEntity<PostResponseDTO> fetchPost(@PathVariable Long postId) {
+        PostResponseDTO responseDTO = PostResponseDTO.builder()
                 .status(StatusEnum.OK)
                 .message("success")
+                .data(postService.fetchPost(postId))
+                .build();
+        return ok(responseDTO);
+    }
+
+    @Operation(summary = "게시글 투표 하기")
+    @PostMapping("/{postId}/votes")
+    public ResponseEntity<VoteResultResponseDTO> vote(@PathVariable Long postId, @RequestBody VoteCreateRequestDTO voteCreateRequestDTO) {
+
+
+        VoteResultResponseDTO responseDTO = VoteResultResponseDTO.builder()
+                .status(StatusEnum.OK)
+                .message("success")
+                .data(postService.createVote(postId, voteCreateRequestDTO.getVoteType()))
                 .build();
         return ok(responseDTO);
     }
