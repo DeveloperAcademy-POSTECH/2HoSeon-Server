@@ -66,13 +66,14 @@ public class PostCustomRepositoryImpl implements PostCustomRepository {
 
     @Override
     public PostInfoDTO findPostById(long postId, long memberId) {
+        LocalDateTime oneDayAgo = LocalDateTime.now().minusDays(1);
         PostInfoDTO postInfo = jpaQueryFactory
                 .select(Projections.constructor(PostInfoDTO.class,
                         post.id.as("post_id"),
                         post.createDate,
                         post.modifiedDate,
                         post.postType,
-                        post.postStatus,
+                        post.createDate.after(oneDayAgo),
                         Projections.constructor(AuthorInfoDTO.class,
                                 member.id,
                                 member.userNickname,
@@ -84,11 +85,13 @@ public class PostCustomRepositoryImpl implements PostCustomRepository {
                         post.likeCount,
                         post.viewCount,
                         post.commentCount
+
                 ))
                 .from(post)
                 .where(post.id.eq(postId))
                 .leftJoin(post.author, member)
                 .fetchOne();
+
         boolean isVoted = getIsVotedPost(postInfo.getPostId(), memberId);
         postInfo.setVoteCounts(getVoteInfo(postInfo.getPostId()));
         postInfo.setIsVoted(isVoted);
@@ -184,9 +187,7 @@ public class PostCustomRepositoryImpl implements PostCustomRepository {
         return jpaQueryFactory
                 .select(
                         Projections.constructor(VoteInfoDTO.class,
-                                vote.gender,
                                 vote.isAgree,
-                                vote.schoolType,
                                 vote.grade,
                                 vote.regionType,
                                 vote.schoolType,
