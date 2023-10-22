@@ -4,6 +4,7 @@ import com.twohoseon.app.dto.response.PostInfoDTO;
 import com.twohoseon.app.repository.search.SearchRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -25,8 +26,8 @@ public class SearchServiceImpl implements SearchService {
 
     @Override
     @Transactional
-    public List<PostInfoDTO> getSearchByKeyword(String keyword) {
-        return searchRepository.findAllPostsByKeyword(keyword);
+    public List<PostInfoDTO> getSearchByKeyword(Pageable pageable, String keyword) {
+        return searchRepository.findAllPostsByKeyword(pageable, keyword);
     }
 
 }

@@ -1,6 +1,7 @@
 package com.twohoseon.app.repository.search;
 
 import com.twohoseon.app.dto.response.PostInfoDTO;
+import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 
@@ -13,5 +14,5 @@ import java.util.List;
  * @modifyed : $
  **/
 public interface SearchRepository {
-    List<PostInfoDTO> findAllPostsByKeyword(String keyword);
+    List<PostInfoDTO> findAllPostsByKeyword(Pageable pageable, String keyword);
 }

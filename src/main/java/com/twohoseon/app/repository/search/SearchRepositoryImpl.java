@@ -5,6 +5,7 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.twohoseon.app.dto.response.AuthorInfoDTO;
 import com.twohoseon.app.dto.response.PostInfoDTO;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -28,7 +29,7 @@ public class SearchRepositoryImpl implements SearchRepository {
     private final JPAQueryFactory jpaQueryFactory;
 
     @Override
-    public List<PostInfoDTO> findAllPostsByKeyword(String keyword) {
+    public List<PostInfoDTO> findAllPostsByKeyword(Pageable pageable, String keyword) {
         return jpaQueryFactory
                 .select(Projections.constructor(
                         PostInfoDTO.class,
@@ -51,6 +52,8 @@ public class SearchRepositoryImpl implements SearchRepository {
                 ))
                 .from(post)
                 .leftJoin(post.author, member)
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize())
                 .where(post.title.contains(keyword)
                         .or(post.contents.contains(keyword))
                         .or(post.postTagList.contains(keyword)))
