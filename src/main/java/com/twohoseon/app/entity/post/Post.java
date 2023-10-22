@@ -2,7 +2,6 @@ package com.twohoseon.app.entity.post;
 
 import com.twohoseon.app.common.BaseTimeEntity;
 import com.twohoseon.app.entity.member.Member;
-import com.twohoseon.app.entity.post.enums.PostStatus;
 import com.twohoseon.app.entity.post.enums.PostType;
 import com.twohoseon.app.entity.post.vote.Vote;
 import com.twohoseon.app.entity.post.vote.VoteId;
@@ -48,13 +47,6 @@ public class Post extends BaseTimeEntity {
     @Enumerated(EnumType.STRING)
     @Comment("게시글 타입")
     private PostType postType;
-
-    @NotNull
-    @Enumerated(EnumType.STRING)
-    @Column
-    @Comment("게시글 상태")
-    @Builder.Default
-    private PostStatus postStatus = PostStatus.ACTIVE;
 
     @NotNull
     @Column
