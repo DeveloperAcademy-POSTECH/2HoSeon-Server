@@ -1,5 +1,7 @@
 package com.twohoseon.app.entity.member;
 
+import com.twohoseon.app.enums.RegionType;
+import com.twohoseon.app.enums.SchoolType;
 import jakarta.persistence.Embeddable;
 import lombok.Getter;
 
@@ -10,14 +12,14 @@ public class School {
 
     private String schoolName;
 
-    private String schoolRegion;
+    private RegionType schoolRegion;
 
-    private String schoolType;
+    private SchoolType schoolType;
 
     protected School() {
     }
 
-    public School(String schoolName, String schoolRegion, String schoolType) {
+    public School(String schoolName, RegionType schoolRegion, SchoolType schoolType) {
         this.schoolName = schoolName;
         this.schoolRegion = schoolRegion;
         this.schoolType = schoolType;

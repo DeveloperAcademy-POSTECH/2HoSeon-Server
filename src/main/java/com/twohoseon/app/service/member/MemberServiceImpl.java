@@ -49,6 +49,7 @@ public class MemberServiceImpl implements MemberService {
 
         member.updateAdditionalUserInfo(profileRequestDTO.getUserProfileImage(),
                 profileRequestDTO.getUserNickname(),
+                profileRequestDTO.getUserGender(),
                 profileRequestDTO.getSchool(),
                 profileRequestDTO.getGrade());
 
