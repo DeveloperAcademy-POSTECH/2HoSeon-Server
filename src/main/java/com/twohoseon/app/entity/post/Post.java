@@ -6,6 +6,7 @@ import com.twohoseon.app.entity.post.enums.PostStatus;
 import com.twohoseon.app.entity.post.enums.PostType;
 import com.twohoseon.app.entity.post.vote.Vote;
 import com.twohoseon.app.entity.post.vote.VoteId;
+import com.twohoseon.app.enums.PostCategoryType;
 import com.twohoseon.app.enums.VoteType;
 import jakarta.annotation.Nullable;
 import jakarta.persistence.*;
@@ -102,6 +103,11 @@ public class Post extends BaseTimeEntity {
     @OneToMany(mappedBy = "id.post", orphanRemoval = true, fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @Builder.Default
     private Set<Vote> votes = new LinkedHashSet<>();
+
+    @Enumerated(EnumType.STRING)
+    @Column
+    @Comment("게시글 카테고리 타입")
+    private PostCategoryType postCategoryType;
 
     public void setAuthor(Member author) {
         this.author = author;
