@@ -35,15 +35,15 @@ public class PostCommentServiceImpl implements PostCommentService {
 
     @Override
     @Transactional
-    public void commentCreate(PostCommentRequestDTO postCommentRequestDTO) {
+    public void createComment(Long postId, PostCommentRequestDTO postCommentRequestDTO) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String providerId = authentication.getName();
 
         Member member = memberRepository.findByProviderId(providerId)
                 .orElseThrow(() -> new NotFoundException("Could not found member id : " + providerId));
 
-        Post post = postRepository.findById(postCommentRequestDTO.getPostId())
-                .orElseThrow(() -> new NotFoundException("Could not found post id : " + postCommentRequestDTO.getPostId()));
+        Post post = postRepository.findById(postId)
+                .orElseThrow(() -> new NotFoundException("Could not found post id : " + postId));
 
         PostComment parentPostComment = null;
 
@@ -102,7 +102,7 @@ public class PostCommentServiceImpl implements PostCommentService {
 
     @Override
     @Transactional
-    public void updateComment(Long postId, Long postCommentId, String comment) {
+    public void updateComment(Long postId, Long postCommentId, String content) {
         Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new NotFoundException("Not found post id" + postId));
 
@@ -115,7 +115,7 @@ public class PostCommentServiceImpl implements PostCommentService {
             throw new IllegalStateException("Not equal provider id");
         }
 
-        postComment.updateContent(comment);
+        postComment.updateContent(content);
         postCommentRepository.save(postComment);
     }
 }

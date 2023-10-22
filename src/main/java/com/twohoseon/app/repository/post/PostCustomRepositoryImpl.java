@@ -181,10 +181,11 @@ public class PostCustomRepositoryImpl implements PostCustomRepository {
         return jpaQueryFactory
                 .select(
                         Projections.constructor(VoteInfoDTO.class,
+                                vote.gender,
                                 vote.isAgree,
-                                vote.grade,
                                 vote.schoolType,
-                                vote.gender))
+                                vote.grade,
+                                vote.regionType))
                 .from(vote)
                 .where(vote.id.post.id.eq(postId))
                 .fetch();

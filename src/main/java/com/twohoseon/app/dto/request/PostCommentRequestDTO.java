@@ -1,5 +1,6 @@
 package com.twohoseon.app.dto.request;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
 
 /**
@@ -12,8 +13,10 @@ import lombok.Getter;
  **/
 
 @Getter
+@Schema(name = "PostCommentRequestDTO", description = "댓글 등록 요청 DTO")
 public class PostCommentRequestDTO {
+    @Schema(name = "content", description = "댓글 내용")
     private String content;
+    @Schema(name = "parentId", description = "상위 댓글 ID")
     private Long parentId;
-    private Long postId;
 }
