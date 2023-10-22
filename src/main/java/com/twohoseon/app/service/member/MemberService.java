@@ -2,6 +2,7 @@ package com.twohoseon.app.service.member;
 
 import com.twohoseon.app.dto.request.ProfileRequestDTO;
 import com.twohoseon.app.entity.member.Member;
+import com.twohoseon.app.service.CommonService;
 import org.springframework.security.core.userdetails.UserDetailsService;
 
 import java.util.Optional;
@@ -14,7 +15,7 @@ import java.util.Optional;
  * @date : 2023/10/07 4:20 PM
  * @modifyed : $
  **/
-public interface MemberService extends UserDetailsService {
+public interface MemberService extends UserDetailsService, CommonService {
     void setUserProfile(ProfileRequestDTO profileRequestDTO);
 
     boolean validateDuplicateUserNickname(String userNickname);

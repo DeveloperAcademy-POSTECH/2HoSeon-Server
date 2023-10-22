@@ -5,8 +5,7 @@ import com.twohoseon.app.entity.member.Member;
 import com.twohoseon.app.repository.member.MemberRepository;
 import com.twohoseon.app.security.MemberDetails;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
@@ -22,6 +21,7 @@ import java.util.Optional;
  * @date : 2023/10/07 4:20 PM
  * @modifyed : $
  **/
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class MemberServiceImpl implements MemberService {
@@ -40,19 +40,14 @@ public class MemberServiceImpl implements MemberService {
     @Override
     @Transactional
     public void setUserProfile(ProfileRequestDTO profileRequestDTO) {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String providerId = authentication.getName();
-        //TODO Exception Handler 추가되면 오류 발생시 Exception 발생시키기
 
-        Member member = memberRepository.findByProviderId(providerId)
-                .orElseThrow(() -> new IllegalArgumentException("wrong access"));
-
+        Member member = getMemberFromRequest();
+        log.debug("profileRequestDTO = " + profileRequestDTO.toString());
         member.updateAdditionalUserInfo(profileRequestDTO.getUserProfileImage(),
                 profileRequestDTO.getUserNickname(),
                 profileRequestDTO.getUserGender(),
                 profileRequestDTO.getSchool(),
                 profileRequestDTO.getGrade());
-
         memberRepository.save(member);
     }
 

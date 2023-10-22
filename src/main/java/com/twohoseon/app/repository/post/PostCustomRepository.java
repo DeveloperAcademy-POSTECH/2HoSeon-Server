@@ -24,6 +24,5 @@ public interface PostCustomRepository {
 
     List<PostCommentInfoDTO> getAllCommentsFromPost(Long postId);
 
-
     VoteCountsDTO getVoteInfo(long postId);
 }

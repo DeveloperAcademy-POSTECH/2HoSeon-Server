@@ -53,13 +53,13 @@ public class PostCustomRepositoryImpl implements PostCustomRepository {
                 ))
                 .from(post)
                 .leftJoin(post.author, member)
-                .leftJoin(post.votes, vote)
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
                 .fetch();
         for (PostInfoDTO postInfoDTO : postInfoList) {
             postInfoDTO.setVoteCounts(getVoteInfo(postInfoDTO.getPostId()));
             postInfoDTO.setIsVoted(getIsVotedPost(postInfoDTO.getPostId(), memberId));
+            postInfoDTO.setIsMine(postInfoDTO.getAuthor().getId() == memberId);
         }
         return postInfoList;
     }
@@ -86,12 +86,15 @@ public class PostCustomRepositoryImpl implements PostCustomRepository {
                         post.commentCount
                 ))
                 .from(post)
+                .where(post.id.eq(postId))
                 .leftJoin(post.author, member)
-                .leftJoin(post.votes, vote)
                 .fetchOne();
+        boolean isVoted = getIsVotedPost(postInfo.getPostId(), memberId);
         postInfo.setVoteCounts(getVoteInfo(postInfo.getPostId()));
-        postInfo.setIsVoted(getIsVotedPost(postInfo.getPostId(), memberId));
-        postInfo.setVoteInfoList(getVoteInfoList(postId));
+        postInfo.setIsVoted(isVoted);
+        if (postInfo.getAuthor().getId() == memberId)
+            postInfo.setVoteInfoList(getVoteInfoList(postId));
+        postInfo.setIsMine(postInfo.getAuthor().getId() == memberId);
         return postInfo;
     }
 
@@ -185,7 +188,9 @@ public class PostCustomRepositoryImpl implements PostCustomRepository {
                                 vote.isAgree,
                                 vote.schoolType,
                                 vote.grade,
-                                vote.regionType))
+                                vote.regionType,
+                                vote.schoolType,
+                                vote.gender))
                 .from(vote)
                 .where(vote.id.post.id.eq(postId))
                 .fetch();
