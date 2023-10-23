@@ -9,5 +9,5 @@ package com.twohoseon.app.enums;
  * @modifyed : $
  **/
 public enum GenderType {
-    남, 녀
+    남, 여
 }
