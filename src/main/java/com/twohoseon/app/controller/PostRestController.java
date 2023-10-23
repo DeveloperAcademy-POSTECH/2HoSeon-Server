@@ -5,6 +5,7 @@ import com.twohoseon.app.dto.request.PostCommentUpdateRequestDTO;
 import com.twohoseon.app.dto.request.PostCreateRequestDTO;
 import com.twohoseon.app.dto.request.VoteCreateRequestDTO;
 import com.twohoseon.app.dto.response.*;
+import com.twohoseon.app.entity.post.enums.PostStatus;
 import com.twohoseon.app.enums.StatusEnum;
 import com.twohoseon.app.repository.post.PostRepository;
 import com.twohoseon.app.service.post.PostCommentService;
@@ -62,13 +63,15 @@ public class PostRestController {
             @ApiResponse(responseCode = "200", description = "게시글 조회 성공", useReturnTypeSchema = true),
     })
     public ResponseEntity<PostListResponseDTO> fetchPosts(@RequestParam(defaultValue = "0") int page,
-                                                          @RequestParam(defaultValue = "10") int size) {
+                                                          @RequestParam(defaultValue = "10") int size,
+                                                          @RequestParam(defaultValue = "ACTIVE") PostStatus postStatus
+    ) {
         Pageable pageable = PageRequest.of(page, size);
 
         PostListResponseDTO responseDTO = PostListResponseDTO.builder()
                 .status(StatusEnum.OK)
                 .message("success")
-                .data(postService.fetchPosts(pageable))
+                .data(postService.fetchPosts(pageable, postStatus))
                 .build();
         return ok(responseDTO);
     }

@@ -2,12 +2,15 @@ package com.twohoseon.app.repository.post;
 
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.CaseBuilder;
+import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.twohoseon.app.dto.response.*;
+import com.twohoseon.app.entity.post.enums.PostStatus;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import static com.twohoseon.app.entity.member.QMember.member;
@@ -31,14 +34,16 @@ public class PostCustomRepositoryImpl implements PostCustomRepository {
     private final JPAQueryFactory jpaQueryFactory;
 
     @Override
-    public List<PostInfoDTO> findAllPostsInMainPage(Pageable pageable, long memberId) {
-        List<PostInfoDTO> postInfoList = jpaQueryFactory
+    public List<PostInfoDTO> findAllPosts(Pageable pageable, PostStatus postStatus, long memberId) {
+
+        LocalDateTime oneDayAgo = LocalDateTime.now().minusDays(1);
+
+        JPAQuery<PostInfoDTO> jpaQuery = jpaQueryFactory
                 .select(Projections.constructor(PostInfoDTO.class,
                         post.id.as("post_id"),
                         post.createDate,
                         post.modifiedDate,
                         post.postType,
-                        post.postStatus,
                         Projections.constructor(AuthorInfoDTO.class,
                                 member.id,
                                 member.userNickname,
@@ -54,25 +59,40 @@ public class PostCustomRepositoryImpl implements PostCustomRepository {
                 .from(post)
                 .leftJoin(post.author, member)
                 .offset(pageable.getOffset())
-                .limit(pageable.getPageSize())
-                .fetch();
+                .limit(pageable.getPageSize());
+        if (postStatus == PostStatus.ACTIVE) {
+            jpaQuery.where(post.createDate.after(oneDayAgo));
+        } else {
+            jpaQuery.where(post.createDate.before(oneDayAgo));
+        }
+        List<PostInfoDTO> postInfoList = jpaQuery.fetch();
         for (PostInfoDTO postInfoDTO : postInfoList) {
             postInfoDTO.setVoteCounts(getVoteInfo(postInfoDTO.getPostId()));
             postInfoDTO.setIsVoted(getIsVotedPost(postInfoDTO.getPostId(), memberId));
             postInfoDTO.setIsMine(postInfoDTO.getAuthor().getId() == memberId);
+            postInfoDTO.setPostStatus(postStatus);
+            //TODO 여기서 계산후 값을 넣어주면 된다.
+//            Date oneDayAgo = new Date(System.currentTimeMillis() - (24 * 60 * 60 * 1000));
+//
+//            return queryFactory
+//                    .selectFrom(post)
+//                    .where(post.creationDate.after(oneDayAgo))
+//                    .fetch();
         }
+
         return postInfoList;
     }
 
     @Override
     public PostInfoDTO findPostById(long postId, long memberId) {
+        LocalDateTime oneDayAgo = LocalDateTime.now().minusDays(1);
         PostInfoDTO postInfo = jpaQueryFactory
                 .select(Projections.constructor(PostInfoDTO.class,
                         post.id.as("post_id"),
                         post.createDate,
                         post.modifiedDate,
                         post.postType,
-                        post.postStatus,
+                        post.createDate.after(oneDayAgo),
                         Projections.constructor(AuthorInfoDTO.class,
                                 member.id,
                                 member.userNickname,
@@ -84,11 +104,13 @@ public class PostCustomRepositoryImpl implements PostCustomRepository {
                         post.likeCount,
                         post.viewCount,
                         post.commentCount
+
                 ))
                 .from(post)
                 .where(post.id.eq(postId))
                 .leftJoin(post.author, member)
                 .fetchOne();
+
         boolean isVoted = getIsVotedPost(postInfo.getPostId(), memberId);
         postInfo.setVoteCounts(getVoteInfo(postInfo.getPostId()));
         postInfo.setIsVoted(isVoted);
@@ -125,6 +147,47 @@ public class PostCustomRepositoryImpl implements PostCustomRepository {
         }
 
         return postCommentInfoDTOS;
+    }
+
+    @Override
+    public List<PostInfoDTO> findAllPostsByKeyword(Pageable pageable, String keyword, long memberId) {
+        LocalDateTime oneDayAgo = LocalDateTime.now().minusDays(1);
+        JPAQuery<PostInfoDTO> jpaQuery = jpaQueryFactory
+                .select(Projections.constructor(
+                        PostInfoDTO.class,
+                        post.id,
+                        post.createDate,
+                        post.modifiedDate,
+                        post.postType,
+                        post.createDate.after(oneDayAgo),
+                        Projections.constructor(AuthorInfoDTO.class,
+                                member.id,
+                                member.userNickname,
+                                member.userProfileImage),
+                        post.title,
+                        post.contents,
+                        post.image,
+                        post.externalURL,
+                        post.likeCount,
+                        post.viewCount,
+                        post.commentCount
+                ))
+                .from(post)
+                .leftJoin(post.author, member)
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize())
+                .where(post.title.contains(keyword)
+                        .or(post.contents.contains(keyword))
+                        .or(post.postTagList.contains(keyword)));
+
+        List<PostInfoDTO> postInfoList = jpaQuery.fetch();
+        for (PostInfoDTO postInfoDTO : postInfoList) {
+            postInfoDTO.setVoteCounts(getVoteInfo(postInfoDTO.getPostId()));
+            postInfoDTO.setIsVoted(getIsVotedPost(postInfoDTO.getPostId(), memberId));
+            postInfoDTO.setIsMine(postInfoDTO.getAuthor().getId() == memberId);
+        }
+
+        return postInfoList;
     }
 
     private List<PostCommentInfoDTO> getChildComments(Long parentId) {
