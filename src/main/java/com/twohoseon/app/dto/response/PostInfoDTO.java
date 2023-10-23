@@ -16,13 +16,13 @@ import java.util.List;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @Schema(name = "PostInfoDTO", description = "게시글 정보 DTO")
 public class PostInfoDTO {
-    @Schema(name = "post_id", type = "long", description = "게시글 ID")
+    @Schema(name = "postId", type = "long", description = "게시글 ID")
     Long postId;
     @Schema(name = "createDate", type = "LocalDateTime", description = "게시글 생성일")
     LocalDateTime createDate;
     @Schema(name = "modifiedDate", type = "LocalDateTime", description = "게시글 수정일")
     LocalDateTime modifiedDate;
-    @Schema(name = "postType", type = "PostType", description = "게시글 타입")
+    @Schema(name = "postType", type = "PostType", description = "게시글 학교 범위")
     PostType postType;
     @Schema(name = "postStatus", type = "PostStatus", description = "게시글 상태")
     PostStatus postStatus;

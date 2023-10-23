@@ -26,7 +26,7 @@ import java.util.List;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @Schema(name = "PostCommentInfoDTO", description = "댓글 정보 DTO")
 public class PostCommentInfoDTO {
-    @Schema(name = "comment_id", type = "long", description = "댓글 ID")
+    @Schema(name = "commentId", type = "long", description = "댓글 ID")
     Long commentId;
 
     @Schema(name = "createDate", type = "LocalDateTime", description = "댓글 생성일")
