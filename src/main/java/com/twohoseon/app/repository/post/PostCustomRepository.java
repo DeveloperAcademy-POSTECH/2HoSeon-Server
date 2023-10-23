@@ -25,5 +25,7 @@ public interface PostCustomRepository {
 
     List<PostCommentInfoDTO> getAllCommentsFromPost(Long postId);
 
+    List<PostInfoDTO> findAllPostsByKeyword(Pageable pageable, String keyword, long memberId);
+
     VoteCountsDTO getVoteInfo(long postId);
 }

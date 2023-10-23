@@ -148,6 +148,47 @@ public class PostCustomRepositoryImpl implements PostCustomRepository {
         return postCommentInfoDTOS;
     }
 
+    @Override
+    public List<PostInfoDTO> findAllPostsByKeyword(Pageable pageable, String keyword, long memberId) {
+        LocalDateTime oneDayAgo = LocalDateTime.now().minusDays(1);
+        JPAQuery<PostInfoDTO> jpaQuery = jpaQueryFactory
+                .select(Projections.constructor(
+                        PostInfoDTO.class,
+                        post.id,
+                        post.createDate,
+                        post.modifiedDate,
+                        post.postType,
+                        post.createDate.after(oneDayAgo),
+                        Projections.constructor(AuthorInfoDTO.class,
+                                member.id,
+                                member.userNickname,
+                                member.userProfileImage),
+                        post.title,
+                        post.contents,
+                        post.image,
+                        post.externalURL,
+                        post.likeCount,
+                        post.viewCount,
+                        post.commentCount
+                ))
+                .from(post)
+                .leftJoin(post.author, member)
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize())
+                .where(post.title.contains(keyword)
+                        .or(post.contents.contains(keyword))
+                        .or(post.postTagList.contains(keyword)));
+
+        List<PostInfoDTO> postInfoList = jpaQuery.fetch();
+        for (PostInfoDTO postInfoDTO : postInfoList) {
+            postInfoDTO.setVoteCounts(getVoteInfo(postInfoDTO.getPostId()));
+            postInfoDTO.setIsVoted(getIsVotedPost(postInfoDTO.getPostId(), memberId));
+            postInfoDTO.setIsMine(postInfoDTO.getAuthor().getId() == memberId);
+        }
+
+        return postInfoList;
+    }
+
     private List<PostCommentInfoDTO> getChildComments(Long parentId) {
         return jpaQueryFactory.select(Projections.constructor(
                         PostCommentInfoDTO.class,
