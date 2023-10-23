@@ -115,8 +115,9 @@ public class PostCustomRepositoryImpl implements PostCustomRepository {
                 ))
                 .from(postComment)
                 .leftJoin(postComment.author, member)
-
                 .where(postComment.parentComment.isNull())
+                .orderBy(postComment.createDate.asc())
+                .distinct()
                 .fetch();
 
         for (PostCommentInfoDTO comments : postCommentInfoDTOS) {
@@ -142,8 +143,9 @@ public class PostCustomRepositoryImpl implements PostCustomRepository {
                 ))
                 .from(postComment)
                 .leftJoin(postComment.author, member)
-
                 .where(postComment.parentComment.id.eq(parentId))
+                .orderBy(postComment.createDate.asc())
+                .distinct()
                 .fetch();
     }
 
@@ -184,13 +186,12 @@ public class PostCustomRepositoryImpl implements PostCustomRepository {
         return jpaQueryFactory
                 .select(
                         Projections.constructor(VoteInfoDTO.class,
-                                vote.gender,
                                 vote.isAgree,
-                                vote.schoolType,
                                 vote.grade,
                                 vote.regionType,
                                 vote.schoolType,
-                                vote.gender))
+                                vote.gender
+                        ))
                 .from(vote)
                 .where(vote.id.post.id.eq(postId))
                 .fetch();

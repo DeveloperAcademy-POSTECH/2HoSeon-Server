@@ -4,6 +4,9 @@ import com.twohoseon.app.dto.request.PostCommentRequestDTO;
 import com.twohoseon.app.entity.member.Member;
 import com.twohoseon.app.entity.post.Post;
 import com.twohoseon.app.entity.post.PostComment;
+import com.twohoseon.app.exception.CommentNotFoundException;
+import com.twohoseon.app.exception.MemberNotFoundException;
+import com.twohoseon.app.exception.PostNotFoundException;
 import com.twohoseon.app.repository.member.MemberRepository;
 import com.twohoseon.app.repository.post.PostCommentRepository;
 import com.twohoseon.app.repository.post.PostRepository;
@@ -40,16 +43,16 @@ public class PostCommentServiceImpl implements PostCommentService {
         String providerId = authentication.getName();
 
         Member member = memberRepository.findByProviderId(providerId)
-                .orElseThrow(() -> new NotFoundException("Could not found member id : " + providerId));
+                .orElseThrow(() -> new MemberNotFoundException("Could not found member id : " + providerId));
 
         Post post = postRepository.findById(postId)
-                .orElseThrow(() -> new NotFoundException("Could not found post id : " + postId));
+                .orElseThrow(() -> new PostNotFoundException("Could not found post id : " + postId));
 
         PostComment parentPostComment = null;
 
         if (postCommentRequestDTO.getParentId() != null) {
             parentPostComment = postCommentRepository.findById(postCommentRequestDTO.getParentId())
-                    .orElseThrow(() -> new NotFoundException("Could not found post-comment id : " + postCommentRequestDTO.getParentId()));
+                    .orElseThrow(() -> new CommentNotFoundException());
 
 
             if (parentPostComment.getPost() != post) {
@@ -83,10 +86,10 @@ public class PostCommentServiceImpl implements PostCommentService {
     @Transactional
     public void removeComment(Long postId, Long postCommentId) {
         Post post = postRepository.findById(postId)
-                .orElseThrow(() -> new NotFoundException("Not found postId" + postId));
+                .orElseThrow(() -> new PostNotFoundException());
 
         PostComment postComment = postCommentRepository.findById(postCommentId)
-                .orElseThrow(() -> new NotFoundException("Not found comment id" + postCommentId));
+                .orElseThrow(() -> new CommentNotFoundException());
 
         if (postComment.getPost().getId() != post.getId()) {
             throw new IllegalStateException("Not equal post id");
@@ -104,10 +107,10 @@ public class PostCommentServiceImpl implements PostCommentService {
     @Transactional
     public void updateComment(Long postId, Long postCommentId, String content) {
         Post post = postRepository.findById(postId)
-                .orElseThrow(() -> new NotFoundException("Not found post id" + postId));
+                .orElseThrow(() -> new PostNotFoundException("Not found post id" + postId));
 
         PostComment postComment = postCommentRepository.findById(postCommentId)
-                .orElseThrow(() -> new NotFoundException("Not found post comment id" + postCommentId));
+                .orElseThrow(() -> new CommentNotFoundException("Not found post comment id" + postCommentId));
 
         if (postComment.getPost().getId() != post.getId()) {
             throw new IllegalStateException("Not equal post id");
