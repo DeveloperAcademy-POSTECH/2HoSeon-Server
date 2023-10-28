@@ -8,6 +8,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.Getter;
 
 import java.io.Serializable;
 
@@ -22,6 +23,7 @@ import java.io.Serializable;
 @Embeddable
 @Builder
 @AllArgsConstructor
+@Getter
 //@EqualsAndHashCode
 public class VoteId implements Serializable {
 

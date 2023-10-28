@@ -12,8 +12,6 @@ import com.twohoseon.app.service.post.PostCommentService;
 import com.twohoseon.app.service.post.PostLikeService;
 import com.twohoseon.app.service.post.PostService;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -59,9 +57,6 @@ public class PostRestController {
 
     @GetMapping
     @Operation(summary = "게시글 조회")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "게시글 조회 성공", useReturnTypeSchema = true),
-    })
     public ResponseEntity<PostListResponseDTO> fetchPosts(@RequestParam(defaultValue = "0") int page,
                                                           @RequestParam(defaultValue = "10") int size,
                                                           @RequestParam(defaultValue = "ACTIVE") PostStatus postStatus
@@ -156,6 +151,21 @@ public class PostRestController {
     public ResponseEntity<PostCommentResponseDTO> readPostComment(@PathVariable Long postId) {
 
         List<PostCommentInfoDTO> postCommentLists = postRepository.getAllCommentsFromPost(postId);
+
+        PostCommentResponseDTO postCommentResponseDTO = PostCommentResponseDTO.builder()
+                .status(StatusEnum.OK)
+                .message("success")
+                .data(postCommentLists)
+                .build();
+
+        return ok(postCommentResponseDTO);
+    }
+
+    @Operation(summary = "댓글 상세 조회")
+    @GetMapping("/{postId}/comments/{commentId}")
+    public ResponseEntity<PostCommentResponseDTO> getPostCommentChildren(@PathVariable Long postId, @PathVariable Long commentId) {
+
+        List<PostCommentInfoDTO> postCommentLists = postRepository.getChildComments(commentId);
 
         PostCommentResponseDTO postCommentResponseDTO = PostCommentResponseDTO.builder()
                 .status(StatusEnum.OK)

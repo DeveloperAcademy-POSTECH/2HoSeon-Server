@@ -1,6 +1,7 @@
 package com.twohoseon.app.service.post;
 
 import com.twohoseon.app.dto.request.PostCommentRequestDTO;
+import com.twohoseon.app.dto.response.PostCommentInfoDTO;
 import com.twohoseon.app.entity.member.Member;
 import com.twohoseon.app.entity.post.Post;
 import com.twohoseon.app.entity.post.PostComment;
@@ -17,6 +18,8 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.webjars.NotFoundException;
+
+import java.util.List;
 
 /**
  * @author : yongjukim
@@ -107,10 +110,10 @@ public class PostCommentServiceImpl implements PostCommentService {
     @Transactional
     public void updateComment(Long postId, Long postCommentId, String content) {
         Post post = postRepository.findById(postId)
-                .orElseThrow(() -> new PostNotFoundException("Not found post id" + postId));
+                .orElseThrow(() -> new PostNotFoundException());
 
         PostComment postComment = postCommentRepository.findById(postCommentId)
-                .orElseThrow(() -> new CommentNotFoundException("Not found post comment id" + postCommentId));
+                .orElseThrow(() -> new CommentNotFoundException());
 
         if (postComment.getPost().getId() != post.getId()) {
             throw new IllegalStateException("Not equal post id");
@@ -120,5 +123,13 @@ public class PostCommentServiceImpl implements PostCommentService {
 
         postComment.updateContent(content);
         postCommentRepository.save(postComment);
+    }
+
+    @Override
+    public List<PostCommentInfoDTO> getPostCommentChildren(Long postId, Long commentId) {
+        Post post = postRepository.findById(postId)
+                .orElseThrow(() -> new PostNotFoundException());
+        List<PostCommentInfoDTO> postCommentLists = postCommentRepository.findByPostAndId(post, commentId);
+        return postCommentLists;
     }
 }
