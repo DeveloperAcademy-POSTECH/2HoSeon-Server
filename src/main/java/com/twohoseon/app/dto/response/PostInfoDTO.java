@@ -57,7 +57,7 @@ public class PostInfoDTO {
     @Schema(name = "isMine", type = "boolean", description = "내가 쓴 글인지 여부")
     boolean isMine;
 
-    public PostInfoDTO(Long postId, LocalDateTime createDate, LocalDateTime modifiedDate, PostType postType, AuthorInfoDTO author, String title, String contents, String image, String externalURL, int likeCount, int viewCount, int commentCount) {
+    public PostInfoDTO(Long postId, LocalDateTime createDate, LocalDateTime modifiedDate, PostType postType, AuthorInfoDTO author, String title, String contents, String image, String externalURL, int likeCount, int viewCount, int commentCount, PostCategoryType postCategoryType) {
         this.postId = postId;
         this.createDate = createDate;
         this.modifiedDate = modifiedDate;
@@ -70,9 +70,10 @@ public class PostInfoDTO {
         this.likeCount = likeCount;
         this.viewCount = viewCount;
         this.commentCount = commentCount;
+        this.postCategoryType = postCategoryType;
     }
 
-    public PostInfoDTO(Long postId, LocalDateTime createDate, LocalDateTime modifiedDate, PostType postType, boolean isActive, AuthorInfoDTO author, String title, String contents, String image, String externalURL, int likeCount, int viewCount, int commentCount) {
+    public PostInfoDTO(Long postId, LocalDateTime createDate, LocalDateTime modifiedDate, PostType postType, boolean isActive, AuthorInfoDTO author, String title, String contents, String image, String externalURL, int likeCount, int viewCount, int commentCount, PostCategoryType postCategoryType) {
         this.postId = postId;
         this.createDate = createDate;
         this.modifiedDate = modifiedDate;
@@ -86,6 +87,7 @@ public class PostInfoDTO {
         this.likeCount = likeCount;
         this.viewCount = viewCount;
         this.commentCount = commentCount;
+        this.postCategoryType = postCategoryType;
     }
 
     public void setVoteCounts(VoteCountsDTO voteCounts) {
