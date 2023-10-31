@@ -59,4 +59,10 @@ public class MemberServiceImpl implements MemberService {
     public Optional<Member> findByProviderId(String providerId) {
         return memberRepository.findByProviderId(providerId);
     }
+
+    @Override
+    public void registerToken(String deviceToken) {
+        Member member = getMemberFromRequest();
+        member.updateDeviceToken(deviceToken);
+    }
 }
