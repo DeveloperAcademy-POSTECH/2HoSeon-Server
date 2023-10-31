@@ -172,6 +172,19 @@ public class GlobalExceptionHandler {
     }
 
     /**
+     * [Exception] PermissionDeniedException 발생하는 경우(유저에게 해당 권한이 없음)
+     *
+     * @param ex PermissionDeniedException
+     * @return ResponseEntity<ErrorResponse>
+     */
+    @ExceptionHandler(PermissionDeniedException.class)
+    protected ResponseEntity<ErrorResponse> handlePermissionDeniedException(PermissionDeniedException ex) {
+        log.error("handlePermissionDeniedException", ex);
+        return ErrorResponse.toResponseEntity(ErrorCode.FORBIDDEN_ERROR);
+    }
+
+
+    /**
      * [Exception] MemberNotFoundException 발생하는 경우
      *
      * @param ex MemberNotFoundException

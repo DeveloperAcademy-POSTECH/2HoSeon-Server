@@ -2,10 +2,10 @@ package com.twohoseon.app.entity.post;
 
 import com.twohoseon.app.common.BaseTimeEntity;
 import com.twohoseon.app.entity.member.Member;
-import com.twohoseon.app.entity.post.enums.PostStatus;
 import com.twohoseon.app.entity.post.enums.PostType;
 import com.twohoseon.app.entity.post.vote.Vote;
 import com.twohoseon.app.entity.post.vote.VoteId;
+import com.twohoseon.app.enums.PostCategoryType;
 import com.twohoseon.app.enums.VoteType;
 import jakarta.annotation.Nullable;
 import jakarta.persistence.*;
@@ -47,13 +47,6 @@ public class Post extends BaseTimeEntity {
     @Enumerated(EnumType.STRING)
     @Comment("게시글 타입")
     private PostType postType;
-
-    @NotNull
-    @Enumerated(EnumType.STRING)
-    @Column
-    @Comment("게시글 상태")
-    @Builder.Default
-    private PostStatus postStatus = PostStatus.ACTIVE;
 
     @NotNull
     @Column
@@ -103,6 +96,11 @@ public class Post extends BaseTimeEntity {
     @Builder.Default
     private Set<Vote> votes = new LinkedHashSet<>();
 
+    @Enumerated(EnumType.STRING)
+    @Column
+    @Comment("게시글 카테고리 타입")
+    private PostCategoryType postCategoryType;
+
     public void setAuthor(Member author) {
         this.author = author;
     }
@@ -111,12 +109,24 @@ public class Post extends BaseTimeEntity {
         this.likeCount += 1;
     }
 
+    public void addComment() {
+        this.commentCount += 1;
+    }
+
     public void cancelLike() {
         int restLikeCount = this.likeCount - 1;
         if (restLikeCount < 0) {
             throw new IllegalStateException("Don't cancel post like");
         }
-        this.likeCount -= 1;
+        this.likeCount = restLikeCount;
+    }
+
+    public void deleteComment() {
+        int restCommentCount = this.commentCount - 1;
+        if (restCommentCount < 0) {
+            throw new IllegalStateException("Don't cancel post comment");
+        }
+        this.commentCount = restCommentCount;
     }
 
     public void createVote(Member voter, VoteType voteType) {
@@ -126,6 +136,11 @@ public class Post extends BaseTimeEntity {
                         .post(this)
                         .build())
                 .isAgree(voteType == VoteType.AGREE)
+                .gender(voter.getUserGender())
+                .grade(voter.getGrade())
+                .regionType(voter.getSchool().getSchoolRegion())
+                .schoolType(voter.getSchool().getSchoolType())
+                .grade(voter.getGrade())
                 .build();
         this.votes.add(vote);
     }

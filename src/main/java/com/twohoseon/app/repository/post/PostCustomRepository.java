@@ -1,6 +1,9 @@
 package com.twohoseon.app.repository.post;
 
+import com.twohoseon.app.dto.response.PostCommentInfoDTO;
 import com.twohoseon.app.dto.response.PostInfoDTO;
+import com.twohoseon.app.dto.response.VoteCountsDTO;
+import com.twohoseon.app.entity.post.enums.PostStatus;
 import org.springframework.data.domain.Pageable;
 
 import java.util.List;
@@ -14,5 +17,19 @@ import java.util.List;
  * @modifyed : $
  **/
 public interface PostCustomRepository {
-    public List<PostInfoDTO> findAllPostsInMainPage(Pageable pageable);
+    List<PostInfoDTO> findAllPosts(Pageable pageable, PostStatus postStatus, long memberId);
+
+//    PostInfoDTO findPostById(long postId);
+
+    PostInfoDTO findPostById(long postId, long memberId);
+
+    List<PostCommentInfoDTO> getAllCommentsFromPost(Long postId);
+
+    List<PostInfoDTO> findAllPostsByKeyword(Pageable pageable, String keyword, long memberId);
+
+    List<PostCommentInfoDTO> getChildComments(Long parentId);
+
+    VoteCountsDTO getVoteInfo(long postId);
+
+
 }

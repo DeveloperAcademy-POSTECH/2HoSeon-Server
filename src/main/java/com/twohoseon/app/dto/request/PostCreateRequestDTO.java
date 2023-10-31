@@ -1,6 +1,7 @@
 package com.twohoseon.app.dto.request;
 
 import com.twohoseon.app.entity.post.enums.PostType;
+import com.twohoseon.app.enums.PostCategoryType;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
 
@@ -29,4 +30,6 @@ public class PostCreateRequestDTO {
     private String externalURL;
     @Schema(name = "postTagList", description = "게시글 태그 리스트")
     private List<String> postTagList;
+    @Schema(name = "postCategoryType", description = "게시글 카테고리 타입")
+    PostCategoryType postCategoryType;
 }

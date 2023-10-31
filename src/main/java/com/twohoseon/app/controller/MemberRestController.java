@@ -1,5 +1,6 @@
 package com.twohoseon.app.controller;
 
+import com.twohoseon.app.dto.request.NicknameValidCheckRequest;
 import com.twohoseon.app.dto.request.ProfileRequestDTO;
 import com.twohoseon.app.dto.response.GeneralResponseDTO;
 import com.twohoseon.app.enums.StatusEnum;
@@ -39,8 +40,8 @@ public class MemberRestController {
 
     @Operation(summary = "닉네임 중복 확인", description = "닉네임 중복 확인")
     @PostMapping("/api/profiles/isValidNickname")
-    public ResponseEntity<GeneralResponseDTO> checkNicknameDuplicate(@RequestBody Map<String, String> params) {
-        String userNickname = params.get("userNickname");
+    public ResponseEntity<GeneralResponseDTO> checkNicknameDuplicate(@RequestBody NicknameValidCheckRequest request) {
+        String userNickname = request.getUserNickname();
         GeneralResponseDTO.GeneralResponseDTOBuilder resultBuilder = GeneralResponseDTO.builder();
         boolean isExist = memberService.validateDuplicateUserNickname(userNickname);
         log.debug("userNickname : {}", userNickname);

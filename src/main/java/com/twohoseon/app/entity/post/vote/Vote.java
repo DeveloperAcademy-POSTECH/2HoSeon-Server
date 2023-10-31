@@ -1,6 +1,8 @@
 package com.twohoseon.app.entity.post.vote;
 
-import com.twohoseon.app.entity.post.enums.Region;
+import com.twohoseon.app.enums.GenderType;
+import com.twohoseon.app.enums.RegionType;
+import com.twohoseon.app.enums.SchoolType;
 import jakarta.persistence.Column;
 import jakarta.persistence.EmbeddedId;
 import jakarta.persistence.Entity;
@@ -19,13 +21,22 @@ public class Vote {
     VoteId id;
 
     @Column
+    GenderType gender;
+
+    @Column
     Boolean isAgree;
 
     @Column
-    Region region;
+    SchoolType schoolType;
 
     @Column
-    String gender;
+    Integer grade;
+
+    @Column
+    RegionType regionType;
+
+
+//    @Column
 
 
     protected Vote() {

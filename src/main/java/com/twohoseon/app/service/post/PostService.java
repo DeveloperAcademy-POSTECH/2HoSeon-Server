@@ -2,6 +2,8 @@ package com.twohoseon.app.service.post;
 
 import com.twohoseon.app.dto.request.PostCreateRequestDTO;
 import com.twohoseon.app.dto.response.PostInfoDTO;
+import com.twohoseon.app.dto.response.VoteCountsDTO;
+import com.twohoseon.app.entity.post.enums.PostStatus;
 import com.twohoseon.app.enums.VoteType;
 import com.twohoseon.app.service.CommonService;
 import org.springframework.data.domain.Pageable;
@@ -22,8 +24,12 @@ public interface PostService extends CommonService {
 
     void createPost(PostCreateRequestDTO postCreateRequestDTO);
 
-    public List<PostInfoDTO> fetchPosts(Pageable pageable);
+    public List<PostInfoDTO> fetchPosts(Pageable pageable, PostStatus postStatus);
 
 
-    void createVote(Long postId, VoteType voteType);
+    VoteCountsDTO createVote(Long postId, VoteType voteType);
+
+//    VoteCountsDTO getVoteCounts(Long postId);
+
+    PostInfoDTO fetchPost(Long postId);
 }

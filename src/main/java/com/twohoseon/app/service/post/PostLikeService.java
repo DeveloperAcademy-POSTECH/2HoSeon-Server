@@ -1,5 +1,7 @@
 package com.twohoseon.app.service.post;
 
+import jakarta.transaction.Transactional;
+
 /**
  * @author : yongjukim
  * @version : 1.0.0
@@ -11,7 +13,9 @@ package com.twohoseon.app.service.post;
 
 public interface PostLikeService {
 
-    void insert(Long postId);
+    @Transactional
+    void likePost(Long postId);
 
-    void delete(Long postId);
+    @Transactional
+    void unlikePost(Long postId);
 }

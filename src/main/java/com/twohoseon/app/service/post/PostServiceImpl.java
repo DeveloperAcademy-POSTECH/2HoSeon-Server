@@ -2,10 +2,14 @@ package com.twohoseon.app.service.post;
 
 import com.twohoseon.app.dto.request.PostCreateRequestDTO;
 import com.twohoseon.app.dto.response.PostInfoDTO;
+import com.twohoseon.app.dto.response.VoteCountsDTO;
 import com.twohoseon.app.entity.member.Member;
 import com.twohoseon.app.entity.post.Post;
+import com.twohoseon.app.entity.post.enums.PostStatus;
 import com.twohoseon.app.entity.post.vote.VoteRepository;
 import com.twohoseon.app.enums.VoteType;
+import com.twohoseon.app.exception.MemberNotFoundException;
+import com.twohoseon.app.exception.PostNotFoundException;
 import com.twohoseon.app.repository.member.MemberRepository;
 import com.twohoseon.app.repository.post.PostRepository;
 import jakarta.transaction.Transactional;
@@ -34,9 +38,8 @@ public class PostServiceImpl implements PostService {
 
     @Override
     public void createPost(PostCreateRequestDTO postCreateRequestDTO) {
-        String providerId = getProviderIdFromRequest();
-        Member author = memberRepository.findByProviderId(providerId)
-                .orElseThrow(() -> new IllegalAccessError("잘못된 요청 입니다."));
+
+        Member author = getMemberFromRequest();
         Post post = Post.builder()
                 .author(author)
                 .postType(postCreateRequestDTO.getPostType())
@@ -45,24 +48,37 @@ public class PostServiceImpl implements PostService {
                 .image(postCreateRequestDTO.getImage())
                 .externalURL(postCreateRequestDTO.getExternalURL())
                 .postTagList(postCreateRequestDTO.getPostTagList())
+                .postCategoryType(postCreateRequestDTO.getPostCategoryType())
                 .build();
         postRepository.save(post);
     }
 
     @Override
     @Transactional
-    public List<PostInfoDTO> fetchPosts(Pageable pageable) {
-        return postRepository.findAllPostsInMainPage(pageable);
+    public List<PostInfoDTO> fetchPosts(Pageable pageable, PostStatus postStatus) {
+        Member member = getMemberFromRequest();
+        return postRepository.findAllPosts(pageable, postStatus, member.getId());
+    }
+
+    @Override
+    public PostInfoDTO fetchPost(Long postId) {
+        Member member = getMemberFromRequest();
+        PostInfoDTO postInfoDTO = postRepository.findPostById(postId, member.getId());
+        return postInfoDTO;
     }
 
     @Override
     @Transactional
-    public void createVote(Long postId, VoteType voteType) {
+    public VoteCountsDTO createVote(Long postId, VoteType voteType) {
         String providerId = getProviderIdFromRequest();
         Member member = memberRepository.findByProviderId(providerId)
-                .orElseThrow(() -> new IllegalAccessError("잘못된 요청 입니다."));
+                .orElseThrow(() -> new MemberNotFoundException());
         Post post = postRepository.findById(postId)
-                .orElseThrow(() -> new IllegalAccessError("잘못된 요청 입니다."));
+                .orElseThrow(() -> new PostNotFoundException());
         post.createVote(member, voteType);
+        postRepository.save(post);
+        return postRepository.getVoteInfo(postId);
     }
+
+
 }

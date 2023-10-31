@@ -8,8 +8,6 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;
 import lombok.Data;
 
-import java.util.List;
-
 /**
  * @author : hyunwoopark
  * @version : 1.0.0
@@ -31,5 +29,5 @@ public class PostResponseDTO {
     private String message;
 
     @Schema(name = "data", description = "응답 데이터")
-    private List<PostInfoDTO> data;
+    private PostInfoDTO data;
 }

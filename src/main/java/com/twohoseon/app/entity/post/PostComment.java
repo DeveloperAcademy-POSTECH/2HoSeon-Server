@@ -51,6 +51,10 @@ public class PostComment extends BaseTimeEntity {
     @OneToMany(mappedBy = "parentComment", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<PostComment> childComments = new ArrayList<>();
 
+    public void updateContent(String postContent) {
+        this.content = postContent;
+    }
+
     public void updateParent(PostComment parentComment) {
         this.parentComment = parentComment;
     }
