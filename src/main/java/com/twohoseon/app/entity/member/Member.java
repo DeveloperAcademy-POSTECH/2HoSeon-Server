@@ -68,6 +68,8 @@ public class Member extends BaseTimeEntity {
     @Column(nullable = true)
     private Integer grade;
 
+    @Column(nullable = true)
+    private String deviceToken;
 
     @Enumerated(EnumType.STRING)
     @Column(length = 15, nullable = false)
@@ -96,6 +98,10 @@ public class Member extends BaseTimeEntity {
         this.grade = grade;
     }
 
+    public void updateDeviceToken(String deviceToken) {
+        this.deviceToken = deviceToken;
+    }
+
     protected Member() {
     }
 
@@ -116,5 +122,6 @@ public class Member extends BaseTimeEntity {
     public int hashCode() {
         return Objects.hashCode(id, provider, providerId, role);
     }
+
 
 }
