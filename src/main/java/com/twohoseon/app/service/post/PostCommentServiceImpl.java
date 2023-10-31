@@ -1,12 +1,13 @@
 package com.twohoseon.app.service.post;
 
-import com.twohoseon.app.dto.request.PostCommentRequestDTO;
+import com.twohoseon.app.dto.request.CommentCreateRequestDTO;
 import com.twohoseon.app.dto.response.PostCommentInfoDTO;
 import com.twohoseon.app.entity.member.Member;
 import com.twohoseon.app.entity.post.Post;
 import com.twohoseon.app.entity.post.PostComment;
 import com.twohoseon.app.exception.CommentNotFoundException;
 import com.twohoseon.app.exception.MemberNotFoundException;
+import com.twohoseon.app.exception.PermissionDeniedException;
 import com.twohoseon.app.exception.PostNotFoundException;
 import com.twohoseon.app.repository.member.MemberRepository;
 import com.twohoseon.app.repository.post.PostCommentRepository;
@@ -41,20 +42,20 @@ public class PostCommentServiceImpl implements PostCommentService {
 
     @Override
     @Transactional
-    public void createComment(Long postId, PostCommentRequestDTO postCommentRequestDTO) {
+    public void createComment(CommentCreateRequestDTO commentCreateRequestDTO) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String providerId = authentication.getName();
 
         Member member = memberRepository.findByProviderId(providerId)
-                .orElseThrow(() -> new MemberNotFoundException("Could not found member id : " + providerId));
+                .orElseThrow(() -> new MemberNotFoundException());
 
-        Post post = postRepository.findById(postId)
-                .orElseThrow(() -> new PostNotFoundException("Could not found post id : " + postId));
+        Post post = postRepository.findById(commentCreateRequestDTO.getPostId())
+                .orElseThrow(() -> new PostNotFoundException());
 
         PostComment parentPostComment = null;
 
-        if (postCommentRequestDTO.getParentId() != null) {
-            parentPostComment = postCommentRepository.findById(postCommentRequestDTO.getParentId())
+        if (commentCreateRequestDTO.getParentId() != null) {
+            parentPostComment = postCommentRepository.findById(commentCreateRequestDTO.getParentId())
                     .orElseThrow(() -> new CommentNotFoundException());
 
 
@@ -70,7 +71,7 @@ public class PostCommentServiceImpl implements PostCommentService {
                 .builder()
                 .author(member)
                 .post(post)
-                .content(postCommentRequestDTO.getContent())
+                .content(commentCreateRequestDTO.getContent())
                 .build();
 
         if (parentPostComment != null) {
@@ -87,42 +88,30 @@ public class PostCommentServiceImpl implements PostCommentService {
 
     @Override
     @Transactional
-    public void removeComment(Long postId, Long postCommentId) {
-        Post post = postRepository.findById(postId)
-                .orElseThrow(() -> new PostNotFoundException());
-
+    public void deleteComment(Long postCommentId) {
+        //TODO 유저 권한 체크
+        //TODO 삭제시 자식이 존재하는 경우 자식들도 사라져야함.
         PostComment postComment = postCommentRepository.findById(postCommentId)
                 .orElseThrow(() -> new CommentNotFoundException());
 
-        if (postComment.getPost().getId() != post.getId()) {
-            throw new IllegalStateException("Not equal post id");
-        } else if (postComment.getAuthor().getProviderId() != getProviderIdFromRequest()) {
-            throw new IllegalStateException("Not equal provider id");
+        if (postComment.getAuthor() != getMemberFromRequest()) {
+            throw new PermissionDeniedException();
         }
-
+        postComment.getPost().deleteComment();
         postCommentRepository.delete(postComment);
-
-        post.deleteComment();
-        postRepository.save(post);
     }
 
     @Override
     @Transactional
-    public void updateComment(Long postId, Long postCommentId, String content) {
-        Post post = postRepository.findById(postId)
-                .orElseThrow(() -> new PostNotFoundException());
-
+    public void updateComment(Long postCommentId, String content) {
         PostComment postComment = postCommentRepository.findById(postCommentId)
                 .orElseThrow(() -> new CommentNotFoundException());
 
-        if (postComment.getPost().getId() != post.getId()) {
-            throw new IllegalStateException("Not equal post id");
-        } else if (postComment.getAuthor().getProviderId() != getProviderIdFromRequest()) {
-            throw new IllegalStateException("Not equal provider id");
+        if (postComment.getAuthor() != getMemberFromRequest()) {
+            throw new PermissionDeniedException();
         }
 
         postComment.updateContent(content);
-        postCommentRepository.save(postComment);
     }
 
     @Override

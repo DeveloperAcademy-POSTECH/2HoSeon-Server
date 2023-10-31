@@ -1,9 +1,6 @@
 package com.twohoseon.app.controller;
 
-import com.twohoseon.app.dto.request.PostCommentRequestDTO;
-import com.twohoseon.app.dto.request.PostCommentUpdateRequestDTO;
-import com.twohoseon.app.dto.request.PostCreateRequestDTO;
-import com.twohoseon.app.dto.request.VoteCreateRequestDTO;
+import com.twohoseon.app.dto.request.*;
 import com.twohoseon.app.dto.response.*;
 import com.twohoseon.app.entity.post.enums.PostStatus;
 import com.twohoseon.app.enums.StatusEnum;
@@ -100,10 +97,10 @@ public class PostRestController {
     //TODO 좋아요 취소
 
     @Operation(summary = "댓글 작성")
-    @PostMapping("/{postId}/comments")
-    public ResponseEntity<GeneralResponseDTO> createPostComment(@PathVariable Long postId, @RequestBody PostCommentRequestDTO postCommentRequestDTO) {
+    @PostMapping("/comments")
+    public ResponseEntity<GeneralResponseDTO> createPostComment(@RequestBody CommentCreateRequestDTO commentCreateRequestDTO) {
 
-        postCommentService.createComment(postId, postCommentRequestDTO);
+        postCommentService.createComment(commentCreateRequestDTO);
 
         GeneralResponseDTO.GeneralResponseDTOBuilder responseDTOBuilder = GeneralResponseDTO.builder();
 
@@ -115,10 +112,11 @@ public class PostRestController {
     }
 
     @Operation(summary = "댓글 삭제")
-    @DeleteMapping("/{postId}/comments/{commentId}")
-    public ResponseEntity<GeneralResponseDTO> deletePostComment(@PathVariable(value = "postId") Long postId, @PathVariable(value = "commentId") Long postCommentId) {
+    @DeleteMapping("/comments/{commentId}")
+    public ResponseEntity<GeneralResponseDTO> deletePostComment(@PathVariable(value = "commentId") Long postCommentId) {
 
-        postCommentService.removeComment(postId, postCommentId);
+
+        postCommentService.deleteComment(postCommentId);
 
         GeneralResponseDTO generalResponseDTO = GeneralResponseDTO
                 .builder()
@@ -130,12 +128,11 @@ public class PostRestController {
     }
 
     @Operation(summary = "댓글 수정")
-    @PutMapping("/{postId}/comments/{commentId}")
-    public ResponseEntity<GeneralResponseDTO> updatePostComment(@PathVariable(value = "postId") Long postId,
-                                                                @PathVariable(value = "commentId") Long postCommentId,
-                                                                @RequestBody PostCommentUpdateRequestDTO postCommentUpdateRequestDTO) {
+    @PutMapping("/comments/{commentId}")
+    public ResponseEntity<GeneralResponseDTO> updatePostComment(@PathVariable(value = "commentId") Long postCommentId,
+                                                                @RequestBody CommentUpdateRequestDTO postCommentUpdateRequestDTO) {
 
-        postCommentService.updateComment(postId, postCommentId, postCommentUpdateRequestDTO.getContent());
+        postCommentService.updateComment(postCommentId, postCommentUpdateRequestDTO.getContent());
 
         GeneralResponseDTO generalResponseDTO = GeneralResponseDTO
                 .builder()
@@ -147,10 +144,10 @@ public class PostRestController {
     }
 
     @Operation(summary = "댓글 조회")
-    @GetMapping("/{postId}/comments")
-    public ResponseEntity<PostCommentResponseDTO> readPostComment(@PathVariable Long postId) {
+    @GetMapping("/comments")
+    public ResponseEntity<PostCommentResponseDTO> readPostComment(@RequestBody CommentFetchRequestDTO commentFetchRequestDTO) {
 
-        List<PostCommentInfoDTO> postCommentLists = postRepository.getAllCommentsFromPost(postId);
+        List<PostCommentInfoDTO> postCommentLists = postRepository.getAllCommentsFromPost(commentFetchRequestDTO.getPostId());
 
         PostCommentResponseDTO postCommentResponseDTO = PostCommentResponseDTO.builder()
                 .status(StatusEnum.OK)
@@ -161,9 +158,9 @@ public class PostRestController {
         return ok(postCommentResponseDTO);
     }
 
-    @Operation(summary = "댓글 상세 조회")
-    @GetMapping("/{postId}/comments/{commentId}")
-    public ResponseEntity<PostCommentResponseDTO> getPostCommentChildren(@PathVariable Long postId, @PathVariable Long commentId) {
+    @Operation(summary = "대댓글 조회")
+    @GetMapping("/comments/{commentId}")
+    public ResponseEntity<PostCommentResponseDTO> getPostCommentChildren(@PathVariable Long commentId) {
 
         List<PostCommentInfoDTO> postCommentLists = postRepository.getChildComments(commentId);
 
