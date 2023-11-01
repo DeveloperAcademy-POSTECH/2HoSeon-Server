@@ -42,7 +42,7 @@ public class PostCommentServiceImpl implements PostCommentService {
     private final NotificationService notificationService;
 
     @Override
-//    @Transactional
+    @Transactional
     public void createComment(CommentCreateRequestDTO commentCreateRequestDTO) {
         Member member = getMemberFromRequest();
 
@@ -65,15 +65,15 @@ public class PostCommentServiceImpl implements PostCommentService {
             }
             postComment.updateParent(parentPostComment);
             parentPostComment.addChildComment(postComment);
+        } else {
+            postCommentRepository.save(postComment);
         }
 
         post.addComment();
         CompletableFuture.runAsync(() -> {
             try {
                 notificationService.sendPostCommentNotification(post, member.getUserNickname(), isSubComment);
-            } catch (ExecutionException e) {
-                log.debug("sendPostCommentNotification error: ", e);
-            } catch (InterruptedException e) {
+            } catch (ExecutionException | InterruptedException e) {
                 log.debug("sendPostCommentNotification error: ", e);
             }
         });
