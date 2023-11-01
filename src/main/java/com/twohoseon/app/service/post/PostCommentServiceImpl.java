@@ -6,21 +6,21 @@ import com.twohoseon.app.entity.member.Member;
 import com.twohoseon.app.entity.post.Post;
 import com.twohoseon.app.entity.post.PostComment;
 import com.twohoseon.app.exception.CommentNotFoundException;
-import com.twohoseon.app.exception.MemberNotFoundException;
 import com.twohoseon.app.exception.PermissionDeniedException;
 import com.twohoseon.app.exception.PostNotFoundException;
 import com.twohoseon.app.repository.member.MemberRepository;
 import com.twohoseon.app.repository.post.PostCommentRepository;
 import com.twohoseon.app.repository.post.PostRepository;
+import com.twohoseon.app.service.notification.NotificationService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.webjars.NotFoundException;
 
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
 
 /**
  * @author : yongjukim
@@ -39,34 +39,16 @@ public class PostCommentServiceImpl implements PostCommentService {
     private final PostCommentRepository postCommentRepository;
     private final MemberRepository memberRepository;
     private final PostRepository postRepository;
+    private final NotificationService notificationService;
 
     @Override
-    @Transactional
+//    @Transactional
     public void createComment(CommentCreateRequestDTO commentCreateRequestDTO) {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String providerId = authentication.getName();
-
-        Member member = memberRepository.findByProviderId(providerId)
-                .orElseThrow(() -> new MemberNotFoundException());
+        Member member = getMemberFromRequest();
 
         Post post = postRepository.findById(commentCreateRequestDTO.getPostId())
                 .orElseThrow(() -> new PostNotFoundException());
-
-        PostComment parentPostComment = null;
-
-        if (commentCreateRequestDTO.getParentId() != null) {
-            parentPostComment = postCommentRepository.findById(commentCreateRequestDTO.getParentId())
-                    .orElseThrow(() -> new CommentNotFoundException());
-
-
-            if (parentPostComment.getPost() != post) {
-                throw new NotFoundException("Not equal id");
-            }
-        }
-
-        post.addComment();
-        postRepository.save(post);
-
+        boolean isSubComment = commentCreateRequestDTO.getParentId() != null;
         PostComment postComment = PostComment
                 .builder()
                 .author(member)
@@ -74,16 +56,27 @@ public class PostCommentServiceImpl implements PostCommentService {
                 .content(commentCreateRequestDTO.getContent())
                 .build();
 
-        if (parentPostComment != null) {
+        if (isSubComment) {
+            PostComment parentPostComment = postCommentRepository.findById(commentCreateRequestDTO.getParentId())
+                    .orElseThrow(() -> new CommentNotFoundException());
+
+            if (parentPostComment.getPost() != post) {
+                throw new NotFoundException("Not equal id");
+            }
             postComment.updateParent(parentPostComment);
-        }
-
-        postCommentRepository.save(postComment);
-
-        if (parentPostComment != null) {
             parentPostComment.addChildComment(postComment);
-            postCommentRepository.save(parentPostComment);
         }
+
+        post.addComment();
+        CompletableFuture.runAsync(() -> {
+            try {
+                notificationService.sendPostCommentNotification(post, member.getUserNickname(), isSubComment);
+            } catch (ExecutionException e) {
+                log.debug("sendPostCommentNotification error: ", e);
+            } catch (InterruptedException e) {
+                log.debug("sendPostCommentNotification error: ", e);
+            }
+        });
     }
 
     @Override

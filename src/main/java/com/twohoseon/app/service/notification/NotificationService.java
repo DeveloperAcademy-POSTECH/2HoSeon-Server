@@ -1,6 +1,6 @@
 package com.twohoseon.app.service.notification;
 
-import com.twohoseon.app.entity.member.Member;
+import com.twohoseon.app.entity.post.Post;
 
 import java.util.concurrent.ExecutionException;
 
@@ -14,11 +14,11 @@ import java.util.concurrent.ExecutionException;
  **/
 
 public interface NotificationService {
-    //TODO 투표에 댓글이 달렸을 때
-    //TODO 투표가 마감 되었을 때
-    //TODO 후기에 댓글이 달렸을 때
-
-    void postExpireNotificationJob(Member member, Long postId);
-
     void sendPostExpiredNotification(Long memberId, Long postId) throws ExecutionException, InterruptedException;
+
+    void sendPostCommentNotification(Post post, String userNickname, boolean isSubComment) throws ExecutionException, InterruptedException;
+
+    //TODO 후기에 댓글이 달렸을 때
+    //TODO 후기에 답글이 달렸을 때
+    //TODO 구독한 후기가 작성되었을 때
 }

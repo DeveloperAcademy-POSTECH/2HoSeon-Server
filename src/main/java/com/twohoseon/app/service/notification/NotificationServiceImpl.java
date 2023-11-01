@@ -38,9 +38,6 @@ public class NotificationServiceImpl implements NotificationService {
     @Value("${app.identifier}")
     private String appIdentifier;
 
-    public void postExpireNotificationJob(Member member, Long postId) {
-
-    }
 
     @Override
     public void sendPostExpiredNotification(Long memberId, Long postId) throws ExecutionException, InterruptedException {
@@ -62,4 +59,26 @@ public class NotificationServiceImpl implements NotificationService {
                 apnsClient.sendNotification(pushNotification).get();
         log.debug("push notification is success?: ", pushNotificationResponse.isAccepted());
     }
+
+    @Override
+    public void sendPostCommentNotification(Post post, String userNickname, boolean isSubComment) throws ExecutionException, InterruptedException {
+        Member Author = post.getAuthor();
+        String deviceToken = Author.getDeviceToken();
+        String alertBody = isSubComment ?
+                String.format("%s님이 회원님의 댓글에 답글을 달았어요", userNickname) :
+                String.format("%s님이 회원님의 게시글에 댓글을 달았어요", userNickname);
+        SimpleApnsPushNotification pushNotification = new SimpleApnsPushNotification(
+                TokenUtil.sanitizeTokenString(deviceToken),
+                appIdentifier,
+                new CustomApnsPayloadBuilder()
+                        .setPostDetails(post.getId())
+                        .setAlertSubtitle(post.getTitle())
+                        .setAlertBody(alertBody)
+                        .build()
+        );
+        PushNotificationResponse<SimpleApnsPushNotification> pushNotificationResponse =
+                apnsClient.sendNotification(pushNotification).get();
+        log.debug("push notification is success?: ", pushNotificationResponse.isAccepted());
+    }
+
 }
