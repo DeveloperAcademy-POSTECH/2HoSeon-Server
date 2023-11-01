@@ -63,6 +63,7 @@ dependencies {
     implementation 'com.oracle.database.security:osdt_core:21.10.0.0'
     implementation 'com.oracle.database.security:osdt_cert:21.10.0.0'
 
+    implementation 'org.springframework.boot:spring-boot-starter-quartz:3.1.2'
 
     compileOnly 'org.projectlombok:lombok'
     annotationProcessor 'org.projectlombok:lombok'
