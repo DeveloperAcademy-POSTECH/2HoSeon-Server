@@ -1,0 +1,11 @@
+spring:
+  servlet:
+    multipart:
+      enabled: true
+      location: /Users/pingse/Desktop/ex/
+      max-request-size: 30MB
+      max-file-size: 10MB
+
+
+file:
+  dir: /Users/pingse/Desktop/ex/
