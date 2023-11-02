@@ -8,15 +8,12 @@ import com.twohoseon.app.repository.member.MemberRepository;
 import com.twohoseon.app.repository.post.PostRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.UUID;
@@ -52,7 +49,7 @@ public class ImageServiceImpl implements ImageService {
 
         String originalName = file.getOriginalFilename();
         String fileName = UUID.randomUUID().toString() + originalName.substring(originalName.lastIndexOf("."));
-        log.info(fileName);
+
         String saveName = fileDir + "profiles" + File.separator + fileName;
         Path savePath = Paths.get(saveName);
 
@@ -64,7 +61,6 @@ public class ImageServiceImpl implements ImageService {
 
         member.setUserProfileImage(fileName);
         memberRepository.save(member);
-
     }
 
     @Override
@@ -78,7 +74,7 @@ public class ImageServiceImpl implements ImageService {
 
         String originalName = file.getOriginalFilename();
         String fileName = UUID.randomUUID().toString() + originalName.substring(originalName.lastIndexOf("."));
-        log.info(fileName);
+
         String saveName = fileDir + "posts" + File.separator + fileName;
         Path savePath = Paths.get(saveName);
 
@@ -95,41 +91,5 @@ public class ImageServiceImpl implements ImageService {
     @Override
     public void uploadReviewImage(MultipartFile file) {
 
-    }
-
-    @Override
-    public byte[] searchProfileImage(String imageName) throws IOException {
-        String image = fileDir + "profiles" + File.separator + imageName;
-        InputStream imageStream = new FileInputStream(image);
-        log.info(imageStream.toString());
-        byte[] imageByteArray = IOUtils.toByteArray(imageStream);
-        imageStream.close();
-        log.info(imageStream.toString());
-
-        return imageByteArray;
-    }
-
-    @Override
-    public byte[] searchPostImage(String imageName) throws IOException {
-        String image = fileDir + "posts" + File.separator + imageName;
-        InputStream imageStream = new FileInputStream(image);
-        log.info(imageStream.toString());
-        byte[] imageByteArray = IOUtils.toByteArray(imageStream);
-        imageStream.close();
-        log.info(imageStream.toString());
-
-        return imageByteArray;
-    }
-
-    @Override
-    public byte[] searchReviewImage(String imageName) throws IOException {
-        String image = fileDir + "reviews" + File.separator + imageName;
-        InputStream imageStream = new FileInputStream(image);
-        log.info(imageStream.toString());
-        byte[] imageByteArray = IOUtils.toByteArray(imageStream);
-        imageStream.close();
-        log.info(imageStream.toString());
-
-        return imageByteArray;
     }
 }

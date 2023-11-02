@@ -3,8 +3,6 @@ package com.twohoseon.app.service.image;
 import com.twohoseon.app.service.CommonService;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
-
 /**
  * @author : yongjukim
  * @version : 1.0.0
@@ -20,9 +18,4 @@ public interface ImageService extends CommonService {
 
     void uploadReviewImage(MultipartFile file);
 
-    byte[] searchProfileImage(String imageName) throws IOException;
-
-    byte[] searchPostImage(String imageName) throws IOException;
-
-    byte[] searchReviewImage(String imageName) throws IOException;
 }
