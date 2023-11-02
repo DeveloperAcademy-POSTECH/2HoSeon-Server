@@ -21,4 +21,6 @@ public interface MemberService extends UserDetailsService, CommonService {
     boolean validateDuplicateUserNickname(String userNickname);
 
     Optional<Member> findByProviderId(String providerId);
+
+    void registerToken(String deviceToken);
 }

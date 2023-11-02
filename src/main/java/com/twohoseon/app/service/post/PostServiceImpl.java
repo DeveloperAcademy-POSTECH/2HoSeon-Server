@@ -12,8 +12,10 @@ import com.twohoseon.app.exception.MemberNotFoundException;
 import com.twohoseon.app.exception.PostNotFoundException;
 import com.twohoseon.app.repository.member.MemberRepository;
 import com.twohoseon.app.repository.post.PostRepository;
+import com.twohoseon.app.service.schedule.JobSchedulingService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.quartz.SchedulerException;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
@@ -31,10 +33,12 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
+
 public class PostServiceImpl implements PostService {
     private final MemberRepository memberRepository;
     private final PostRepository postRepository;
     private final VoteRepository voteRepository;
+    private final JobSchedulingService jobSchedulingService;
 
     @Override
     public void createPost(PostCreateRequestDTO postCreateRequestDTO) {
@@ -51,6 +55,11 @@ public class PostServiceImpl implements PostService {
                 .postCategoryType(postCreateRequestDTO.getPostCategoryType())
                 .build();
         postRepository.save(post);
+        try {
+            jobSchedulingService.schedulePostExpireJob(author.getId(), post.getId());
+        } catch (SchedulerException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override
