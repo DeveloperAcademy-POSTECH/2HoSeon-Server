@@ -7,5 +7,3 @@ spring:
       max-file-size: 10MB
 
 
-file:
-  dir: /Users/pingse/Desktop/ex/

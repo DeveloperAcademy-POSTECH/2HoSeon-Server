@@ -7,3 +7,6 @@ spring:
 oauth:
   apple:
     client-id: com.twohosun.TwoHoSun
+
+file:
+  dir: /home/ubuntu/images/
