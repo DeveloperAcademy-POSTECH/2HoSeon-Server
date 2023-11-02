@@ -10,3 +10,6 @@ spring:
 oauth:
   apple:
     client-id: com.twohosun.service
+
+file:
+  dir: /Users/pingse/Desktop/ex/

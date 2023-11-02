@@ -98,8 +98,13 @@ public class Member extends BaseTimeEntity {
         this.grade = grade;
     }
 
+
     public void updateDeviceToken(String deviceToken) {
         this.deviceToken = deviceToken;
+    }
+  
+    public void setUserProfileImage(String userProfileImage) {
+        this.userProfileImage = userProfileImage;
     }
 
     protected Member() {

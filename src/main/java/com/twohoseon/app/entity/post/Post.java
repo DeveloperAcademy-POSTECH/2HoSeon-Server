@@ -105,6 +105,10 @@ public class Post extends BaseTimeEntity {
         this.author = author;
     }
 
+    public void setImage(String image) {
+        this.image = image;
+    }
+
     public void addLike() {
         this.likeCount += 1;
     }
