@@ -11,6 +11,7 @@ spring:
         - server
         - db
         - security
+        - upload
       prod:
         - prod
         - common
