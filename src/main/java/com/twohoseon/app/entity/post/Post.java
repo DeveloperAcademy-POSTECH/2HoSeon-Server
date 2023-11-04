@@ -101,14 +101,24 @@ public class Post extends BaseTimeEntity {
     @Builder.Default
     private Set<Vote> votes = new LinkedHashSet<>();
 
-    @OneToMany(mappedBy = "post", orphanRemoval = true)
-    @Builder.Default
-    private Set<Member> subscribers = new LinkedHashSet<>();
+//    @OneToMany(mappedBy = "post", orphanRemoval = true)
+//    @Builder.Default
+//    private Set<Member> subscribers = new LinkedHashSet<>();
 
-    @OneToOne(orphanRemoval = true)
+    @OneToOne(orphanRemoval = true, cascade = CascadeType.ALL)
     @JoinColumn(name = "review_id")
     @Builder.Default
     private Post review = null;
+
+    @ManyToMany
+    @JoinTable(name = "Review_subscribed_members",
+            joinColumns = @JoinColumn(name = "post_id"),
+            inverseJoinColumns = @JoinColumn(name = "members_id"))
+    private Set<Member> subscribers = new LinkedHashSet<>();
+
+    public void setSubscribers(Set<Member> subscribers) {
+        this.subscribers = subscribers;
+    }
 
     public boolean isAuthor(Member member) {
         return this.author.equals(member);
@@ -123,9 +133,6 @@ public class Post extends BaseTimeEntity {
         this.postStatus = PostStatus.COMPLETE;
     }
 
-    public void setSubscribers(Set<Member> subscribers) {
-        this.subscribers = subscribers;
-    }
 
     public void incrementVoteCount() {
         this.voteCount += 1;

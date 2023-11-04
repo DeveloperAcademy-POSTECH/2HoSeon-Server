@@ -15,14 +15,18 @@ import com.twohoseon.app.exception.PostNotFoundException;
 import com.twohoseon.app.exception.ReviewExistException;
 import com.twohoseon.app.repository.member.MemberRepository;
 import com.twohoseon.app.repository.post.PostRepository;
+import com.twohoseon.app.service.notification.NotificationService;
 import com.twohoseon.app.service.schedule.JobSchedulingService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.quartz.SchedulerException;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
 
 
 /**
@@ -36,12 +40,13 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-
+@Slf4j
 public class PostServiceImpl implements PostService {
     private final MemberRepository memberRepository;
     private final PostRepository postRepository;
     private final VoteRepository voteRepository;
     private final JobSchedulingService jobSchedulingService;
+    private final NotificationService notificationService;
 
     @Override
     public void createPost(PostCreateRequestDTO postCreateRequestDTO) {
@@ -115,6 +120,13 @@ public class PostServiceImpl implements PostService {
         }
         post.createReview(reviewRequestDTO);
         postRepository.save(post);
+        CompletableFuture.runAsync(() -> {
+            try {
+                notificationService.sendPostReviewNotification(post);
+            } catch (ExecutionException | InterruptedException e) {
+                log.debug("sendPostReviewNotification error: ", e);
+            }
+        });
     }
 
     @Override

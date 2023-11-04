@@ -67,17 +67,6 @@ public class Member extends BaseTimeEntity {
     @OneToMany(mappedBy = "author", orphanRemoval = true)
     private Set<Post> posts = new LinkedHashSet<>();
 
-    @ManyToOne
-    @JoinColumn(name = "post_id")
-    private Post post;
-
-    public void setPost(Post post) {
-        this.post = post;
-    }
-
-    public void setPosts(Set<Post> posts) {
-        this.posts = posts;
-    }
 
     public void updateAdditionalUserInfo(String profileImage, String nickname, School school) {
         this.profileImage = profileImage;

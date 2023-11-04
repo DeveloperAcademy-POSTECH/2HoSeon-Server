@@ -14,6 +14,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 /**
@@ -73,6 +74,27 @@ public class NotificationServiceImpl implements NotificationService {
         PushNotificationResponse<SimpleApnsPushNotification> pushNotificationResponse =
                 apnsClient.sendNotification(pushNotification).get();
         log.debug("push notification is success?: ", pushNotificationResponse.isAccepted());
+    }
+
+    @Override
+    public void sendPostReviewNotification(Post post) throws ExecutionException, InterruptedException {
+        List<String> deviceTokens = memberRepository.findMemberDeviceTokenByPostId(post.getId());
+        for (String deviceToken : deviceTokens) {
+            SimpleApnsPushNotification pushNotification = new SimpleApnsPushNotification(
+                    TokenUtil.sanitizeTokenString(deviceToken),
+                    appIdentifier,
+                    new CustomApnsPayloadBuilder()
+                            .setPostDetails(post.getId())
+                            .setAlertSubtitle(post.getTitle())
+                            .setAlertBody("회원님의 투표에 후기가 작성되었어요.")
+                            .build()
+            );
+            PushNotificationResponse<SimpleApnsPushNotification> pushNotificationResponse =
+                    apnsClient.sendNotification(pushNotification).get();
+            log.debug("push notification is success?: ", pushNotificationResponse.isAccepted());
+        }
+
+
     }
 
 }
