@@ -16,6 +16,8 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 /**
@@ -95,7 +97,31 @@ public class ImageServiceImpl implements ImageService {
     }
 
     @Override
-    public void uploadReviewImage(MultipartFile file) {
+    public void uploadReviewImage(MultipartFile file, Long reviewId) {
 
+        Post post = postRepository.findById(reviewId)
+                .orElseThrow(() -> new PostNotFoundException());
+
+        List<String> imageList = new ArrayList<>();
+
+        if (!file.getContentType().startsWith("image")) {
+            throw new InvalidFileTypeException();
+        }
+
+        String originalName = file.getOriginalFilename();
+        String fileName = UUID.randomUUID().toString() + originalName.substring(originalName.lastIndexOf("."));
+        imageList.add(fileName);
+
+        String saveName = fileDir + "reviews" + File.separator + fileName;
+        Path savePath = Paths.get(saveName);
+
+        try {
+            file.transferTo(savePath);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        post.setImageList(imageList);
+        postRepository.save(post);
     }
 }

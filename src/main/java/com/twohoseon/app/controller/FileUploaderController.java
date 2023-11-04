@@ -67,8 +67,10 @@ public class FileUploaderController {
 
     @Operation(summary = "후기 사진 업로드")
     @PostMapping("/reviews/upload")
-    public ResponseEntity<GeneralResponseDTO> uploadReviewImage(@RequestParam("imageFile") MultipartFile imageFile) {
+    public ResponseEntity<GeneralResponseDTO> uploadReviewImage(@RequestParam("imageFile") MultipartFile imageFile,
+                                                                @RequestParam("reviewId") Long reviewId) {
 
+        imageService.uploadReviewImage(imageFile, reviewId);
 
         GeneralResponseDTO responseDTO = GeneralResponseDTO.builder()
                 .status(StatusEnum.OK)
