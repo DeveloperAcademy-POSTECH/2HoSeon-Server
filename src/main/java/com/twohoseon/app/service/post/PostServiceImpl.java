@@ -49,14 +49,11 @@ public class PostServiceImpl implements PostService {
                 .visibilityScope(postCreateRequestDTO.getVisibilityScope())
                 .title(postCreateRequestDTO.getTitle())
                 .contents(postCreateRequestDTO.getContents())
-//                .image(postCreateRequestDTO.getImage())
                 .externalURL(postCreateRequestDTO.getExternalURL())
-//                .postTagList(postCreateRequestDTO.getPostTagList())
-//                .postCategoryType(postCreateRequestDTO.getPostCategoryType())
                 .build();
         postRepository.save(post);
         try {
-            jobSchedulingService.schedulePostExpireJob(author.getId(), post.getId());
+            jobSchedulingService.schedulePostExpireJob(post.getId());
         } catch (SchedulerException e) {
             throw new RuntimeException(e);
         }

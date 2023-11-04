@@ -113,6 +113,10 @@ public class Post extends BaseTimeEntity {
         this.review = review;
     }
 
+    public void setPostToComplete() {
+        this.postStatus = PostStatus.COMPLETE;
+    }
+
     public void setSubscribers(Set<Member> subscribers) {
         this.subscribers = subscribers;
     }
