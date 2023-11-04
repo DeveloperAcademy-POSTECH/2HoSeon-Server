@@ -11,7 +11,6 @@ import jakarta.annotation.Nullable;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
-import lombok.experimental.SuperBuilder;
 import org.hibernate.annotations.Comment;
 
 import java.util.ArrayList;
@@ -29,7 +28,7 @@ import java.util.Set;
  **/
 @Entity
 @Getter
-@SuperBuilder
+@Builder
 @EqualsAndHashCode(of = "id", callSuper = false)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor

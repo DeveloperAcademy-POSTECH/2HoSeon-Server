@@ -84,7 +84,7 @@ public class ImageServiceImpl implements ImageService {
             e.printStackTrace();
         }
 
-        post.setImage(fileName);
+//        post.setImage(fileName);
         postRepository.save(post);
     }
 

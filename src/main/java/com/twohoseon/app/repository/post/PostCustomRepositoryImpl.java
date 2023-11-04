@@ -42,7 +42,7 @@ public class PostCustomRepositoryImpl implements PostCustomRepository {
                         post.id.as("post_id"),
                         post.createDate,
                         post.modifiedDate,
-                        post.postType,
+//                        post.postType,
                         Projections.constructor(AuthorInfoDTO.class,
                                 member.id,
                                 member.nickname,
@@ -93,7 +93,7 @@ public class PostCustomRepositoryImpl implements PostCustomRepository {
                         post.id.as("post_id"),
                         post.createDate,
                         post.modifiedDate,
-                        post.postType,
+//                        post.postType,
                         post.createDate.after(oneDayAgo),
                         Projections.constructor(AuthorInfoDTO.class,
                                 member.id,
@@ -101,10 +101,10 @@ public class PostCustomRepositoryImpl implements PostCustomRepository {
                                 member.profileImage),
                         post.title,
                         post.contents,
-                        post.image,
+//                        post.image,
                         post.externalURL,
                         post.likeCount,
-                        post.viewCount,
+//                        post.viewCount,
                         post.commentCount
                 ))
                 .from(post)
@@ -164,7 +164,7 @@ public class PostCustomRepositoryImpl implements PostCustomRepository {
                         post.id,
                         post.createDate,
                         post.modifiedDate,
-                        post.postType,
+//                        post.postType,
                         post.createDate.after(oneDayAgo),
                         Projections.constructor(AuthorInfoDTO.class,
                                 member.id,
@@ -172,10 +172,10 @@ public class PostCustomRepositoryImpl implements PostCustomRepository {
                                 member.profileImage),
                         post.title,
                         post.contents,
-                        post.image,
+//                        post.image,
                         post.externalURL,
                         post.likeCount,
-                        post.viewCount,
+//                        post.viewCount,
                         post.commentCount
                 ))
                 .from(post)
