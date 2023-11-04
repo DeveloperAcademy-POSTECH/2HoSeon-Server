@@ -15,7 +15,7 @@ import lombok.Getter;
 @Getter
 @Schema(name = "PostCreateRequestDTO", description = "게시글 생성 요청 DTO")
 public class PostCreateRequestDTO {
-    @Schema(name = "VisibilityScope", description = "게시글 공개 범위")
+    @Schema(name = "visibilityScope", description = "게시글 공개 범위")
     private VisibilityScope visibilityScope;
     @Schema(name = "title", description = "게시글 제목")
     private String title;
@@ -23,6 +23,8 @@ public class PostCreateRequestDTO {
     private String contents;
     @Schema(name = "image", description = "게시글 이미지, 아마 multipart로 받아야 할듯")
     private String image;
+    @Schema(name = "price", description = "가격")
+    private Integer price;
     @Schema(name = "externalURL", description = "게시글 외부 URL")
     private String externalURL;
 }

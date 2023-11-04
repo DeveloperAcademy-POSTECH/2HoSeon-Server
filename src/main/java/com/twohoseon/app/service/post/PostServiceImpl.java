@@ -52,6 +52,7 @@ public class PostServiceImpl implements PostService {
                 .visibilityScope(postCreateRequestDTO.getVisibilityScope())
                 .title(postCreateRequestDTO.getTitle())
                 .contents(postCreateRequestDTO.getContents())
+                .price(postCreateRequestDTO.getPrice())
                 .externalURL(postCreateRequestDTO.getExternalURL())
                 .build();
         postRepository.save(post);
