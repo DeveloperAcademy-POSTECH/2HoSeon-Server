@@ -64,27 +64,33 @@ public class ImageServiceImpl implements ImageService {
     }
 
     @Override
-    public void uploadPostImage(MultipartFile file, Long postId) {
+    public void uploadPostImage(List<MultipartFile> files, Long postId) {
         Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new PostNotFoundException());
 
-        if (!file.getContentType().startsWith("image")) {
-            throw new InvalidFileTypeException();
+        List<String> imageList = new ArrayList<>();
+
+        for (MultipartFile file : files) {
+            if (!file.getContentType().startsWith("image")) {
+                throw new InvalidFileTypeException();
+            }
+
+            String originalName = file.getOriginalFilename();
+            String fileName = UUID.randomUUID().toString() + originalName.substring(originalName.lastIndexOf("."));
+            imageList.add(fileName);
+
+            String saveName = fileDir + "posts" + File.separator + fileName;
+            Path savePath = Paths.get(saveName);
+
+            try {
+                file.transferTo(savePath);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
         }
 
-        String originalName = file.getOriginalFilename();
-        String fileName = UUID.randomUUID().toString() + originalName.substring(originalName.lastIndexOf("."));
-
-        String saveName = fileDir + "posts" + File.separator + fileName;
-        Path savePath = Paths.get(saveName);
-
-        try {
-            file.transferTo(savePath);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-//        post.setImage(fileName);
+        post.setImageList(imageList);
         postRepository.save(post);
     }
 
