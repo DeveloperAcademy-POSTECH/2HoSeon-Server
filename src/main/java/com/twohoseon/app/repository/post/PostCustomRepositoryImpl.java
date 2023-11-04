@@ -5,7 +5,7 @@ import com.querydsl.core.types.dsl.CaseBuilder;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.twohoseon.app.dto.response.*;
-import com.twohoseon.app.entity.post.enums.PostStatus;
+import com.twohoseon.app.enums.post.PostStatus;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
@@ -45,16 +45,15 @@ public class PostCustomRepositoryImpl implements PostCustomRepository {
                         post.postType,
                         Projections.constructor(AuthorInfoDTO.class,
                                 member.id,
-                                member.userNickname,
-                                member.userProfileImage),
+                                member.nickname,
+                                member.profileImage),
                         post.title,
                         post.contents,
-                        post.image,
+//                        post.image,
                         post.externalURL,
                         post.likeCount,
-                        post.viewCount,
-                        post.commentCount,
-                        post.postCategoryType
+//                        post.viewCount,
+                        post.commentCount
                 ))
                 .from(post)
                 .leftJoin(post.author, member)
@@ -98,16 +97,15 @@ public class PostCustomRepositoryImpl implements PostCustomRepository {
                         post.createDate.after(oneDayAgo),
                         Projections.constructor(AuthorInfoDTO.class,
                                 member.id,
-                                member.userNickname,
-                                member.userProfileImage),
+                                member.nickname,
+                                member.profileImage),
                         post.title,
                         post.contents,
                         post.image,
                         post.externalURL,
                         post.likeCount,
                         post.viewCount,
-                        post.commentCount,
-                        post.postCategoryType
+                        post.commentCount
                 ))
                 .from(post)
                 .where(post.id.eq(postId))
@@ -135,8 +133,8 @@ public class PostCustomRepositoryImpl implements PostCustomRepository {
                         Projections.constructor(
                                 AuthorInfoDTO.class,
                                 member.id,
-                                member.userNickname,
-                                member.userProfileImage
+                                member.nickname,
+                                member.profileImage
                         )
                 ))
                 .from(postComment)
@@ -170,24 +168,22 @@ public class PostCustomRepositoryImpl implements PostCustomRepository {
                         post.createDate.after(oneDayAgo),
                         Projections.constructor(AuthorInfoDTO.class,
                                 member.id,
-                                member.userNickname,
-                                member.userProfileImage),
+                                member.nickname,
+                                member.profileImage),
                         post.title,
                         post.contents,
                         post.image,
                         post.externalURL,
                         post.likeCount,
                         post.viewCount,
-                        post.commentCount,
-                        post.postCategoryType
+                        post.commentCount
                 ))
                 .from(post)
                 .leftJoin(post.author, member)
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
                 .where(post.title.contains(keyword)
-                        .or(post.contents.contains(keyword))
-                        .or(post.postTagList.contains(keyword)));
+                        .or(post.contents.contains(keyword)));
 
         List<PostInfoDTO> postInfoList = jpaQuery.fetch();
         for (PostInfoDTO postInfoDTO : postInfoList) {
@@ -210,8 +206,8 @@ public class PostCustomRepositoryImpl implements PostCustomRepository {
                         Projections.constructor(
                                 AuthorInfoDTO.class,
                                 member.id,
-                                member.userNickname,
-                                member.userProfileImage
+                                member.nickname,
+                                member.profileImage
                         )
                 ))
                 .from(postComment)
@@ -260,11 +256,8 @@ public class PostCustomRepositoryImpl implements PostCustomRepository {
         return jpaQueryFactory
                 .select(
                         Projections.constructor(VoteInfoDTO.class,
-                                vote.isAgree,
-                                vote.grade,
-                                vote.regionType,
-                                vote.schoolType,
-                                vote.gender
+                                vote.isAgree
+                                //TODO 반드시 수정할 것 이 있을거임 소비성향
                         ))
                 .from(vote)
                 .where(vote.id.post.id.eq(postId))

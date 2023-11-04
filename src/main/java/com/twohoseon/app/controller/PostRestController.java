@@ -2,8 +2,8 @@ package com.twohoseon.app.controller;
 
 import com.twohoseon.app.dto.request.*;
 import com.twohoseon.app.dto.response.*;
-import com.twohoseon.app.entity.post.enums.PostStatus;
 import com.twohoseon.app.enums.StatusEnum;
+import com.twohoseon.app.enums.post.PostStatus;
 import com.twohoseon.app.repository.post.PostRepository;
 import com.twohoseon.app.service.post.PostCommentService;
 import com.twohoseon.app.service.post.PostLikeService;

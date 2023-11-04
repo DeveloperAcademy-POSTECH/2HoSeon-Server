@@ -48,7 +48,7 @@ public class PostLikeServiceImpl implements PostLikeService {
             throw new IllegalStateException("Already check post like");
         }
 
-        post.addLike();
+        post.incrementLikeCount();
         postRepository.save(post);
 
         PostLike postLike = PostLike.builder()
@@ -74,7 +74,7 @@ public class PostLikeServiceImpl implements PostLikeService {
         PostLike postLike = postLikeRepository.findByMemberAndPost(member, post)
                 .orElseThrow(() -> new NotFoundException("Could not found post-like id"));
 
-        post.cancelLike();
+        post.decrementLike();
         postRepository.save(post);
 
         postLikeRepository.delete(postLike);

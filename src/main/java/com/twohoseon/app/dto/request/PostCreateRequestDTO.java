@@ -1,7 +1,6 @@
 package com.twohoseon.app.dto.request;
 
-import com.twohoseon.app.entity.post.enums.PostType;
-import com.twohoseon.app.enums.PostCategoryType;
+import com.twohoseon.app.enums.post.VisibilityScope;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
 
@@ -19,7 +18,7 @@ import java.util.List;
 @Schema(name = "PostCreateRequestDTO", description = "게시글 생성 요청 DTO")
 public class PostCreateRequestDTO {
     @Schema(name = "postType", description = "게시글 타입")
-    private PostType postType;
+    private VisibilityScope visibilityScope;
     @Schema(name = "title", description = "게시글 제목")
     private String title;
     @Schema(name = "contents", description = "게시글 내용")
@@ -30,6 +29,4 @@ public class PostCreateRequestDTO {
     private String externalURL;
     @Schema(name = "postTagList", description = "게시글 태그 리스트")
     private List<String> postTagList;
-    @Schema(name = "postCategoryType", description = "게시글 카테고리 타입")
-    PostCategoryType postCategoryType;
 }

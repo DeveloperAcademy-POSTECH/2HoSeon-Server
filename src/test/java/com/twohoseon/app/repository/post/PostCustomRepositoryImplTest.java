@@ -90,10 +90,11 @@ class PostCustomRepositoryImplTest {
         return jpaQueryFactory
                 .select(
                         Projections.constructor(VoteInfoDTO.class,
-                                vote.isAgree,
-                                vote.grade,
-                                vote.schoolType,
-                                vote.gender))
+                                vote.isAgree
+//                                vote.grade,
+//                                vote.schoolType,
+//                                vote.gender
+                        ))
                 .from(vote)
                 .where(vote.id.post.id.eq(postId))
                 .fetch();
@@ -106,11 +107,11 @@ class PostCustomRepositoryImplTest {
                         post.createDate,
                         post.modifiedDate,
                         post.postType,
-                        post.postStatus,
+//                        post.postStatus,
                         Projections.constructor(AuthorInfoDTO.class,
                                 member.id,
-                                member.userNickname,
-                                member.userProfileImage),
+                                member.nickname,
+                                member.profileImage),
                         post.title,
                         post.contents,
                         post.image,

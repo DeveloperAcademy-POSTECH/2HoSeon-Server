@@ -1,8 +1,7 @@
 package com.twohoseon.app.entity.post.vote;
 
-import com.twohoseon.app.enums.GenderType;
-import com.twohoseon.app.enums.RegionType;
-import com.twohoseon.app.enums.SchoolType;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.twohoseon.app.enums.ConsumerType;
 import jakarta.persistence.Column;
 import jakarta.persistence.EmbeddedId;
 import jakarta.persistence.Entity;
@@ -17,27 +16,15 @@ import lombok.Getter;
 @AllArgsConstructor
 public class Vote {
 
+    @JsonIgnoreProperties
     @EmbeddedId
     VoteId id;
-
-    @Column
-    GenderType gender;
 
     @Column
     Boolean isAgree;
 
     @Column
-    SchoolType schoolType;
-
-    @Column
-    Integer grade;
-
-    @Column
-    RegionType regionType;
-
-
-//    @Column
-
+    ConsumerType consumerType;
 
     protected Vote() {
     }

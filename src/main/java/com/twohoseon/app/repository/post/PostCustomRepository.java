@@ -3,7 +3,7 @@ package com.twohoseon.app.repository.post;
 import com.twohoseon.app.dto.response.PostCommentInfoDTO;
 import com.twohoseon.app.dto.response.PostInfoDTO;
 import com.twohoseon.app.dto.response.VoteCountsDTO;
-import com.twohoseon.app.entity.post.enums.PostStatus;
+import com.twohoseon.app.enums.post.PostStatus;
 import org.springframework.data.domain.Pageable;
 
 import java.util.List;

@@ -5,9 +5,9 @@ import com.twohoseon.app.dto.response.PostInfoDTO;
 import com.twohoseon.app.dto.response.VoteCountsDTO;
 import com.twohoseon.app.entity.member.Member;
 import com.twohoseon.app.entity.post.Post;
-import com.twohoseon.app.entity.post.enums.PostStatus;
 import com.twohoseon.app.entity.post.vote.VoteRepository;
 import com.twohoseon.app.enums.VoteType;
+import com.twohoseon.app.enums.post.PostStatus;
 import com.twohoseon.app.exception.MemberNotFoundException;
 import com.twohoseon.app.exception.PostNotFoundException;
 import com.twohoseon.app.repository.member.MemberRepository;
@@ -46,13 +46,13 @@ public class PostServiceImpl implements PostService {
         Member author = getMemberFromRequest();
         Post post = Post.builder()
                 .author(author)
-                .postType(postCreateRequestDTO.getPostType())
+                .visibilityScope(postCreateRequestDTO.getVisibilityScope())
                 .title(postCreateRequestDTO.getTitle())
                 .contents(postCreateRequestDTO.getContents())
-                .image(postCreateRequestDTO.getImage())
+//                .image(postCreateRequestDTO.getImage())
                 .externalURL(postCreateRequestDTO.getExternalURL())
-                .postTagList(postCreateRequestDTO.getPostTagList())
-                .postCategoryType(postCreateRequestDTO.getPostCategoryType())
+//                .postTagList(postCreateRequestDTO.getPostTagList())
+//                .postCategoryType(postCreateRequestDTO.getPostCategoryType())
                 .build();
         postRepository.save(post);
         try {

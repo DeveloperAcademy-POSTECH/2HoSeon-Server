@@ -1,8 +1,8 @@
 package com.twohoseon.app.repository.post;
 
 import com.twohoseon.app.dto.response.PostCommentInfoDTO;
+import com.twohoseon.app.entity.post.Comment;
 import com.twohoseon.app.entity.post.Post;
-import com.twohoseon.app.entity.post.PostComment;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -18,9 +18,9 @@ import java.util.Optional;
  * @modifyed : $
  **/
 @Repository
-public interface PostCommentRepository extends JpaRepository<PostComment, Long> {
+public interface PostCommentRepository extends JpaRepository<Comment, Long> {
 
-    Optional<List<PostComment>> findPostCommentsByPost(Post post);
+    Optional<List<Comment>> findPostCommentsByPost(Post post);
 
     List<PostCommentInfoDTO> findByPostAndId(Post post, Long id);
 

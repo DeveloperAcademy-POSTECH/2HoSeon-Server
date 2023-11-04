@@ -1,9 +1,6 @@
 package com.twohoseon.app.dto.response;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.twohoseon.app.enums.GenderType;
-import com.twohoseon.app.enums.RegionType;
-import com.twohoseon.app.enums.SchoolType;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -21,9 +18,13 @@ import lombok.Data;
 @Schema(name = "VoteInfoDTO", description = "투표 정보 DTO")
 @AllArgsConstructor
 public class VoteInfoDTO {
+    //TODO 투표를 했는가 like voted
     boolean isAgree;
-    int grade;
-    RegionType regionType;
-    SchoolType schoolType;
-    GenderType gender;
+
+
+    //상세 조회시 한 depth 가 더들어가서 vote list를 리턴한다.
+//    int grade;
+//    RegionType regionType;
+//    SchoolType schoolType;
+//    GenderType gender;
 }

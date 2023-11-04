@@ -2,15 +2,16 @@ package com.twohoseon.app.entity.post;
 
 import com.twohoseon.app.common.BaseTimeEntity;
 import com.twohoseon.app.entity.member.Member;
-import com.twohoseon.app.entity.post.enums.PostType;
 import com.twohoseon.app.entity.post.vote.Vote;
 import com.twohoseon.app.entity.post.vote.VoteId;
-import com.twohoseon.app.enums.PostCategoryType;
 import com.twohoseon.app.enums.VoteType;
+import com.twohoseon.app.enums.post.PostStatus;
+import com.twohoseon.app.enums.post.VisibilityScope;
 import jakarta.annotation.Nullable;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
+import lombok.experimental.SuperBuilder;
 import org.hibernate.annotations.Comment;
 
 import java.util.ArrayList;
@@ -28,7 +29,7 @@ import java.util.Set;
  **/
 @Entity
 @Getter
-@Builder
+@SuperBuilder
 @EqualsAndHashCode(of = "id", callSuper = false)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
@@ -41,12 +42,12 @@ public class Post extends BaseTimeEntity {
     @ManyToOne(optional = false)
     @JoinColumn(name = "author_id", nullable = false)
     @Comment("작성자")
-    private Member author;
+    protected Member author;
 
     @NotNull
     @Enumerated(EnumType.STRING)
     @Comment("게시글 타입")
-    private PostType postType;
+    private VisibilityScope visibilityScope;
 
     @NotNull
     @Column
@@ -60,9 +61,18 @@ public class Post extends BaseTimeEntity {
 
     @Nullable
     @Column
-    @Comment("이미지")
-    private String image;
+    @Comment("제품 가격")
+    private Integer price;
 
+    @Comment("포스트 상태")
+    @Enumerated(EnumType.STRING)
+    private PostStatus postStatus;
+
+    @NotNull
+    @Column
+    @Comment("댓글 수")
+    @Builder.Default
+    private Integer commentCount = 0;
     @Nullable
     @Column
     @Comment("외부 링크")
@@ -76,61 +86,52 @@ public class Post extends BaseTimeEntity {
 
     @NotNull
     @Column
-    @Comment("조회수")
+    @Comment("투표수")
     @Builder.Default
-    private Integer viewCount = 0;
-
-    @NotNull
-    @Column
-    @Comment("댓글 수")
-    @Builder.Default
-    private Integer commentCount = 0;
+    private Integer voteCount = 0;
 
     @ElementCollection(fetch = FetchType.EAGER)
     @Column
-    @Comment("태그 리스트")
+    @Comment("이미지 리스트")
     @Builder.Default
-    private List<String> postTagList = new ArrayList<>();
+    private List<String> imageList = new ArrayList<>();
 
     @OneToMany(mappedBy = "id.post", orphanRemoval = true, fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @Builder.Default
     private Set<Vote> votes = new LinkedHashSet<>();
 
-    @Enumerated(EnumType.STRING)
-    @Column
-    @Comment("게시글 카테고리 타입")
-    private PostCategoryType postCategoryType;
+//    @Column
+//    private Post review;
 
-    public void setAuthor(Member author) {
-        this.author = author;
+    @OneToMany(mappedBy = "post", orphanRemoval = true)
+    private Set<Member> subscribers = new LinkedHashSet<>();
+
+    @OneToOne(orphanRemoval = true)
+    @JoinColumn(name = "review_id")
+    private Post review;
+
+    public void setReview(Post review) {
+        this.review = review;
     }
 
-    public void setImage(String image) {
-        this.image = image;
+    public void setSubscribers(Set<Member> subscribers) {
+        this.subscribers = subscribers;
     }
 
-    public void addLike() {
+    public void incrementVoteCount() {
+        this.voteCount += 1;
+    }
+
+    public void decrementVoteCount() {
+        this.voteCount -= 1;
+    }
+
+    public void incrementLikeCount() {
         this.likeCount += 1;
     }
 
-    public void addComment() {
-        this.commentCount += 1;
-    }
-
-    public void cancelLike() {
-        int restLikeCount = this.likeCount - 1;
-        if (restLikeCount < 0) {
-            throw new IllegalStateException("Don't cancel post like");
-        }
-        this.likeCount = restLikeCount;
-    }
-
-    public void deleteComment() {
-        int restCommentCount = this.commentCount - 1;
-        if (restCommentCount < 0) {
-            throw new IllegalStateException("Don't cancel post comment");
-        }
-        this.commentCount = restCommentCount;
+    public void decrementLike() {
+        this.likeCount -= 1;
     }
 
     public void createVote(Member voter, VoteType voteType) {
@@ -140,12 +141,19 @@ public class Post extends BaseTimeEntity {
                         .post(this)
                         .build())
                 .isAgree(voteType == VoteType.AGREE)
-                .gender(voter.getUserGender())
-                .grade(voter.getGrade())
-                .regionType(voter.getSchool().getSchoolRegion())
-                .schoolType(voter.getSchool().getSchoolType())
-                .grade(voter.getGrade())
                 .build();
         this.votes.add(vote);
+    }
+
+    public void setAuthor(Member author) {
+        this.author = author;
+    }
+
+    public void incrementCommentCount() {
+        this.commentCount += 1;
+    }
+
+    public void decrementComment() {
+        this.commentCount -= 1;
     }
 }

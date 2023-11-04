@@ -3,8 +3,8 @@ package com.twohoseon.app.service.post;
 import com.twohoseon.app.dto.request.CommentCreateRequestDTO;
 import com.twohoseon.app.dto.response.PostCommentInfoDTO;
 import com.twohoseon.app.entity.member.Member;
+import com.twohoseon.app.entity.post.Comment;
 import com.twohoseon.app.entity.post.Post;
-import com.twohoseon.app.entity.post.PostComment;
 import com.twohoseon.app.exception.CommentNotFoundException;
 import com.twohoseon.app.exception.PermissionDeniedException;
 import com.twohoseon.app.exception.PostNotFoundException;
@@ -49,7 +49,7 @@ public class PostCommentServiceImpl implements PostCommentService {
         Post post = postRepository.findById(commentCreateRequestDTO.getPostId())
                 .orElseThrow(() -> new PostNotFoundException());
         boolean isSubComment = commentCreateRequestDTO.getParentId() != null;
-        PostComment postComment = PostComment
+        Comment comment = Comment
                 .builder()
                 .author(member)
                 .post(post)
@@ -57,22 +57,22 @@ public class PostCommentServiceImpl implements PostCommentService {
                 .build();
 
         if (isSubComment) {
-            PostComment parentPostComment = postCommentRepository.findById(commentCreateRequestDTO.getParentId())
+            Comment parentComment = postCommentRepository.findById(commentCreateRequestDTO.getParentId())
                     .orElseThrow(() -> new CommentNotFoundException());
 
-            if (parentPostComment.getPost() != post) {
+            if (parentComment.getPost() != post) {
                 throw new NotFoundException("Not equal id");
             }
-            postComment.updateParent(parentPostComment);
-            parentPostComment.addChildComment(postComment);
+            comment.updateParent(parentComment);
+            parentComment.addChildComment(comment);
         } else {
-            postCommentRepository.save(postComment);
+            postCommentRepository.save(comment);
         }
 
-        post.addComment();
+        post.incrementCommentCount();
         CompletableFuture.runAsync(() -> {
             try {
-                notificationService.sendPostCommentNotification(post, member.getUserNickname(), isSubComment);
+                notificationService.sendPostCommentNotification(post, member.getNickname(), isSubComment);
             } catch (ExecutionException | InterruptedException e) {
                 log.debug("sendPostCommentNotification error: ", e);
             }
@@ -84,27 +84,27 @@ public class PostCommentServiceImpl implements PostCommentService {
     public void deleteComment(Long postCommentId) {
         //TODO 유저 권한 체크
         //TODO 삭제시 자식이 존재하는 경우 자식들도 사라져야함.
-        PostComment postComment = postCommentRepository.findById(postCommentId)
+        Comment comment = postCommentRepository.findById(postCommentId)
                 .orElseThrow(() -> new CommentNotFoundException());
 
-        if (postComment.getAuthor() != getMemberFromRequest()) {
+        if (comment.getAuthor() != getMemberFromRequest()) {
             throw new PermissionDeniedException();
         }
-        postComment.getPost().deleteComment();
-        postCommentRepository.delete(postComment);
+        comment.getPost().decrementComment();
+        postCommentRepository.delete(comment);
     }
 
     @Override
     @Transactional
     public void updateComment(Long postCommentId, String content) {
-        PostComment postComment = postCommentRepository.findById(postCommentId)
+        Comment comment = postCommentRepository.findById(postCommentId)
                 .orElseThrow(() -> new CommentNotFoundException());
 
-        if (postComment.getAuthor() != getMemberFromRequest()) {
+        if (comment.getAuthor() != getMemberFromRequest()) {
             throw new PermissionDeniedException();
         }
 
-        postComment.updateContent(content);
+        comment.updateContent(content);
     }
 
     @Override
