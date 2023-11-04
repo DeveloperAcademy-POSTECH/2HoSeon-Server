@@ -30,5 +30,9 @@ public class ResourceConfig implements WebMvcConfigurer {
         registry.addResourceHandler("/images/profiles/**")
                 .addResourceLocations(filePath + "profiles/")
                 .setCachePeriod(20);
+
+        registry.addResourceHandler("/images/reviews/**")
+                .addResourceLocations(filePath + "reviews/")
+                .setCachePeriod(20);
     }
 }
