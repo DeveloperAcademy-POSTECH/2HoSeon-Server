@@ -1,6 +1,7 @@
 package com.twohoseon.app.service.post;
 
-import com.twohoseon.app.dto.request.PostCreateRequestDTO;
+import com.twohoseon.app.dto.request.post.PostCreateRequestDTO;
+import com.twohoseon.app.dto.request.post.PostUpdateRequestDTO;
 import com.twohoseon.app.dto.response.PostInfoDTO;
 import com.twohoseon.app.dto.response.VoteCountsDTO;
 import com.twohoseon.app.enums.VoteType;
@@ -32,4 +33,8 @@ public interface PostService extends CommonService {
 //    VoteCountsDTO getVoteCounts(Long postId);
 
     PostInfoDTO fetchPost(Long postId);
+
+    void updatePost(Long postId, PostUpdateRequestDTO postUpdateRequestDTO);
+
+    void deletePost(Long postId);
 }

@@ -1,6 +1,11 @@
 package com.twohoseon.app.controller;
 
-import com.twohoseon.app.dto.request.*;
+import com.twohoseon.app.dto.request.CommentCreateRequestDTO;
+import com.twohoseon.app.dto.request.CommentFetchRequestDTO;
+import com.twohoseon.app.dto.request.CommentUpdateRequestDTO;
+import com.twohoseon.app.dto.request.VoteCreateRequestDTO;
+import com.twohoseon.app.dto.request.post.PostCreateRequestDTO;
+import com.twohoseon.app.dto.request.post.PostUpdateRequestDTO;
 import com.twohoseon.app.dto.response.*;
 import com.twohoseon.app.enums.StatusEnum;
 import com.twohoseon.app.enums.post.PostStatus;
@@ -52,12 +57,33 @@ public class PostRestController {
         return ok(responseDTO);
     }
 
+    @Operation(summary = "게시글 수정")
+    @PutMapping("/{postId}")
+    public ResponseEntity<GeneralResponseDTO> updatePost(@PathVariable Long postId, @RequestBody PostUpdateRequestDTO postUpdateRequestDTO) {
+        postService.updatePost(postId, postUpdateRequestDTO);
+        GeneralResponseDTO responseDTO = GeneralResponseDTO.builder()
+                .status(StatusEnum.OK)
+                .message("success")
+                .build();
+        return ok(responseDTO);
+    }
+
+    @Operation(summary = "게시글 삭제")
+    @DeleteMapping("/{postId}")
+    public ResponseEntity<GeneralResponseDTO> deletePost(@PathVariable Long postId) {
+        postService.deletePost(postId);
+        GeneralResponseDTO responseDTO = GeneralResponseDTO.builder()
+                .status(StatusEnum.OK)
+                .message("success")
+                .build();
+        return ok(responseDTO);
+    }
+
     @GetMapping
     @Operation(summary = "게시글 조회")
     public ResponseEntity<PostListResponseDTO> fetchPosts(@RequestParam(defaultValue = "0") int page,
                                                           @RequestParam(defaultValue = "10") int size,
-                                                          @RequestParam(defaultValue = "ACTIVE") PostStatus postStatus
-    ) {
+                                                          @RequestParam(defaultValue = "ACTIVE") PostStatus postStatus) {
         Pageable pageable = PageRequest.of(page, size);
 
         PostListResponseDTO responseDTO = PostListResponseDTO.builder()
@@ -79,10 +105,10 @@ public class PostRestController {
         return ok(responseDTO);
     }
 
+
     @Operation(summary = "게시글 투표 하기")
     @PostMapping("/{postId}/votes")
     public ResponseEntity<VoteResultResponseDTO> vote(@PathVariable Long postId, @RequestBody VoteCreateRequestDTO voteCreateRequestDTO) {
-
 
         VoteResultResponseDTO responseDTO = VoteResultResponseDTO.builder()
                 .status(StatusEnum.OK)
@@ -101,14 +127,12 @@ public class PostRestController {
     public ResponseEntity<GeneralResponseDTO> createPostComment(@RequestBody CommentCreateRequestDTO commentCreateRequestDTO) {
 
         postCommentService.createComment(commentCreateRequestDTO);
-
-        GeneralResponseDTO.GeneralResponseDTOBuilder responseDTOBuilder = GeneralResponseDTO.builder();
-
-        responseDTOBuilder
+        GeneralResponseDTO generalResponseDTO = GeneralResponseDTO
+                .builder()
                 .status(StatusEnum.OK)
-                .message("create success");
-
-        return ok(responseDTOBuilder.build());
+                .message("create success")
+                .build();
+        return ok(generalResponseDTO);
     }
 
     @Operation(summary = "댓글 삭제")

@@ -1,6 +1,7 @@
 package com.twohoseon.app.service.post;
 
-import com.twohoseon.app.dto.request.PostCreateRequestDTO;
+import com.twohoseon.app.dto.request.post.PostCreateRequestDTO;
+import com.twohoseon.app.dto.request.post.PostUpdateRequestDTO;
 import com.twohoseon.app.dto.response.PostInfoDTO;
 import com.twohoseon.app.dto.response.VoteCountsDTO;
 import com.twohoseon.app.entity.member.Member;
@@ -9,6 +10,7 @@ import com.twohoseon.app.entity.post.vote.VoteRepository;
 import com.twohoseon.app.enums.VoteType;
 import com.twohoseon.app.enums.post.PostStatus;
 import com.twohoseon.app.exception.MemberNotFoundException;
+import com.twohoseon.app.exception.PermissionDeniedException;
 import com.twohoseon.app.exception.PostNotFoundException;
 import com.twohoseon.app.repository.member.MemberRepository;
 import com.twohoseon.app.repository.post.PostRepository;
@@ -71,6 +73,32 @@ public class PostServiceImpl implements PostService {
         Member member = getMemberFromRequest();
         PostInfoDTO postInfoDTO = postRepository.findPostById(postId, member.getId());
         return postInfoDTO;
+    }
+
+    @Override
+    @Transactional
+    public void updatePost(Long postId, PostUpdateRequestDTO postUpdateRequestDTO) {
+        Post post = postRepository.findById(postId)
+                .orElseThrow(() -> new PostNotFoundException());
+        Member author = post.getAuthor();
+        Member member = getMemberFromRequest();
+        if (!author.equals(member))
+            throw new PermissionDeniedException();
+
+        post.updatePost(postUpdateRequestDTO);
+        postRepository.save(post);
+    }
+
+    @Override
+    @Transactional
+    public void deletePost(Long postId) {
+        Post post = postRepository.findById(postId)
+                .orElseThrow(() -> new PostNotFoundException());
+        Member author = post.getAuthor();
+        Member member = getMemberFromRequest();
+        if (!author.equals(member))
+            throw new PermissionDeniedException();
+        postRepository.delete(post);
     }
 
     @Override
