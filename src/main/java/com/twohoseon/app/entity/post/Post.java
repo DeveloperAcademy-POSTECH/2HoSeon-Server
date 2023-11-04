@@ -155,4 +155,8 @@ public class Post extends BaseTimeEntity {
     public void decrementComment() {
         this.commentCount -= 1;
     }
+
+    public void setImageList(List<String> imageList) {
+        this.imageList = imageList;
+    }
 }
