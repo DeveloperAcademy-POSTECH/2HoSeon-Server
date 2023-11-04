@@ -2,6 +2,7 @@ package com.twohoseon.app.service.post;
 
 import com.twohoseon.app.dto.request.post.PostCreateRequestDTO;
 import com.twohoseon.app.dto.request.post.PostUpdateRequestDTO;
+import com.twohoseon.app.dto.request.review.ReviewRequestDTO;
 import com.twohoseon.app.dto.response.PostInfoDTO;
 import com.twohoseon.app.dto.response.VoteCountsDTO;
 import com.twohoseon.app.entity.member.Member;
@@ -9,9 +10,9 @@ import com.twohoseon.app.entity.post.Post;
 import com.twohoseon.app.entity.post.vote.VoteRepository;
 import com.twohoseon.app.enums.VoteType;
 import com.twohoseon.app.enums.post.PostStatus;
-import com.twohoseon.app.exception.MemberNotFoundException;
 import com.twohoseon.app.exception.PermissionDeniedException;
 import com.twohoseon.app.exception.PostNotFoundException;
+import com.twohoseon.app.exception.ReviewExistException;
 import com.twohoseon.app.repository.member.MemberRepository;
 import com.twohoseon.app.repository.post.PostRepository;
 import com.twohoseon.app.service.schedule.JobSchedulingService;
@@ -102,11 +103,45 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
+    public void createReview(Long postId, ReviewRequestDTO reviewRequestDTO) {
+        Member member = getMemberFromRequest();
+        Post post = postRepository.findById(postId)
+                .orElseThrow(() -> new PostNotFoundException());
+        if (!post.isAuthor(member))
+            throw new PermissionDeniedException();
+        if (post.isReviewExist()) {
+            throw new ReviewExistException();
+        }
+        post.createReview(reviewRequestDTO);
+        postRepository.save(post);
+    }
+
+    @Override
+    public void updateReview(Long postId, ReviewRequestDTO reviewRequestDTO) {
+        Member member = getMemberFromRequest();
+        Post post = postRepository.findById(postId)
+                .orElseThrow(() -> new PostNotFoundException());
+        if (!post.isAuthor(member))
+            throw new PermissionDeniedException();
+        post.updateReview(reviewRequestDTO);
+    }
+
+    @Override
+    @Transactional
+    public void deleteReview(Long postId) {
+        Member member = getMemberFromRequest();
+        Post post = postRepository.findById(postId)
+                .orElseThrow(() -> new PostNotFoundException());
+        if (!post.isAuthor(member))
+            throw new PermissionDeniedException();
+
+        postRepository.delete(post.deleteReview());
+    }
+
+    @Override
     @Transactional
     public VoteCountsDTO createVote(Long postId, VoteType voteType) {
-        String providerId = getProviderIdFromRequest();
-        Member member = memberRepository.findByProviderId(providerId)
-                .orElseThrow(() -> new MemberNotFoundException());
+        Member member = getMemberFromRequest();
         Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new PostNotFoundException());
         post.createVote(member, voteType);

@@ -6,6 +6,7 @@ import com.twohoseon.app.dto.request.CommentUpdateRequestDTO;
 import com.twohoseon.app.dto.request.VoteCreateRequestDTO;
 import com.twohoseon.app.dto.request.post.PostCreateRequestDTO;
 import com.twohoseon.app.dto.request.post.PostUpdateRequestDTO;
+import com.twohoseon.app.dto.request.review.ReviewRequestDTO;
 import com.twohoseon.app.dto.response.*;
 import com.twohoseon.app.enums.StatusEnum;
 import com.twohoseon.app.enums.post.PostStatus;
@@ -78,6 +79,47 @@ public class PostRestController {
                 .build();
         return ok(responseDTO);
     }
+
+    @Operation(summary = "리뷰 작성")
+    @PostMapping("/{postId}/reviews")
+    public ResponseEntity<GeneralResponseDTO> createReview(@PathVariable Long postId, @RequestBody ReviewRequestDTO reviewRequestDTO) {
+        postService.createReview(postId, reviewRequestDTO);
+        GeneralResponseDTO responseDTO = GeneralResponseDTO.builder()
+                .status(StatusEnum.OK)
+                .message("success")
+                .build();
+        return ok(responseDTO);
+    }
+
+    @Operation(summary = "리뷰 수정")
+    @PutMapping("/{postId}/reviews")
+    public ResponseEntity<GeneralResponseDTO> updateReview(@PathVariable Long postId, @RequestBody ReviewRequestDTO reviewRequestDTO) {
+        postService.updateReview(postId, reviewRequestDTO);
+        GeneralResponseDTO responseDTO = GeneralResponseDTO.builder()
+                .status(StatusEnum.OK)
+                .message("success")
+                .build();
+        return ok(responseDTO);
+    }
+
+    @Operation(summary = "리뷰 삭제")
+    @DeleteMapping("/{postId}/reviews")
+    public ResponseEntity<GeneralResponseDTO> deleteReview(@PathVariable Long postId) {
+        postService.deleteReview(postId);
+        GeneralResponseDTO responseDTO = GeneralResponseDTO.builder()
+                .status(StatusEnum.OK)
+                .message("success")
+                .build();
+        return ok(responseDTO);
+    }
+
+    @Operation(summary = "리뷰 조회")
+    @GetMapping("/{postId}/reviews")
+    public ResponseEntity<GeneralResponseDTO> readReview(@PathVariable Long postId) {
+        //TODO 리뷰 조회 구현하기.
+        return ok().build();
+    }
+
 
     @GetMapping
     @Operation(summary = "게시글 조회")

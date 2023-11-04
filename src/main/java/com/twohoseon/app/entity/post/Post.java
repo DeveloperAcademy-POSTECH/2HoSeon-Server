@@ -1,6 +1,8 @@
 package com.twohoseon.app.entity.post;
 
 import com.twohoseon.app.common.BaseTimeEntity;
+import com.twohoseon.app.dto.request.post.PostUpdateRequestDTO;
+import com.twohoseon.app.dto.request.review.ReviewRequestDTO;
 import com.twohoseon.app.entity.member.Member;
 import com.twohoseon.app.entity.post.vote.Vote;
 import com.twohoseon.app.entity.post.vote.VoteId;
@@ -99,18 +101,22 @@ public class Post extends BaseTimeEntity {
     @Builder.Default
     private Set<Vote> votes = new LinkedHashSet<>();
 
-//    @Column
-//    private Post review;
-
     @OneToMany(mappedBy = "post", orphanRemoval = true)
+    @Builder.Default
     private Set<Member> subscribers = new LinkedHashSet<>();
 
     @OneToOne(orphanRemoval = true)
     @JoinColumn(name = "review_id")
-    private Post review;
+    @Builder.Default
+    private Post review = null;
 
-    public void setReview(Post review) {
-        this.review = review;
+    public boolean isAuthor(Member member) {
+        return this.author.equals(member);
+    }
+
+    //review is exist
+    public boolean isReviewExist() {
+        return this.review != null;
     }
 
     public void setPostToComplete() {
@@ -158,5 +164,48 @@ public class Post extends BaseTimeEntity {
 
     public void decrementComment() {
         this.commentCount -= 1;
+    }
+
+    //For Post Update
+    public void updatePost(PostUpdateRequestDTO postUpdateRequestDTO) {
+        if (postUpdateRequestDTO.getTitle() != null)
+            this.title = postUpdateRequestDTO.getTitle();
+        if (postUpdateRequestDTO.getContents() != null)
+            this.contents = postUpdateRequestDTO.getContents();
+        if (postUpdateRequestDTO.getExternalURL() != null)
+            this.externalURL = postUpdateRequestDTO.getExternalURL();
+        if (postUpdateRequestDTO.getImage() != null)
+            this.imageList.add(postUpdateRequestDTO.getImage());
+        if (postUpdateRequestDTO.getVisibilityScope() != null)
+            this.visibilityScope = postUpdateRequestDTO.getVisibilityScope();
+    }
+
+    private void updatePost(ReviewRequestDTO reviewRequestDTO) {
+        if (reviewRequestDTO.getTitle() != null)
+            this.title = reviewRequestDTO.getTitle();
+        if (reviewRequestDTO.getContents() != null)
+            this.contents = reviewRequestDTO.getContents();
+        if (reviewRequestDTO.getImage() != null)
+            this.imageList.add(reviewRequestDTO.getImage());
+    }
+
+    public void createReview(ReviewRequestDTO reviewRequestDTO) {
+        Post review = Post.builder()
+                .author(this.author)
+                .visibilityScope(this.visibilityScope)
+                .title(reviewRequestDTO.getTitle())
+                .contents(reviewRequestDTO.getContents())
+                .build();
+        this.review = review;
+    }
+
+    public void updateReview(ReviewRequestDTO reviewRequestDTO) {
+        this.review.updatePost(reviewRequestDTO);
+    }
+
+    public Post deleteReview() {
+        Post review = this.review;
+        this.review = null;
+        return review;
     }
 }
