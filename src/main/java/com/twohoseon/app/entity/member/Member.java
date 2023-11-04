@@ -3,7 +3,7 @@ package com.twohoseon.app.entity.member;
 import com.google.common.base.Objects;
 import com.twohoseon.app.common.BaseTimeEntity;
 import com.twohoseon.app.entity.post.Post;
-import com.twohoseon.app.enums.GenderType;
+import com.twohoseon.app.enums.ConsumerType;
 import com.twohoseon.app.enums.OAuth2Provider;
 import com.twohoseon.app.enums.UserRole;
 import jakarta.persistence.*;
@@ -12,7 +12,6 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.ToString;
 
-import java.time.LocalDate;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
@@ -44,29 +43,18 @@ public class Member extends BaseTimeEntity {
     private String providerId;
 
     @Column(nullable = true)
-    private String userEmail;
-    @Column(nullable = true)
-    private String userName;
+    private String nickname;
 
+    @Column(nullable = true)
+    private String profileImage;
+
+    @Column
     @Enumerated(EnumType.STRING)
-    @Column(nullable = true)
-    private GenderType userGender;
-
-    @Column(nullable = true)
-    private String userNickname;
-
-    @Column(nullable = true)
-    private String userProfileImage;
-
-    @Column(nullable = true)
-    private LocalDate userBirth;
+    private ConsumerType consumerType;
 
     @Embedded
     @Column(nullable = true)
     private School school;
-
-    @Column(nullable = true)
-    private Integer grade;
 
     @Column(nullable = true)
     private String deviceToken;
@@ -79,32 +67,31 @@ public class Member extends BaseTimeEntity {
     @OneToMany(mappedBy = "author", orphanRemoval = true)
     private Set<Post> posts = new LinkedHashSet<>();
 
+    @ManyToOne
+    @JoinColumn(name = "post_id")
+    private Post post;
+
+    public void setPost(Post post) {
+        this.post = post;
+    }
+
     public void setPosts(Set<Post> posts) {
         this.posts = posts;
     }
 
-//    @OneToMany(mappedBy = "member", orphanRemoval = true)
-//    private Set<PostComment> postComments = new LinkedHashSet<>();
-//
-//    public void setPostComments(Set<PostComment> postComments) {
-//        this.postComments = postComments;
-//    }
-
-    public void updateAdditionalUserInfo(String userProfileImage, String userNickname, GenderType userGender, School school, Integer grade) {
-        this.userProfileImage = userProfileImage;
-        this.userNickname = userNickname;
-        this.userGender = userGender;
+    public void updateAdditionalUserInfo(String profileImage, String nickname, School school) {
+        this.profileImage = profileImage;
+        this.nickname = nickname;
         this.school = school;
-        this.grade = grade;
     }
 
 
     public void updateDeviceToken(String deviceToken) {
         this.deviceToken = deviceToken;
     }
-  
-    public void setUserProfileImage(String userProfileImage) {
-        this.userProfileImage = userProfileImage;
+
+    public void setUserProfileImage(String profileImage) {
+        this.profileImage = profileImage;
     }
 
     protected Member() {

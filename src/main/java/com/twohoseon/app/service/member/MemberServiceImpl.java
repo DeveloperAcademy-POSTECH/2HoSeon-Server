@@ -29,12 +29,9 @@ public class MemberServiceImpl implements MemberService {
 
     @Override
     public UserDetails loadUserByUsername(String providerId) throws UsernameNotFoundException {
-        Optional<Member> memberOptional = memberRepository.findByProviderId(providerId);
-        if (memberOptional.isPresent()) {
-            return new MemberDetails(memberOptional.get());
-        }
-        //TODO member not found exception handling
-        return null;
+        Member member = memberRepository.findByProviderId(providerId)
+                .orElseThrow(() -> new UsernameNotFoundException("Member not found with providerId : " + providerId));
+        return new MemberDetails(member);
     }
 
     @Override
@@ -43,17 +40,17 @@ public class MemberServiceImpl implements MemberService {
 
         Member member = getMemberFromRequest();
         log.debug("profileRequestDTO = " + profileRequestDTO.toString());
-        member.updateAdditionalUserInfo(profileRequestDTO.getUserProfileImage(),
-                profileRequestDTO.getUserNickname(),
-                profileRequestDTO.getUserGender(),
-                profileRequestDTO.getSchool(),
-                profileRequestDTO.getGrade());
+        member.updateAdditionalUserInfo(
+                profileRequestDTO.getProfileImage(),
+                profileRequestDTO.getNickname(),
+                profileRequestDTO.getSchool()
+        );
         memberRepository.save(member);
     }
 
     @Override
     public boolean validateDuplicateUserNickname(String userNickname) {
-        return memberRepository.existsByUserNickname(userNickname);
+        return memberRepository.existsByNickname(userNickname);
     }
 
     public Optional<Member> findByProviderId(String providerId) {
