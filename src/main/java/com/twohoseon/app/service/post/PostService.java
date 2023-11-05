@@ -44,4 +44,6 @@ public interface PostService extends CommonService {
     void updateReview(Long postId, ReviewRequestDTO reviewRequestDTO);
 
     void deleteReview(Long postId);
+
+    void subscribePost(Long postId);
 }

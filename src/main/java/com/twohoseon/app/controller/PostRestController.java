@@ -80,6 +80,13 @@ public class PostRestController {
         return ok(responseDTO);
     }
 
+    @Operation(summary = "후기 구독")
+    @PostMapping("/{postId}/subscribe")
+    public ResponseEntity<GeneralResponseDTO> subscribePost(@PathVariable Long postId) {
+        postService.subscribePost(postId);
+        return ok().build();
+    }
+
     @Operation(summary = "리뷰 작성")
     @PostMapping("/{postId}/reviews")
     public ResponseEntity<GeneralResponseDTO> createReview(@PathVariable Long postId, @RequestBody ReviewRequestDTO reviewRequestDTO) {
@@ -112,14 +119,34 @@ public class PostRestController {
                 .build();
         return ok(responseDTO);
     }
-
-    @Operation(summary = "리뷰 조회")
-    @GetMapping("/{postId}/reviews")
-    public ResponseEntity<GeneralResponseDTO> readReview(@PathVariable Long postId) {
-        //TODO 리뷰 조회 구현하기.
-        return ok().build();
-    }
-
+//
+//    @Operation(summary = "리뷰 조회")
+//    @GetMapping("/{postId}/reviews")
+//    public ResponseEntity<GeneralResponseDTO> readReview(@PathVariable Long postId) {
+//        //TODO 리뷰 조회 구현하기.
+//        return ok().build();
+//    }
+//
+//    @Operation(summary = "리뷰 댓글 작성")
+//    @PostMapping("/{postId}/reviews/comments")
+//    public ResponseEntity<GeneralResponseDTO> createReviewComment(@PathVariable Long postId, @RequestBody CommentCreateRequestDTO commentCreateRequestDTO) {
+//        //TODO 리뷰 댓글 작성 구현하기.
+//        return ok().build();
+//    }
+//
+//    @Operation(summary = "리뷰 댓글 수정")
+//    @PutMapping("/{postId}/reviews/comments/{commentId}")
+//    public ResponseEntity<GeneralResponseDTO> updateReviewComment(@PathVariable Long postId, @PathVariable Long commentId, @RequestBody CommentUpdateRequestDTO commentUpdateRequestDTO) {
+//        //TODO 리뷰 댓글 수정 구현하기.
+//        return ok().build();
+//    }
+//
+//    @Operation(summary = "리뷰 댓글 삭제")
+//    @DeleteMapping("/{postId}/reviews/comments/{commentId}")
+//    public ResponseEntity<GeneralResponseDTO> deleteReviewComment(@PathVariable Long postId, @PathVariable Long commentId) {
+//        //TODO 리뷰 댓글 삭제 구현하기.
+//        return ok().build();
+//    }
 
     @GetMapping
     @Operation(summary = "게시글 조회")
@@ -268,4 +295,5 @@ public class PostRestController {
 
         return ok(responseDTOBuilder.build());
     }
+
 }

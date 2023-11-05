@@ -50,7 +50,7 @@ public class PostServiceImpl implements PostService {
 
     @Override
     public void createPost(PostCreateRequestDTO postCreateRequestDTO) {
-
+        //TODO 이미지 추가를 위해 PostCreateRequestDTO 수정 및 Request Type 변경 필요(json to form-data)
         Member author = getMemberFromRequest();
         Post post = Post.builder()
                 .author(author)
@@ -149,6 +149,15 @@ public class PostServiceImpl implements PostService {
             throw new PermissionDeniedException();
 
         postRepository.delete(post.deleteReview());
+    }
+
+    @Override
+    public void subscribePost(Long postId) {
+        Member member = getMemberFromRequest();
+        Post post = postRepository.findById(postId)
+                .orElseThrow(() -> new PostNotFoundException());
+        post.subscribe(member);
+        postRepository.save(post);
     }
 
     @Override

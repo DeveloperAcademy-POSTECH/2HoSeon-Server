@@ -207,4 +207,8 @@ public class Post extends BaseTimeEntity {
         this.review = null;
         return review;
     }
+
+    public void subscribe(Member member) {
+        subscribers.add(member);
+    }
 }
