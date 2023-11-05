@@ -133,15 +133,6 @@ public class Post extends BaseTimeEntity {
         this.postStatus = PostStatus.COMPLETE;
     }
 
-
-    public void incrementVoteCount() {
-        this.voteCount += 1;
-    }
-
-    public void decrementVoteCount() {
-        this.voteCount -= 1;
-    }
-
     public void incrementLikeCount() {
         this.likeCount += 1;
     }
@@ -158,6 +149,7 @@ public class Post extends BaseTimeEntity {
                         .build())
                 .isAgree(voteType == VoteType.AGREE)
                 .build();
+        voteCount++;
         this.votes.add(vote);
     }
 
