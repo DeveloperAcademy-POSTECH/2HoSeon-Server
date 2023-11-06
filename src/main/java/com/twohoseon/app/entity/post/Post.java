@@ -190,11 +190,13 @@ public class Post extends BaseTimeEntity {
     }
 
     public void incrementCommentCount() {
-        this.commentCount += 1;
+        this.commentCount++;
     }
 
     public void decrementComment() {
         this.commentCount -= 1;
+    public void decrementCommentCount() {
+        this.commentCount--;
     }
 
     //For Post Update
