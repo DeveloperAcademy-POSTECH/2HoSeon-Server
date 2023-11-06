@@ -15,14 +15,14 @@ import org.springframework.web.multipart.MultipartFile;
 @Schema(name = "ReviewRequestDTO", description = "후기 생성 요청 DTO")
 @Getter
 public class ReviewRequestDTO {
-    @Schema(name = "title", description = "후기 제목")
+    @Schema(name = "title", type = "String", description = "후기 제목")
     private String title;
-    @Schema(name = "contents", description = "후기 내용")
+    @Schema(name = "contents", type = "String", description = "후기 내용")
     private String contents;
-    @Schema(name = "price", description = "제품 가격")
+    @Schema(name = "price", type = "int", description = "제품 가격")
     private int price;
-    @Schema(name = "image", description = "후기 이미지")
+    @Schema(name = "image", type = "MultipartFile", description = "후기 이미지")
     private MultipartFile image;
-    @Schema(name = "isPurchased", description = "구매 여부")
+    @Schema(name = "isPurchased", type = "boolean", description = "구매 여부")
     private boolean isPurchased;
 }
