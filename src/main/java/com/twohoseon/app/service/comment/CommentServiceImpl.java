@@ -43,7 +43,6 @@ public class CommentServiceImpl implements CommentService {
     @Transactional
     public void createComment(CommentCreateRequestDTO commentCreateRequestDTO) {
         Member member = getMemberFromRequest();
-
         Post post = postRepository.findById(commentCreateRequestDTO.getPostId())
                 .orElseThrow(() -> new PostNotFoundException());
         Comment comment = Comment
@@ -52,7 +51,6 @@ public class CommentServiceImpl implements CommentService {
                 .post(post)
                 .content(commentCreateRequestDTO.getContents())
                 .build();
-        post.incrementCommentCount();
         commentRepository.save(comment);
         CompletableFuture.runAsync(() -> {
             try {
@@ -90,7 +88,7 @@ public class CommentServiceImpl implements CommentService {
         if (comment.getAuthor() != member) {
             throw new PermissionDeniedException();
         }
-        comment.getPost().decrementComment();
+        comment.getPost().decrementCommentCount();
         commentRepository.delete(comment);
     }
 

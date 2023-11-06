@@ -67,4 +67,13 @@ public class Comment extends BaseTimeEntity {
         return !this.author.equals(author);
     }
 
+    @PrePersist
+    public void prePersist() {
+        this.post.incrementCommentCount();
+    }
+
+    @PreRemove
+    public void preRemove() {
+        this.post.decrementCommentCount();
+    }
 }
