@@ -8,15 +8,14 @@ import lombok.Getter;
  * @author : hyunwoopark
  * @version : 1.0.0
  * @package : twohoseon
- * @name : PostUpdateRequestDTO
- * @date : 11/5/23 12:46 AM
+ * @name : PostCreateRequestDTO
+ * @date : 10/18/23 11:21 PM
  * @modifyed : $
  **/
-@Schema(name = "PostUpdateRequestDTO", description = "게시글 수정 요청 DTO")
 @Getter
-public class PostUpdateRequestDTO {
-    //TODO PostCreateRequestDTO와 동일하므로 추후에 하나로 합칠 것
-    @Schema(name = "VisibilityScope", description = "게시글 공개 범위")
+@Schema(name = "PostCreateRequestDTO", description = "게시글 생성 요청 DTO")
+public class PostRequestDTO {
+    @Schema(name = "visibilityScope", description = "게시글 공개 범위")
     private VisibilityScope visibilityScope;
     @Schema(name = "title", description = "게시글 제목")
     private String title;
@@ -24,6 +23,8 @@ public class PostUpdateRequestDTO {
     private String contents;
     @Schema(name = "image", description = "게시글 이미지, 아마 multipart로 받아야 할듯")
     private String image;
+    @Schema(name = "price", description = "가격")
+    private Integer price;
     @Schema(name = "externalURL", description = "게시글 외부 URL")
     private String externalURL;
 }

@@ -1,11 +1,10 @@
 package com.twohoseon.app.controller;
 
-import com.twohoseon.app.dto.request.CommentCreateRequestDTO;
-import com.twohoseon.app.dto.request.CommentFetchRequestDTO;
-import com.twohoseon.app.dto.request.CommentUpdateRequestDTO;
-import com.twohoseon.app.dto.request.VoteCreateRequestDTO;
-import com.twohoseon.app.dto.request.post.PostCreateRequestDTO;
-import com.twohoseon.app.dto.request.post.PostUpdateRequestDTO;
+import com.twohoseon.app.dto.request.comment.CommentCreateRequestDTO;
+import com.twohoseon.app.dto.request.comment.CommentFetchRequestDTO;
+import com.twohoseon.app.dto.request.comment.CommentUpdateRequestDTO;
+import com.twohoseon.app.dto.request.post.PostRequestDTO;
+import com.twohoseon.app.dto.request.post.VoteCreateRequestDTO;
 import com.twohoseon.app.dto.request.review.ReviewRequestDTO;
 import com.twohoseon.app.dto.response.*;
 import com.twohoseon.app.enums.StatusEnum;
@@ -49,8 +48,8 @@ public class PostRestController {
 
     @Operation(summary = "게시글 작성")
     @PostMapping
-    public ResponseEntity<GeneralResponseDTO> createPost(@RequestBody PostCreateRequestDTO postCreateRequestDTO) {
-        postService.createPost(postCreateRequestDTO);
+    public ResponseEntity<GeneralResponseDTO> createPost(@RequestBody PostRequestDTO postRequestDTO) {
+        postService.createPost(postRequestDTO);
         GeneralResponseDTO responseDTO = GeneralResponseDTO.builder()
                 .status(StatusEnum.OK)
                 .message("success")
@@ -60,7 +59,7 @@ public class PostRestController {
 
     @Operation(summary = "게시글 수정")
     @PutMapping("/{postId}")
-    public ResponseEntity<GeneralResponseDTO> updatePost(@PathVariable Long postId, @RequestBody PostUpdateRequestDTO postUpdateRequestDTO) {
+    public ResponseEntity<GeneralResponseDTO> updatePost(@PathVariable Long postId, @RequestBody PostRequestDTO postUpdateRequestDTO) {
         postService.updatePost(postId, postUpdateRequestDTO);
         GeneralResponseDTO responseDTO = GeneralResponseDTO.builder()
                 .status(StatusEnum.OK)

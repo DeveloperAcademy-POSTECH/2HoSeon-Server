@@ -1,4 +1,4 @@
-package com.twohoseon.app.dto.request;
+package com.twohoseon.app.dto.request.post;
 
 import com.twohoseon.app.enums.VoteType;
 import io.swagger.v3.oas.annotations.media.Schema;

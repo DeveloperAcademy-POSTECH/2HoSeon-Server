@@ -1,6 +1,6 @@
 package com.twohoseon.app.controller;
 
-import com.twohoseon.app.dto.request.RegisterDeviceTokenRequestDTO;
+import com.twohoseon.app.dto.request.member.RegisterDeviceTokenRequestDTO;
 import com.twohoseon.app.dto.response.GeneralResponseDTO;
 import com.twohoseon.app.service.member.MemberService;
 import lombok.RequiredArgsConstructor;

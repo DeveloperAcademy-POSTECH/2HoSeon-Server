@@ -1,7 +1,7 @@
 package com.twohoseon.app.controller;
 
-import com.twohoseon.app.dto.request.NicknameValidCheckRequest;
-import com.twohoseon.app.dto.request.ProfileRequestDTO;
+import com.twohoseon.app.dto.request.member.NicknameValidCheckRequest;
+import com.twohoseon.app.dto.request.member.ProfileRequestDTO;
 import com.twohoseon.app.dto.response.GeneralResponseDTO;
 import com.twohoseon.app.enums.StatusEnum;
 import com.twohoseon.app.service.member.MemberService;

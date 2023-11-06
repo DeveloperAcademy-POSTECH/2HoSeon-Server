@@ -1,4 +1,4 @@
-package com.twohoseon.app.dto.request;
+package com.twohoseon.app.dto.request.comment;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
