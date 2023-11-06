@@ -227,10 +227,12 @@ public class Post extends BaseTimeEntity {
 
     public void createReview(ReviewRequestDTO reviewRequestDTO) {
         Post review = Post.builder()
+                .postStatus(PostStatus.REVIEW)
                 .author(this.author)
                 .visibilityScope(this.visibilityScope)
                 .title(reviewRequestDTO.getTitle())
                 .contents(reviewRequestDTO.getContents())
+                .isPurchased(reviewRequestDTO.isPurchased())
                 .build();
         this.review = review;
     }
