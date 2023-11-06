@@ -1,8 +1,11 @@
 package com.twohoseon.app.dto.response;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.ToString;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -18,16 +21,38 @@ import java.util.List;
 
 @Getter
 @Builder
+@ToString
+@AllArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_NULL)
+@Schema(name = "PostCommentInfoDTO", description = "댓글 정보 DTO")
 public class CommentInfoDTO {
-    private Long id;
-    private String profileImage;
-    private String author;
-    private String content;
+    @Schema(name = "commentId", type = "long", description = "댓글 ID")
+    Long commentId;
 
-    private LocalDateTime createDate;
+    @Schema(name = "createDate", type = "LocalDateTime", description = "댓글 생성일")
+    LocalDateTime createDate;
 
-    private LocalDateTime modifiedDate;
+    @Schema(name = "modifiedDate", type = "LocalDateTime", description = "댓글 수정일")
+    LocalDateTime modifiedDate;
 
-    private List<CommentInfoDTO> childComments;
+    @Schema(name = "contents", type = "String", description = "댓글 내용")
+    String content;
+
+    @Schema(name = "author", type = "AuthorInfoDTO", description = "댓글 작성자 정보")
+    AuthorInfoDTO author;
+
+    @Schema(name = "childComments", type = "List<PostCommentInfoDTO>", description = "대댓글 정보 DTO 리스트")
+    List<CommentInfoDTO> childComments;
+
+    public void setChildComments(List<CommentInfoDTO> childComments) {
+        this.childComments = childComments;
+    }
+
+    public CommentInfoDTO(Long commentId, LocalDateTime createDate, LocalDateTime modifiedDate, String content, AuthorInfoDTO author) {
+        this.commentId = commentId;
+        this.createDate = createDate;
+        this.modifiedDate = modifiedDate;
+        this.content = content;
+        this.author = author;
+    }
 }

@@ -1,7 +1,7 @@
 package com.twohoseon.app.service.post;
 
 import com.twohoseon.app.dto.request.comment.CommentCreateRequestDTO;
-import com.twohoseon.app.dto.response.PostCommentInfoDTO;
+import com.twohoseon.app.dto.response.CommentInfoDTO;
 import com.twohoseon.app.entity.member.Member;
 import com.twohoseon.app.entity.post.Comment;
 import com.twohoseon.app.entity.post.Post;
@@ -108,10 +108,10 @@ public class PostCommentServiceImpl implements PostCommentService {
     }
 
     @Override
-    public List<PostCommentInfoDTO> getPostCommentChildren(Long postId, Long commentId) {
+    public List<CommentInfoDTO> getPostCommentChildren(Long postId, Long commentId) {
         Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new PostNotFoundException());
-        List<PostCommentInfoDTO> postCommentLists = postCommentRepository.findByPostAndId(post, commentId);
+        List<CommentInfoDTO> postCommentLists = postCommentRepository.findByPostAndId(post, commentId);
         return postCommentLists;
     }
 }

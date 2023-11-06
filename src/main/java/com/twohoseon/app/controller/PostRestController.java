@@ -239,7 +239,7 @@ public class PostRestController {
     @GetMapping("/comments")
     public ResponseEntity<PostCommentResponseDTO> readPostComment(@RequestBody CommentFetchRequestDTO commentFetchRequestDTO) {
 
-        List<PostCommentInfoDTO> postCommentLists = postRepository.getAllCommentsFromPost(commentFetchRequestDTO.getPostId());
+        List<CommentInfoDTO> postCommentLists = postRepository.getAllCommentsFromPost(commentFetchRequestDTO.getPostId());
 
         PostCommentResponseDTO postCommentResponseDTO = PostCommentResponseDTO.builder()
                 .status(StatusEnum.OK)
@@ -254,7 +254,7 @@ public class PostRestController {
     @GetMapping("/comments/{commentId}")
     public ResponseEntity<PostCommentResponseDTO> getPostCommentChildren(@PathVariable Long commentId) {
 
-        List<PostCommentInfoDTO> postCommentLists = postRepository.getChildComments(commentId);
+        List<CommentInfoDTO> postCommentLists = postRepository.getChildComments(commentId);
 
         PostCommentResponseDTO postCommentResponseDTO = PostCommentResponseDTO.builder()
                 .status(StatusEnum.OK)
