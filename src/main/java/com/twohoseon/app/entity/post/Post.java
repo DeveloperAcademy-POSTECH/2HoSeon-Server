@@ -1,7 +1,7 @@
 package com.twohoseon.app.entity.post;
 
 import com.twohoseon.app.common.BaseTimeEntity;
-import com.twohoseon.app.dto.request.post.PostUpdateRequestDTO;
+import com.twohoseon.app.dto.request.post.PostRequestDTO;
 import com.twohoseon.app.dto.request.review.ReviewRequestDTO;
 import com.twohoseon.app.entity.member.Member;
 import com.twohoseon.app.entity.post.vote.Vote;
@@ -47,7 +47,7 @@ public class Post extends BaseTimeEntity {
 
     @NotNull
     @Enumerated(EnumType.STRING)
-    @Comment("게시글 타입")
+    @Comment("공개 범위")
     private VisibilityScope visibilityScope;
 
     @NotNull
@@ -166,17 +166,18 @@ public class Post extends BaseTimeEntity {
     }
 
     //For Post Update
-    public void updatePost(PostUpdateRequestDTO postUpdateRequestDTO) {
-        if (postUpdateRequestDTO.getTitle() != null)
-            this.title = postUpdateRequestDTO.getTitle();
-        if (postUpdateRequestDTO.getContents() != null)
-            this.contents = postUpdateRequestDTO.getContents();
-        if (postUpdateRequestDTO.getExternalURL() != null)
-            this.externalURL = postUpdateRequestDTO.getExternalURL();
-        if (postUpdateRequestDTO.getImage() != null)
-            this.imageList.add(postUpdateRequestDTO.getImage());
-        if (postUpdateRequestDTO.getVisibilityScope() != null)
-            this.visibilityScope = postUpdateRequestDTO.getVisibilityScope();
+    public void updatePost(PostRequestDTO postRequestDTO) {
+        //TODO 이미지 부분 List<String>으로 변경
+        if (postRequestDTO.getTitle() != null)
+            this.title = postRequestDTO.getTitle();
+        if (postRequestDTO.getContents() != null)
+            this.contents = postRequestDTO.getContents();
+        if (postRequestDTO.getExternalURL() != null)
+            this.externalURL = postRequestDTO.getExternalURL();
+        if (postRequestDTO.getImage() != null)
+            this.imageList.add(postRequestDTO.getImage());
+        if (postRequestDTO.getVisibilityScope() != null)
+            this.visibilityScope = postRequestDTO.getVisibilityScope();
     }
 
     private void updatePost(ReviewRequestDTO reviewRequestDTO) {
@@ -184,8 +185,9 @@ public class Post extends BaseTimeEntity {
             this.title = reviewRequestDTO.getTitle();
         if (reviewRequestDTO.getContents() != null)
             this.contents = reviewRequestDTO.getContents();
-        if (reviewRequestDTO.getImage() != null)
-            this.imageList.add(reviewRequestDTO.getImage());
+        //TODO 멀티파트 처리후 이미지 링크 저장 필
+//        if (reviewRequestDTO.getImage() != null)
+//            this.imageList.add(reviewRequestDTO.getImage());
     }
 
     public void createReview(ReviewRequestDTO reviewRequestDTO) {
