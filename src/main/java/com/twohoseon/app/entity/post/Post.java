@@ -181,7 +181,10 @@ public class Post extends BaseTimeEntity {
                         .build())
                 .isAgree(voteType == VoteType.AGREE)
                 .build();
-        voteCount++;
+        if (voteType == VoteType.AGREE)
+            this.agreeCount += 1;
+        else
+            this.disagreeCount += 1;
         this.votes.add(vote);
     }
 
@@ -193,8 +196,6 @@ public class Post extends BaseTimeEntity {
         this.commentCount++;
     }
 
-    public void decrementComment() {
-        this.commentCount -= 1;
     public void decrementCommentCount() {
         this.commentCount--;
     }
