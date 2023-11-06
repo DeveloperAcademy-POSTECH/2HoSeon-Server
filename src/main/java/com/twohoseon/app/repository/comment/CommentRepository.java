@@ -1,4 +1,4 @@
-package com.twohoseon.app.repository.post;
+package com.twohoseon.app.repository.comment;
 
 import com.twohoseon.app.dto.response.CommentInfoDTO;
 import com.twohoseon.app.entity.post.Comment;
@@ -18,10 +18,13 @@ import java.util.Optional;
  * @modifyed : $
  **/
 @Repository
-public interface PostCommentRepository extends JpaRepository<Comment, Long> {
+public interface CommentRepository extends JpaRepository<Comment, Long>, CommentCustomRepository {
 
     Optional<List<Comment>> findPostCommentsByPost(Post post);
 
     List<CommentInfoDTO> findByPostAndId(Post post, Long id);
+
+    List<Comment> findByPost_Id(Long id);
+
 
 }

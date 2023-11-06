@@ -4,7 +4,10 @@ import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.CaseBuilder;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
-import com.twohoseon.app.dto.response.*;
+import com.twohoseon.app.dto.response.AuthorInfoDTO;
+import com.twohoseon.app.dto.response.PostInfoDTO;
+import com.twohoseon.app.dto.response.VoteCountsDTO;
+import com.twohoseon.app.dto.response.VoteInfoDTO;
 import com.twohoseon.app.enums.post.PostStatus;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
@@ -15,7 +18,6 @@ import java.util.List;
 
 import static com.twohoseon.app.entity.member.QMember.member;
 import static com.twohoseon.app.entity.post.QPost.post;
-import static com.twohoseon.app.entity.post.QPostComment.postComment;
 import static com.twohoseon.app.entity.post.vote.QVote.vote;
 
 
@@ -122,37 +124,6 @@ public class PostCustomRepositoryImpl implements PostCustomRepository {
         return postInfo;
     }
 
-    @Override
-    public List<CommentInfoDTO> getAllCommentsFromPost(Long postId) {
-        List<CommentInfoDTO> commentInfoDTOS = jpaQueryFactory.select(Projections.constructor(
-                        CommentInfoDTO.class,
-                        postComment.id,
-                        postComment.createDate,
-                        postComment.modifiedDate,
-                        postComment.content,
-                        Projections.constructor(
-                                AuthorInfoDTO.class,
-                                member.id,
-                                member.nickname,
-                                member.profileImage
-                        )
-                ))
-                .from(postComment)
-                .leftJoin(postComment.author, member)
-                .where(
-                        postComment.parentComment.isNull()
-                                .and(postComment.post.id.eq(postId))
-                )
-                .orderBy(postComment.createDate.asc())
-                .distinct()
-                .fetch();
-
-        for (CommentInfoDTO comments : commentInfoDTOS) {
-            comments.setSubComments(getChildComments(comments.getCommentId()));
-        }
-
-        return commentInfoDTOS;
-    }
 
     @Override
     public List<PostInfoDTO> findAllPostsByKeyword(Pageable pageable, String keyword, long memberId) {
@@ -195,28 +166,6 @@ public class PostCustomRepositoryImpl implements PostCustomRepository {
         return postInfoList;
     }
 
-    @Override
-    public List<CommentInfoDTO> getChildComments(Long parentId) {
-        return jpaQueryFactory.select(Projections.constructor(
-                        CommentInfoDTO.class,
-                        postComment.id,
-                        postComment.createDate,
-                        postComment.modifiedDate,
-                        postComment.content,
-                        Projections.constructor(
-                                AuthorInfoDTO.class,
-                                member.id,
-                                member.nickname,
-                                member.profileImage
-                        )
-                ))
-                .from(postComment)
-                .leftJoin(postComment.author, member)
-                .where(postComment.parentComment.id.eq(parentId))
-                .orderBy(postComment.createDate.asc())
-                .distinct()
-                .fetch();
-    }
 
     @Override
     public VoteCountsDTO getVoteInfo(long postId) {
