@@ -3,8 +3,6 @@ package com.twohoseon.app.service.image;
 import com.twohoseon.app.service.CommonService;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.util.List;
-
 /**
  * @author : yongjukim
  * @version : 1.0.0
@@ -14,10 +12,8 @@ import java.util.List;
  * @modifyed : $
  **/
 public interface ImageService extends CommonService {
-    void uploadProfileImage(MultipartFile file);
+    String uploadImage(MultipartFile file, String path);
 
-    void uploadPostImage(List<MultipartFile> files, Long postId);
-
-    void uploadReviewImage(MultipartFile file, Long reviewId);
+    String updateImage(MultipartFile file, String path, Long postId);
 
 }
