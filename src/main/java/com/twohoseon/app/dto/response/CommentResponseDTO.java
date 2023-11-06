@@ -23,7 +23,7 @@ import java.util.List;
 @Builder
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @Schema(name = "PostCommentResponseDTO", description = "댓글 응답 DTO")
-public class PostCommentResponseDTO {
+public class CommentResponseDTO {
     @Schema(name = "status", type = "int", description = "응답 상태")
     @JsonSerialize(using = StatusEnumSerializer.class)
     private StatusEnum status;

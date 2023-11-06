@@ -41,11 +41,11 @@ public class CommentInfoDTO {
     @Schema(name = "author", type = "AuthorInfoDTO", description = "댓글 작성자 정보")
     AuthorInfoDTO author;
 
-    @Schema(name = "childComments", type = "List<PostCommentInfoDTO>", description = "대댓글 정보 DTO 리스트")
-    List<CommentInfoDTO> childComments;
+    @Schema(name = "subComments", type = "List<PostCommentInfoDTO>", description = "대댓글 정보 DTO 리스트")
+    List<CommentInfoDTO> subComments;
 
-    public void setChildComments(List<CommentInfoDTO> childComments) {
-        this.childComments = childComments;
+    public void setSubComments(List<CommentInfoDTO> subComments) {
+        this.subComments = subComments;
     }
 
     public CommentInfoDTO(Long commentId, LocalDateTime createDate, LocalDateTime modifiedDate, String content, AuthorInfoDTO author) {

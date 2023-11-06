@@ -6,7 +6,6 @@ import com.twohoseon.app.dto.response.PostInfoDTO;
 import com.twohoseon.app.dto.response.VoteCountsDTO;
 import com.twohoseon.app.entity.member.Member;
 import com.twohoseon.app.entity.post.Post;
-import com.twohoseon.app.entity.post.vote.VoteRepository;
 import com.twohoseon.app.enums.VoteType;
 import com.twohoseon.app.enums.post.PostStatus;
 import com.twohoseon.app.exception.PermissionDeniedException;
@@ -43,7 +42,6 @@ import java.util.concurrent.ExecutionException;
 public class PostServiceImpl implements PostService {
     private final MemberRepository memberRepository;
     private final PostRepository postRepository;
-    private final VoteRepository voteRepository;
     private final JobSchedulingService jobSchedulingService;
     private final NotificationService notificationService;
 

@@ -148,7 +148,7 @@ public class PostCustomRepositoryImpl implements PostCustomRepository {
                 .fetch();
 
         for (CommentInfoDTO comments : commentInfoDTOS) {
-            comments.setChildComments(getChildComments(comments.getCommentId()));
+            comments.setSubComments(getChildComments(comments.getCommentId()));
         }
 
         return commentInfoDTOS;

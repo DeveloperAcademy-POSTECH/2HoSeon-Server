@@ -237,32 +237,32 @@ public class PostRestController {
 
     @Operation(summary = "댓글 조회")
     @GetMapping("/comments")
-    public ResponseEntity<PostCommentResponseDTO> readPostComment(@RequestBody CommentFetchRequestDTO commentFetchRequestDTO) {
+    public ResponseEntity<CommentResponseDTO> readPostComment(@RequestBody CommentFetchRequestDTO commentFetchRequestDTO) {
 
         List<CommentInfoDTO> postCommentLists = postRepository.getAllCommentsFromPost(commentFetchRequestDTO.getPostId());
 
-        PostCommentResponseDTO postCommentResponseDTO = PostCommentResponseDTO.builder()
+        CommentResponseDTO commentResponseDTO = CommentResponseDTO.builder()
                 .status(StatusEnum.OK)
                 .message("success")
                 .data(postCommentLists)
                 .build();
 
-        return ok(postCommentResponseDTO);
+        return ok(commentResponseDTO);
     }
 
     @Operation(summary = "대댓글 조회")
     @GetMapping("/comments/{commentId}")
-    public ResponseEntity<PostCommentResponseDTO> getPostCommentChildren(@PathVariable Long commentId) {
+    public ResponseEntity<CommentResponseDTO> getPostCommentChildren(@PathVariable Long commentId) {
 
         List<CommentInfoDTO> postCommentLists = postRepository.getChildComments(commentId);
 
-        PostCommentResponseDTO postCommentResponseDTO = PostCommentResponseDTO.builder()
+        CommentResponseDTO commentResponseDTO = CommentResponseDTO.builder()
                 .status(StatusEnum.OK)
                 .message("success")
                 .data(postCommentLists)
                 .build();
 
-        return ok(postCommentResponseDTO);
+        return ok(commentResponseDTO);
     }
 
     @Operation(summary = "좋아요 등록")
