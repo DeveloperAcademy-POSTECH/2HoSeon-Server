@@ -61,7 +61,7 @@ public class ImageServiceImpl implements ImageService {
 
             String thumbnailSaveName = fileDir + "profiles" + File.separator + "thumb_" + fileName;
             File thumbnailFile = new File(thumbnailSaveName);
-            Thumbnailator.createThumbnail(savePath.toFile(), thumbnailFile, 150, 150);
+            Thumbnailator.createThumbnail(savePath.toFile(), thumbnailFile, 50, 50);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -70,6 +70,7 @@ public class ImageServiceImpl implements ImageService {
         memberRepository.save(member);
     }
 
+    //TODO 이미지 파일 무조건 하나
     @Override
     public void uploadPostImage(List<MultipartFile> files, Long postId) {
         Post post = postRepository.findById(postId)
@@ -94,7 +95,7 @@ public class ImageServiceImpl implements ImageService {
 
                 String thumbnailSaveName = fileDir + "posts" + File.separator + "thumb_" + fileName;
                 File thumbnailFile = new File(thumbnailSaveName);
-                Thumbnailator.createThumbnail(savePath.toFile(), thumbnailFile, 150, 150);
+                Thumbnailator.createThumbnail(savePath.toFile(), thumbnailFile, 100, 100);
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -129,7 +130,7 @@ public class ImageServiceImpl implements ImageService {
 
             String thumbnailSaveName = fileDir + "reviews" + File.separator + "thumb_" + fileName;
             File thumbnailFile = new File(thumbnailSaveName);
-            Thumbnailator.createThumbnail(savePath.toFile(), thumbnailFile, 150, 150);
+            Thumbnailator.createThumbnail(savePath.toFile(), thumbnailFile, 100, 100);
         } catch (IOException e) {
             e.printStackTrace();
         }

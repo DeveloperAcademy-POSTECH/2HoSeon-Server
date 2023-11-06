@@ -1,6 +1,7 @@
 package com.twohoseon.app.service.post;
 
-import com.twohoseon.app.dto.request.PostCreateRequestDTO;
+import com.twohoseon.app.dto.request.post.PostRequestDTO;
+import com.twohoseon.app.dto.request.review.ReviewRequestDTO;
 import com.twohoseon.app.dto.response.PostInfoDTO;
 import com.twohoseon.app.dto.response.VoteCountsDTO;
 import com.twohoseon.app.enums.VoteType;
@@ -22,7 +23,7 @@ import java.util.List;
 
 public interface PostService extends CommonService {
 
-    void createPost(PostCreateRequestDTO postCreateRequestDTO);
+    void createPost(PostRequestDTO postRequestDTO);
 
     public List<PostInfoDTO> fetchPosts(Pageable pageable, PostStatus postStatus);
 
@@ -32,4 +33,16 @@ public interface PostService extends CommonService {
 //    VoteCountsDTO getVoteCounts(Long postId);
 
     PostInfoDTO fetchPost(Long postId);
+
+    void updatePost(Long postId, PostRequestDTO postRequestDTO);
+
+    void deletePost(Long postId);
+
+    void createReview(Long postId, ReviewRequestDTO reviewRequestDTO);
+
+    void updateReview(Long postId, ReviewRequestDTO reviewRequestDTO);
+
+    void deleteReview(Long postId);
+
+    void subscribePost(Long postId);
 }

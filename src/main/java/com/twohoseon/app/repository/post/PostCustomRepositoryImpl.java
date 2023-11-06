@@ -123,9 +123,9 @@ public class PostCustomRepositoryImpl implements PostCustomRepository {
     }
 
     @Override
-    public List<PostCommentInfoDTO> getAllCommentsFromPost(Long postId) {
-        List<PostCommentInfoDTO> postCommentInfoDTOS = jpaQueryFactory.select(Projections.constructor(
-                        PostCommentInfoDTO.class,
+    public List<CommentInfoDTO> getAllCommentsFromPost(Long postId) {
+        List<CommentInfoDTO> commentInfoDTOS = jpaQueryFactory.select(Projections.constructor(
+                        CommentInfoDTO.class,
                         postComment.id,
                         postComment.createDate,
                         postComment.modifiedDate,
@@ -147,11 +147,11 @@ public class PostCustomRepositoryImpl implements PostCustomRepository {
                 .distinct()
                 .fetch();
 
-        for (PostCommentInfoDTO comments : postCommentInfoDTOS) {
-            comments.setChildComments(getChildComments(comments.getCommentId()));
+        for (CommentInfoDTO comments : commentInfoDTOS) {
+            comments.setSubComments(getChildComments(comments.getCommentId()));
         }
 
-        return postCommentInfoDTOS;
+        return commentInfoDTOS;
     }
 
     @Override
@@ -196,9 +196,9 @@ public class PostCustomRepositoryImpl implements PostCustomRepository {
     }
 
     @Override
-    public List<PostCommentInfoDTO> getChildComments(Long parentId) {
+    public List<CommentInfoDTO> getChildComments(Long parentId) {
         return jpaQueryFactory.select(Projections.constructor(
-                        PostCommentInfoDTO.class,
+                        CommentInfoDTO.class,
                         postComment.id,
                         postComment.createDate,
                         postComment.modifiedDate,

@@ -110,7 +110,11 @@ public enum ErrorCode {
     DELETE_ERROR(200, "E012", "Delete Transaction Error Exception"),
 
     // 닉네임이 중복됨
-    NICKNAME_DUPLICATE_ERROR(409, "E013", "Nickname is already in use");
+    NICKNAME_DUPLICATE_ERROR(409, "E013", "Nickname is already in use"),
+
+    //후기를 중복해서 작성할 수 없음
+    REVIEW_DUPLICATE_ERROR(409, "E014", "Review is already exist");
+
 
     /**
      * ******************************* Error Code Constructor ***************************************

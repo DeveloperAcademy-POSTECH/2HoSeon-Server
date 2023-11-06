@@ -27,7 +27,7 @@ public class GeneralResponseDTO<T> {
     @JsonSerialize(using = StatusEnumSerializer.class)
     private StatusEnum status;
 
-    @Schema(name = "message", description = "응답 메시지")
+    @Schema(name = "message", type = "String", description = "응답 메시지")
     private String message;
 
     @Schema(name = "data", description = "응답 데이터")

@@ -23,14 +23,14 @@ import java.util.List;
 @Builder
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @Schema(name = "PostCommentResponseDTO", description = "댓글 응답 DTO")
-public class PostCommentResponseDTO {
+public class CommentResponseDTO {
     @Schema(name = "status", type = "int", description = "응답 상태")
     @JsonSerialize(using = StatusEnumSerializer.class)
     private StatusEnum status;
 
-    @Schema(name = "message", description = "응답 메시지")
+    @Schema(name = "message", type = "String", description = "응답 메시지")
     private String message;
 
-    @Schema(name = "data", description = "응답 데이터")
-    private List<PostCommentInfoDTO> data;
+    @Schema(name = "data", type = "List<CommentInfoDTO>", description = "응답 데이터")
+    private List<CommentInfoDTO> data;
 }

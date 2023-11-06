@@ -22,11 +22,10 @@ import java.util.Date;
 public class JobSchedulingServiceImpl implements JobSchedulingService {
     private final Scheduler scheduler;
 
-    public void schedulePostExpireJob(Long memberId, Long postId) throws SchedulerException {
+    public void schedulePostExpireJob(Long postId) throws SchedulerException {
 
         JobDataMap jobDataMap = new JobDataMap();
         jobDataMap.put("postId", postId);
-        jobDataMap.put("memberId", memberId);
 
         Date startAtDate = DateBuilder.futureDate(5, DateBuilder.IntervalUnit.SECOND);  // 현재로부터 5초 후
 //        Date startAtDate = DateBuilder.futureDate(24, DateBuilder.IntervalUnit.HOUR);  // 현재로부터 24시간 후

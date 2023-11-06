@@ -1,6 +1,8 @@
 package com.twohoseon.app.entity.post;
 
 import com.twohoseon.app.common.BaseTimeEntity;
+import com.twohoseon.app.dto.request.post.PostRequestDTO;
+import com.twohoseon.app.dto.request.review.ReviewRequestDTO;
 import com.twohoseon.app.entity.member.Member;
 import com.twohoseon.app.entity.post.vote.Vote;
 import com.twohoseon.app.entity.post.vote.VoteId;
@@ -45,7 +47,7 @@ public class Post extends BaseTimeEntity {
 
     @NotNull
     @Enumerated(EnumType.STRING)
-    @Comment("게시글 타입")
+    @Comment("공개 범위")
     private VisibilityScope visibilityScope;
 
     @NotNull
@@ -99,30 +101,36 @@ public class Post extends BaseTimeEntity {
     @Builder.Default
     private Set<Vote> votes = new LinkedHashSet<>();
 
-//    @Column
-//    private Post review;
+//    @OneToMany(mappedBy = "post", orphanRemoval = true)
+//    @Builder.Default
+//    private Set<Member> subscribers = new LinkedHashSet<>();
 
-    @OneToMany(mappedBy = "post", orphanRemoval = true)
-    private Set<Member> subscribers = new LinkedHashSet<>();
-
-    @OneToOne(orphanRemoval = true)
+    @OneToOne(orphanRemoval = true, cascade = CascadeType.ALL)
     @JoinColumn(name = "review_id")
-    private Post review;
+    @Builder.Default
+    private Post review = null;
 
-    public void setReview(Post review) {
-        this.review = review;
-    }
+    @ManyToMany
+    @JoinTable(name = "Review_subscribed_members",
+            joinColumns = @JoinColumn(name = "post_id"),
+            inverseJoinColumns = @JoinColumn(name = "members_id"))
+    private Set<Member> subscribers = new LinkedHashSet<>();
 
     public void setSubscribers(Set<Member> subscribers) {
         this.subscribers = subscribers;
     }
 
-    public void incrementVoteCount() {
-        this.voteCount += 1;
+    public boolean isAuthor(Member member) {
+        return this.author.equals(member);
     }
 
-    public void decrementVoteCount() {
-        this.voteCount -= 1;
+    //review is exist
+    public boolean isReviewExist() {
+        return this.review != null;
+    }
+
+    public void setPostToComplete() {
+        this.postStatus = PostStatus.COMPLETE;
     }
 
     public void incrementLikeCount() {
@@ -141,6 +149,7 @@ public class Post extends BaseTimeEntity {
                         .build())
                 .isAgree(voteType == VoteType.AGREE)
                 .build();
+        voteCount++;
         this.votes.add(vote);
     }
 
@@ -154,6 +163,55 @@ public class Post extends BaseTimeEntity {
 
     public void decrementComment() {
         this.commentCount -= 1;
+    }
+
+    //For Post Update
+    public void updatePost(PostRequestDTO postRequestDTO) {
+        //TODO 이미지 부분 List<String>으로 변경
+        if (postRequestDTO.getTitle() != null)
+            this.title = postRequestDTO.getTitle();
+        if (postRequestDTO.getContents() != null)
+            this.contents = postRequestDTO.getContents();
+        if (postRequestDTO.getExternalURL() != null)
+            this.externalURL = postRequestDTO.getExternalURL();
+        if (postRequestDTO.getImage() != null)
+            this.imageList.add(postRequestDTO.getImage());
+        if (postRequestDTO.getVisibilityScope() != null)
+            this.visibilityScope = postRequestDTO.getVisibilityScope();
+    }
+
+    private void updatePost(ReviewRequestDTO reviewRequestDTO) {
+        if (reviewRequestDTO.getTitle() != null)
+            this.title = reviewRequestDTO.getTitle();
+        if (reviewRequestDTO.getContents() != null)
+            this.contents = reviewRequestDTO.getContents();
+        //TODO 멀티파트 처리후 이미지 링크 저장 필
+//        if (reviewRequestDTO.getImage() != null)
+//            this.imageList.add(reviewRequestDTO.getImage());
+    }
+
+    public void createReview(ReviewRequestDTO reviewRequestDTO) {
+        Post review = Post.builder()
+                .author(this.author)
+                .visibilityScope(this.visibilityScope)
+                .title(reviewRequestDTO.getTitle())
+                .contents(reviewRequestDTO.getContents())
+                .build();
+        this.review = review;
+    }
+
+    public void updateReview(ReviewRequestDTO reviewRequestDTO) {
+        this.review.updatePost(reviewRequestDTO);
+    }
+
+    public Post deleteReview() {
+        Post review = this.review;
+        this.review = null;
+        return review;
+    }
+
+    public void subscribe(Member member) {
+        subscribers.add(member);
     }
 
     public void setImageList(List<String> imageList) {

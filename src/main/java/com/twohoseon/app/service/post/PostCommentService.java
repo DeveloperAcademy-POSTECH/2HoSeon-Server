@@ -1,7 +1,7 @@
 package com.twohoseon.app.service.post;
 
-import com.twohoseon.app.dto.request.CommentCreateRequestDTO;
-import com.twohoseon.app.dto.response.PostCommentInfoDTO;
+import com.twohoseon.app.dto.request.comment.CommentCreateRequestDTO;
+import com.twohoseon.app.dto.response.CommentInfoDTO;
 import com.twohoseon.app.service.CommonService;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -27,5 +27,5 @@ public interface PostCommentService extends CommonService {
     @Transactional
     void updateComment(Long postCommentId, String content);
 
-    List<PostCommentInfoDTO> getPostCommentChildren(Long postId, Long commentId);
+    List<CommentInfoDTO> getPostCommentChildren(Long postId, Long commentId);
 }

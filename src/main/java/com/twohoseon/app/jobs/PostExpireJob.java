@@ -1,6 +1,9 @@
 package com.twohoseon.app.jobs;
 
+import com.twohoseon.app.entity.post.Post;
+import com.twohoseon.app.repository.post.PostRepository;
 import com.twohoseon.app.service.notification.NotificationService;
+import jakarta.transaction.Transactional;
 import org.quartz.Job;
 import org.quartz.JobDataMap;
 import org.quartz.JobExecutionContext;
@@ -22,14 +25,18 @@ public class PostExpireJob implements Job {
     @Autowired
     private NotificationService notificationService;
 
+    @Autowired
+    private PostRepository postRepository;
+
+    @Transactional
     @Override
     public void execute(JobExecutionContext context) {
         JobDataMap dataMap = context.getJobDetail().getJobDataMap();
-
-        Long memberId = dataMap.getLong("memberId");
         Long postId = dataMap.getLong("postId");
+        Post post = postRepository.findById(postId).orElseThrow(() -> new RuntimeException("Post not found"));
+        post.setPostToComplete();
         try {
-            notificationService.sendPostExpiredNotification(memberId, postId);
+            notificationService.sendPostExpiredNotification(post);
         } catch (ExecutionException e) {
             throw new RuntimeException(e);
         } catch (InterruptedException e) {

@@ -14,9 +14,12 @@ import java.util.concurrent.ExecutionException;
  **/
 
 public interface NotificationService {
-    void sendPostExpiredNotification(Long memberId, Long postId) throws ExecutionException, InterruptedException;
+    void sendPostExpiredNotification(Post post) throws ExecutionException, InterruptedException;
 
     void sendPostCommentNotification(Post post, String userNickname, boolean isSubComment) throws ExecutionException, InterruptedException;
+
+    void sendPostReviewNotification(Post post) throws ExecutionException, InterruptedException;
+
 
     //TODO 후기에 댓글이 달렸을 때
     //TODO 후기에 답글이 달렸을 때

@@ -1,10 +1,8 @@
-package com.twohoseon.app.dto.request;
+package com.twohoseon.app.dto.request.post;
 
 import com.twohoseon.app.enums.post.VisibilityScope;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
-
-import java.util.List;
 
 /**
  * @author : hyunwoopark
@@ -16,8 +14,8 @@ import java.util.List;
  **/
 @Getter
 @Schema(name = "PostCreateRequestDTO", description = "게시글 생성 요청 DTO")
-public class PostCreateRequestDTO {
-    @Schema(name = "postType", description = "게시글 타입")
+public class PostRequestDTO {
+    @Schema(name = "visibilityScope", description = "게시글 공개 범위")
     private VisibilityScope visibilityScope;
     @Schema(name = "title", description = "게시글 제목")
     private String title;
@@ -25,8 +23,8 @@ public class PostCreateRequestDTO {
     private String contents;
     @Schema(name = "image", description = "게시글 이미지, 아마 multipart로 받아야 할듯")
     private String image;
+    @Schema(name = "price", description = "가격")
+    private Integer price;
     @Schema(name = "externalURL", description = "게시글 외부 URL")
     private String externalURL;
-    @Schema(name = "postTagList", description = "게시글 태그 리스트")
-    private List<String> postTagList;
 }

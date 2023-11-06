@@ -268,6 +268,11 @@ public class GlobalExceptionHandler {
         return ErrorResponse.toResponseEntity(ErrorCode.NICKNAME_DUPLICATE_ERROR);
     }
 
+    @ExceptionHandler(ReviewExistException.class)
+    protected ResponseEntity<ErrorResponse> handleReviewExistException(ReviewExistException ex) {
+        log.error("handleReviewExistException: Review is already exist", ex);
+        return ErrorResponse.toResponseEntity(ErrorCode.REVIEW_DUPLICATE_ERROR);
+    }
 
     // ==================================================================================================================
 

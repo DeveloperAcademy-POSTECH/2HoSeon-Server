@@ -15,7 +15,7 @@ import java.util.Optional;
  * @modifyed : $
  **/
 @Repository
-public interface MemberRepository extends JpaRepository<Member, Long> {
+public interface MemberRepository extends JpaRepository<Member, Long>, MemberCustomRepository {
     Optional<Member> findByProviderId(String providerId);
 
     boolean existsByProviderId(String providerId);

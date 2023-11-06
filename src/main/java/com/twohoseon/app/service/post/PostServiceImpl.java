@@ -1,25 +1,30 @@
 package com.twohoseon.app.service.post;
 
-import com.twohoseon.app.dto.request.PostCreateRequestDTO;
+import com.twohoseon.app.dto.request.post.PostRequestDTO;
+import com.twohoseon.app.dto.request.review.ReviewRequestDTO;
 import com.twohoseon.app.dto.response.PostInfoDTO;
 import com.twohoseon.app.dto.response.VoteCountsDTO;
 import com.twohoseon.app.entity.member.Member;
 import com.twohoseon.app.entity.post.Post;
-import com.twohoseon.app.entity.post.vote.VoteRepository;
 import com.twohoseon.app.enums.VoteType;
 import com.twohoseon.app.enums.post.PostStatus;
-import com.twohoseon.app.exception.MemberNotFoundException;
+import com.twohoseon.app.exception.PermissionDeniedException;
 import com.twohoseon.app.exception.PostNotFoundException;
+import com.twohoseon.app.exception.ReviewExistException;
 import com.twohoseon.app.repository.member.MemberRepository;
 import com.twohoseon.app.repository.post.PostRepository;
+import com.twohoseon.app.service.notification.NotificationService;
 import com.twohoseon.app.service.schedule.JobSchedulingService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.quartz.SchedulerException;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
 
 
 /**
@@ -33,30 +38,28 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-
+@Slf4j
 public class PostServiceImpl implements PostService {
     private final MemberRepository memberRepository;
     private final PostRepository postRepository;
-    private final VoteRepository voteRepository;
     private final JobSchedulingService jobSchedulingService;
+    private final NotificationService notificationService;
 
     @Override
-    public void createPost(PostCreateRequestDTO postCreateRequestDTO) {
-
+    public void createPost(PostRequestDTO postRequestDTO) {
+        //TODO 이미지 추가를 위해 PostCreateRequestDTO 수정 및 Request Type 변경 필요(json to form-data)
         Member author = getMemberFromRequest();
         Post post = Post.builder()
                 .author(author)
-                .visibilityScope(postCreateRequestDTO.getVisibilityScope())
-                .title(postCreateRequestDTO.getTitle())
-                .contents(postCreateRequestDTO.getContents())
-//                .image(postCreateRequestDTO.getImage())
-                .externalURL(postCreateRequestDTO.getExternalURL())
-//                .postTagList(postCreateRequestDTO.getPostTagList())
-//                .postCategoryType(postCreateRequestDTO.getPostCategoryType())
+                .visibilityScope(postRequestDTO.getVisibilityScope())
+                .title(postRequestDTO.getTitle())
+                .contents(postRequestDTO.getContents())
+                .price(postRequestDTO.getPrice())
+                .externalURL(postRequestDTO.getExternalURL())
                 .build();
         postRepository.save(post);
         try {
-            jobSchedulingService.schedulePostExpireJob(author.getId(), post.getId());
+            jobSchedulingService.schedulePostExpireJob(post.getId());
         } catch (SchedulerException e) {
             throw new RuntimeException(e);
         }
@@ -78,10 +81,86 @@ public class PostServiceImpl implements PostService {
 
     @Override
     @Transactional
+    public void updatePost(Long postId, PostRequestDTO postRequestDTO) {
+        Post post = postRepository.findById(postId)
+                .orElseThrow(() -> new PostNotFoundException());
+        Member author = post.getAuthor();
+        Member member = getMemberFromRequest();
+        if (!author.equals(member))
+            throw new PermissionDeniedException();
+
+        post.updatePost(postRequestDTO);
+        postRepository.save(post);
+    }
+
+    @Override
+    @Transactional
+    public void deletePost(Long postId) {
+        Post post = postRepository.findById(postId)
+                .orElseThrow(() -> new PostNotFoundException());
+        Member author = post.getAuthor();
+        Member member = getMemberFromRequest();
+        if (!author.equals(member))
+            throw new PermissionDeniedException();
+        postRepository.delete(post);
+    }
+
+    @Override
+    public void createReview(Long postId, ReviewRequestDTO reviewRequestDTO) {
+        Member member = getMemberFromRequest();
+        Post post = postRepository.findById(postId)
+                .orElseThrow(() -> new PostNotFoundException());
+        if (!post.isAuthor(member))
+            throw new PermissionDeniedException();
+        if (post.isReviewExist()) {
+            throw new ReviewExistException();
+        }
+        post.createReview(reviewRequestDTO);
+        postRepository.save(post);
+        CompletableFuture.runAsync(() -> {
+            try {
+                notificationService.sendPostReviewNotification(post);
+            } catch (ExecutionException | InterruptedException e) {
+                log.debug("sendPostReviewNotification error: ", e);
+            }
+        });
+    }
+
+    @Override
+    public void updateReview(Long postId, ReviewRequestDTO reviewRequestDTO) {
+        Member member = getMemberFromRequest();
+        Post post = postRepository.findById(postId)
+                .orElseThrow(() -> new PostNotFoundException());
+        if (!post.isAuthor(member))
+            throw new PermissionDeniedException();
+        post.updateReview(reviewRequestDTO);
+    }
+
+    @Override
+    @Transactional
+    public void deleteReview(Long postId) {
+        Member member = getMemberFromRequest();
+        Post post = postRepository.findById(postId)
+                .orElseThrow(() -> new PostNotFoundException());
+        if (!post.isAuthor(member))
+            throw new PermissionDeniedException();
+
+        postRepository.delete(post.deleteReview());
+    }
+
+    @Override
+    public void subscribePost(Long postId) {
+        Member member = getMemberFromRequest();
+        Post post = postRepository.findById(postId)
+                .orElseThrow(() -> new PostNotFoundException());
+        post.subscribe(member);
+        postRepository.save(post);
+    }
+
+    @Override
+    @Transactional
     public VoteCountsDTO createVote(Long postId, VoteType voteType) {
-        String providerId = getProviderIdFromRequest();
-        Member member = memberRepository.findByProviderId(providerId)
-                .orElseThrow(() -> new MemberNotFoundException());
+        Member member = getMemberFromRequest();
         Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new PostNotFoundException());
         post.createVote(member, voteType);
