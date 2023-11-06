@@ -25,9 +25,9 @@ public class PostResponseDTO {
     @JsonSerialize(using = StatusEnumSerializer.class)
     private StatusEnum status;
 
-    @Schema(name = "message", description = "응답 메시지")
+    @Schema(name = "message", type = "int", description = "응답 메시지")
     private String message;
 
-    @Schema(name = "data", description = "응답 데이터")
+    @Schema(name = "data", type = "PostInfoDTO", description = "응답 데이터")
     private PostInfoDTO data;
 }
