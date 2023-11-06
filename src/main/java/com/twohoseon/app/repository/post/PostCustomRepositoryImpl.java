@@ -8,6 +8,7 @@ import com.twohoseon.app.dto.response.AuthorInfoDTO;
 import com.twohoseon.app.dto.response.PostInfoDTO;
 import com.twohoseon.app.dto.response.VoteCountsDTO;
 import com.twohoseon.app.dto.response.VoteInfoDTO;
+import com.twohoseon.app.dto.response.post.SearchPostInfo;
 import com.twohoseon.app.enums.post.PostStatus;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
@@ -189,6 +190,96 @@ public class PostCustomRepositoryImpl implements PostCustomRepository {
                 .where(vote.id.post.id.eq(postId))
                 .fetchOne();
         return result == null ? new VoteCountsDTO(0, 0) : result;
+    }
+
+
+    @Override
+    public List<SearchPostInfo> findActivePostsByKeyword(Pageable pageable, String keyword) {
+        List<SearchPostInfo> result = jpaQueryFactory
+                .select(Projections.constructor(SearchPostInfo.class,
+                        post.id,
+                        Projections.constructor(AuthorInfoDTO.class,
+                                member.id,
+                                member.nickname,
+                                member.profileImage,
+                                member.consumerType),
+                        post.postStatus,
+                        post.agreeCount.add(post.disagreeCount),
+                        post.title,
+                        post.image,
+                        post.contents.substring(0, 25),
+                        post.price,
+                        post.commentCount
+                ))
+                .from(post)
+                .leftJoin(post.author, member)
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize())
+                .where((post.title.contains(keyword)
+                        .or(post.contents.contains(keyword)))
+                        .and(post.postStatus.eq(PostStatus.ACTIVE)))
+                .fetch();
+        return result;
+    }
+
+    @Override
+    public List<SearchPostInfo> findClosedPostsByKeyword(Pageable pageable, String keyword) {
+        List<SearchPostInfo> result = jpaQueryFactory
+                .select(Projections.constructor(SearchPostInfo.class,
+                        post.id,
+                        Projections.constructor(AuthorInfoDTO.class,
+                                member.id,
+                                member.nickname,
+                                member.profileImage,
+                                member.consumerType),
+                        post.postStatus,
+                        post.agreeCount.add(post.disagreeCount),
+                        post.commentCount,
+                        post.voteResult,
+                        post.title,
+                        post.image,
+                        post.contents.substring(0, 25),
+                        post.price
+                ))
+                .from(post)
+                .leftJoin(post.author, member)
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize())
+                .where((post.title.contains(keyword)
+                        .or(post.contents.contains(keyword)))
+                        .and(post.postStatus.eq(PostStatus.CLOSED)))
+                .fetch();
+        return result;
+    }
+
+    @Override
+    public List<SearchPostInfo> findReviewPostsByKeyword(Pageable pageable, String keyword) {
+        List<SearchPostInfo> result = jpaQueryFactory
+                .select(Projections.constructor(SearchPostInfo.class,
+                        post.id,
+                        Projections.constructor(AuthorInfoDTO.class,
+                                member.id,
+                                member.nickname,
+                                member.profileImage,
+                                member.consumerType),
+                        post.postStatus,
+                        post.viewCount,
+                        post.commentCount,
+                        post.title,
+                        post.image,
+                        post.contents.substring(0, 25),
+                        post.price,
+                        post.isPurchased
+                ))
+                .from(post)
+                .leftJoin(post.author, member)
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize())
+                .where((post.title.contains(keyword)
+                        .or(post.contents.contains(keyword)))
+                        .and(post.postStatus.eq(PostStatus.REVIEW)))
+                .fetch();
+        return result;
     }
 
 

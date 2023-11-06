@@ -1,9 +1,14 @@
 package com.twohoseon.app.controller;
 
-import com.twohoseon.app.dto.response.PostListResponseDTO;
+import com.twohoseon.app.dto.response.post.SearchPostInfo;
+import com.twohoseon.app.dto.response.post.SearchResponseDTO;
 import com.twohoseon.app.enums.StatusEnum;
+import com.twohoseon.app.enums.post.PostStatus;
 import com.twohoseon.app.service.search.SearchService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -14,6 +19,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.List;
 
 import static org.springframework.http.ResponseEntity.ok;
 
@@ -30,26 +37,35 @@ import static org.springframework.http.ResponseEntity.ok;
 @RestController
 @RequiredArgsConstructor
 @Tag(name = "Search", description = "검색 관련 API")
-@RequestMapping("/api/posts/search")
+@RequestMapping("/api/search")
 public class SearchRestController {
 
     private final SearchService searchService;
 
     @Operation(summary = "검색")
+    @ApiResponse(
+            responseCode = "200",
+            description = "검색 성공",
+            content = @Content(
+                    mediaType = "application/json",
+                    schema = @Schema(implementation = SearchResponseDTO.class)
+            )
+    )
     @GetMapping
-    public ResponseEntity<PostListResponseDTO> searchKeyword(@RequestParam(defaultValue = "0") int page,
-                                                             @RequestParam(defaultValue = "10") int size,
-                                                             @RequestParam(defaultValue = "") String keyword) {
-
+    public ResponseEntity<SearchResponseDTO> searchKeyword(@RequestParam(defaultValue = "ACTIVE") PostStatus postStatus,
+                                                           @RequestParam(defaultValue = "0") int page,
+                                                           @RequestParam(defaultValue = "10") int size,
+                                                           @RequestParam(defaultValue = "") String keyword) {
         Pageable pageable = PageRequest.of(page, size);
+        List<SearchPostInfo> postInfoList = searchService.getSearchByKeyword(postStatus, pageable, keyword);
 
-        PostListResponseDTO responseDTO = PostListResponseDTO.builder()
+        SearchResponseDTO response = SearchResponseDTO.builder()
                 .status(StatusEnum.OK)
                 .message("search success")
-                .data(searchService.getSearchByKeyword(pageable, keyword))
+                .data(postInfoList)
                 .build();
 
-        return ok(responseDTO);
+        return ok(response);
     }
 
 }

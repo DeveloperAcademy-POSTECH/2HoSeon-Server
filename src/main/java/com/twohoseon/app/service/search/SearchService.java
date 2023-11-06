@@ -1,6 +1,7 @@
 package com.twohoseon.app.service.search;
 
-import com.twohoseon.app.dto.response.PostInfoDTO;
+import com.twohoseon.app.dto.response.post.SearchPostInfo;
+import com.twohoseon.app.enums.post.PostStatus;
 import com.twohoseon.app.service.CommonService;
 import jakarta.transaction.Transactional;
 import org.springframework.data.domain.Pageable;
@@ -17,5 +18,5 @@ import java.util.List;
  **/
 public interface SearchService extends CommonService {
     @Transactional
-    List<PostInfoDTO> getSearchByKeyword(Pageable pageable, String keyword);
+    List<SearchPostInfo> getSearchByKeyword(PostStatus postStatus, Pageable pageable, String keyword);
 }
