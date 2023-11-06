@@ -48,6 +48,7 @@ public class NotificationServiceImpl implements NotificationService {
                 new CustomApnsPayloadBuilder()
                         .setPostDetails(post.getId())
                         .setAlertBody(alertBody)
+                        .setSound("default")
                         .build()
         );
         PushNotificationResponse<SimpleApnsPushNotification> pushNotificationResponse =
@@ -69,6 +70,7 @@ public class NotificationServiceImpl implements NotificationService {
                         .setPostDetails(post.getId())
                         .setAlertSubtitle(post.getTitle())
                         .setAlertBody(alertBody)
+                        .setSound("default")
                         .build()
         );
         PushNotificationResponse<SimpleApnsPushNotification> pushNotificationResponse =
@@ -87,6 +89,7 @@ public class NotificationServiceImpl implements NotificationService {
                             .setPostDetails(post.getId())
                             .setAlertSubtitle(post.getTitle())
                             .setAlertBody("회원님의 투표에 후기가 작성되었어요.")
+                            .setSound("default")
                             .build()
             );
             PushNotificationResponse<SimpleApnsPushNotification> pushNotificationResponse =
