@@ -9,5 +9,5 @@ package com.twohoseon.app.enums.post;
  * @modifyed : $
  **/
 public enum PostStatus {
-    ACTIVE, COMPLETE
+    ACTIVE, CLOSED, REVIEW
 }
