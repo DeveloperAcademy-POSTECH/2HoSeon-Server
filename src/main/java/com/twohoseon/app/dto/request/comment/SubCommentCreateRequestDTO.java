@@ -4,19 +4,16 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
 
 /**
- * @author : yongjukim
+ * @author : hyunwoopark
  * @version : 1.0.0
  * @package : twohoseon
- * @name : PostCommentRequestDTO
- * @date : 2023/10/18
+ * @name : SubCommentCreateRequestDTO
+ * @date : 11/7/23 12:00 AM
  * @modifyed : $
  **/
-
 @Getter
-@Schema(name = "CommentCreateRequestDTO", description = "댓글 등록 요청 DTO")
-public class CommentCreateRequestDTO {
-    @Schema(name = "postId", type = "long", description = "게시글 ID")
-    private Long postId;
+@Schema(name = "SubCommentCreateRequestDTO", description = "대댓글 등록 요청 DTO")
+public class SubCommentCreateRequestDTO {
     @Schema(name = "contents", type = "String", description = "댓글 내용")
     private String contents;
 }
