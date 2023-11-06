@@ -101,10 +101,6 @@ public class Post extends BaseTimeEntity {
     @Builder.Default
     private Set<Vote> votes = new LinkedHashSet<>();
 
-//    @OneToMany(mappedBy = "post", orphanRemoval = true)
-//    @Builder.Default
-//    private Set<Member> subscribers = new LinkedHashSet<>();
-
     @OneToOne(orphanRemoval = true, cascade = CascadeType.ALL)
     @JoinColumn(name = "review_id")
     @Builder.Default

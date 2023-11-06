@@ -40,11 +40,11 @@ public class MemberServiceImpl implements MemberService {
 
         Member member = getMemberFromRequest();
         log.debug("profileRequestDTO = " + profileRequestDTO.toString());
-        member.updateAdditionalUserInfo(
-                profileRequestDTO.getProfileImage(),
-                profileRequestDTO.getNickname(),
-                profileRequestDTO.getSchool()
-        );
+//        member.updateAdditionalUserInfo(
+//                profileRequestDTO.getProfileImage(),
+//                profileRequestDTO.getNickname(),
+//                profileRequestDTO.getSchool()
+//        );
         memberRepository.save(member);
     }
 

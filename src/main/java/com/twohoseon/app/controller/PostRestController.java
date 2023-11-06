@@ -1,16 +1,16 @@
 package com.twohoseon.app.controller;
 
-import com.twohoseon.app.dto.request.comment.CommentCreateRequestDTO;
-import com.twohoseon.app.dto.request.comment.CommentFetchRequestDTO;
-import com.twohoseon.app.dto.request.comment.CommentUpdateRequestDTO;
 import com.twohoseon.app.dto.request.post.PostRequestDTO;
 import com.twohoseon.app.dto.request.post.VoteCreateRequestDTO;
 import com.twohoseon.app.dto.request.review.ReviewRequestDTO;
-import com.twohoseon.app.dto.response.*;
+import com.twohoseon.app.dto.response.GeneralResponseDTO;
+import com.twohoseon.app.dto.response.PostListResponseDTO;
+import com.twohoseon.app.dto.response.PostResponseDTO;
+import com.twohoseon.app.dto.response.VoteResultResponseDTO;
 import com.twohoseon.app.enums.StatusEnum;
 import com.twohoseon.app.enums.post.PostStatus;
 import com.twohoseon.app.repository.post.PostRepository;
-import com.twohoseon.app.service.post.PostCommentService;
+import com.twohoseon.app.service.comment.CommentService;
 import com.twohoseon.app.service.post.PostLikeService;
 import com.twohoseon.app.service.post.PostService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -21,8 +21,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 import static org.springframework.http.ResponseEntity.ok;
 
@@ -43,7 +41,7 @@ import static org.springframework.http.ResponseEntity.ok;
 public class PostRestController {
     private final PostService postService;
     private final PostLikeService postLikeService;
-    private final PostCommentService postCommentService;
+    private final CommentService commentService;
     private final PostRepository postRepository;
 
     @Operation(summary = "게시글 작성")
@@ -190,80 +188,6 @@ public class PostRestController {
     //TODO 좋아요
     //TODO 좋아요 취소
 
-    @Operation(summary = "댓글 작성")
-    @PostMapping("/comments")
-    public ResponseEntity<GeneralResponseDTO> createPostComment(@RequestBody CommentCreateRequestDTO commentCreateRequestDTO) {
-
-        postCommentService.createComment(commentCreateRequestDTO);
-        GeneralResponseDTO generalResponseDTO = GeneralResponseDTO
-                .builder()
-                .status(StatusEnum.OK)
-                .message("create success")
-                .build();
-        return ok(generalResponseDTO);
-    }
-
-    @Operation(summary = "댓글 삭제")
-    @DeleteMapping("/comments/{commentId}")
-    public ResponseEntity<GeneralResponseDTO> deletePostComment(@PathVariable(value = "commentId") Long postCommentId) {
-
-
-        postCommentService.deleteComment(postCommentId);
-
-        GeneralResponseDTO generalResponseDTO = GeneralResponseDTO
-                .builder()
-                .status(StatusEnum.OK)
-                .message("delete success")
-                .build();
-
-        return ok(generalResponseDTO);
-    }
-
-    @Operation(summary = "댓글 수정")
-    @PutMapping("/comments/{commentId}")
-    public ResponseEntity<GeneralResponseDTO> updatePostComment(@PathVariable(value = "commentId") Long postCommentId,
-                                                                @RequestBody CommentUpdateRequestDTO postCommentUpdateRequestDTO) {
-
-        postCommentService.updateComment(postCommentId, postCommentUpdateRequestDTO.getContent());
-
-        GeneralResponseDTO generalResponseDTO = GeneralResponseDTO
-                .builder()
-                .status(StatusEnum.OK)
-                .message("update success")
-                .build();
-
-        return ok(generalResponseDTO);
-    }
-
-    @Operation(summary = "댓글 조회")
-    @GetMapping("/comments")
-    public ResponseEntity<CommentResponseDTO> readPostComment(@RequestBody CommentFetchRequestDTO commentFetchRequestDTO) {
-
-        List<CommentInfoDTO> postCommentLists = postRepository.getAllCommentsFromPost(commentFetchRequestDTO.getPostId());
-
-        CommentResponseDTO commentResponseDTO = CommentResponseDTO.builder()
-                .status(StatusEnum.OK)
-                .message("success")
-                .data(postCommentLists)
-                .build();
-
-        return ok(commentResponseDTO);
-    }
-
-    @Operation(summary = "대댓글 조회")
-    @GetMapping("/comments/{commentId}")
-    public ResponseEntity<CommentResponseDTO> getPostCommentChildren(@PathVariable Long commentId) {
-
-        List<CommentInfoDTO> postCommentLists = postRepository.getChildComments(commentId);
-
-        CommentResponseDTO commentResponseDTO = CommentResponseDTO.builder()
-                .status(StatusEnum.OK)
-                .message("success")
-                .data(postCommentLists)
-                .build();
-
-        return ok(commentResponseDTO);
-    }
 
     @Operation(summary = "좋아요 등록")
     @PostMapping("/{postId}/likes")
