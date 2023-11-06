@@ -99,17 +99,27 @@ public class Post extends BaseTimeEntity {
 
     @OneToMany(mappedBy = "id.post", orphanRemoval = true, fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @Builder.Default
+    @Comment("투표 리스트")
     private Set<Vote> votes = new LinkedHashSet<>();
 
     @OneToOne(orphanRemoval = true, cascade = CascadeType.ALL)
     @JoinColumn(name = "review_id")
     @Builder.Default
+    @Comment("리뷰")
     private Post review = null;
+
+    //샀다 안샀다 boolean
+    @Column
+    @Comment("구매 여부")
+    @Builder.Default
+    private Boolean isBought = false;
 
     @ManyToMany
     @JoinTable(name = "Review_subscribed_members",
             joinColumns = @JoinColumn(name = "post_id"),
             inverseJoinColumns = @JoinColumn(name = "members_id"))
+    @Builder.Default
+    @Comment("구독자 리스트")
     private Set<Member> subscribers = new LinkedHashSet<>();
 
     public void setSubscribers(Set<Member> subscribers) {
@@ -127,6 +137,8 @@ public class Post extends BaseTimeEntity {
 
     public void setPostToComplete() {
         this.postStatus = PostStatus.COMPLETE;
+
+
     }
 
     public void incrementLikeCount() {
