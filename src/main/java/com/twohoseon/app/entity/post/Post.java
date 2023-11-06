@@ -65,9 +65,18 @@ public class Post extends BaseTimeEntity {
     @Comment("제품 가격")
     private Integer price;
 
+    @NotNull
+    @Column
     @Comment("포스트 상태")
     @Enumerated(EnumType.STRING)
-    private PostStatus postStatus;
+    @Builder.Default
+    private PostStatus postStatus = PostStatus.ACTIVE;
+
+    @NotNull
+    @Column
+    @Comment("조회 수")
+    @Builder.Default
+    private Integer viewCount = 0;
 
     @NotNull
     @Column
@@ -87,9 +96,15 @@ public class Post extends BaseTimeEntity {
 
     @NotNull
     @Column
-    @Comment("투표수")
+    @Comment("투표 찬성 수")
     @Builder.Default
-    private Integer voteCount = 0;
+    private Integer agreeCount = 0;
+
+    @NotNull
+    @Column
+    @Comment("투표 반대 수")
+    @Builder.Default
+    private Integer disagreeCount = 0;
 
     @ElementCollection(fetch = FetchType.EAGER)
     @Column
@@ -110,7 +125,12 @@ public class Post extends BaseTimeEntity {
 
     //샀다 안샀다 boolean
     @Column
+    @Builder.Default
     @Comment("구매 여부")
+    private boolean isPurchased = false;
+
+    @Column
+    @Comment("투표 결과")
     @Builder.Default
     private VoteResult voteResult = VoteResult.DRAW;
 
@@ -226,7 +246,8 @@ public class Post extends BaseTimeEntity {
         subscribers.add(member);
     }
 
-    public void setImageList(List<String> imageList) {
-        this.imageList = imageList;
+    public int getVoteCount() {
+        return this.agreeCount + this.disagreeCount;
     }
+
 }
