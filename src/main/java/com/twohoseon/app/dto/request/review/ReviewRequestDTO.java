@@ -15,7 +15,6 @@ import org.springframework.web.multipart.MultipartFile;
 @Schema(name = "ReviewRequestDTO", description = "후기 생성 요청 DTO")
 @Getter
 public class ReviewRequestDTO {
-    //TODO Controller, Service에서 변경점 수정
     @Schema(name = "title", description = "후기 제목")
     private String title;
     @Schema(name = "contents", description = "후기 내용")

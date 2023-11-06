@@ -21,8 +21,7 @@ public class PostInfoDTO {
     LocalDateTime createDate;
     @Schema(name = "modifiedDate", type = "LocalDateTime", description = "게시글 수정일")
     LocalDateTime modifiedDate;
-    //TODO Fix it
-    @Schema(name = "postType", type = "PostType", description = "게시글 학교 범위")
+    @Schema(name = "visibilityScope", type = "VisibilityScope", description = "게시글 공개 범위")
     VisibilityScope visibilityScope;
     @Schema(name = "postStatus", type = "PostStatus", description = "게시글 상태")
     PostStatus postStatus;
@@ -37,11 +36,8 @@ public class PostInfoDTO {
     @Schema(name = "externalURL", type = "String", description = "게시글 외부 URL")
     String externalURL;
 
-    @Schema(name = "likeCount", type = "int", description = "게시글 좋아요 수")
-    int likeCount;
-    //TODO Fix it
-    @Schema(name = "viewCount", type = "int", description = "게시글 조회 수")
-    int viewCount;
+    @Schema(name = "voteCount", type = "int", description = "게시글 총 투표 수")
+    int voteCount;
     @Schema(name = "commentCount", type = "int", description = "게시글 댓글 수")
     int commentCount;
 
@@ -53,11 +49,10 @@ public class PostInfoDTO {
     @Schema(name = "voteInfoList", type = "List<VoteInfoDTO>", description = "투표 정보")
     List<VoteInfoDTO> voteInfoList;
 
-
     @Schema(name = "isMine", type = "boolean", description = "내가 쓴 글인지 여부")
     boolean isMine;
 
-    public PostInfoDTO(Long postId, LocalDateTime createDate, LocalDateTime modifiedDate, VisibilityScope visibilityScope, AuthorInfoDTO author, String title, String contents, String image, String externalURL, int likeCount, int viewCount, int commentCount) {
+    public PostInfoDTO(Long postId, LocalDateTime createDate, LocalDateTime modifiedDate, VisibilityScope visibilityScope, AuthorInfoDTO author, String title, String contents, String image, String externalURL, int commentCount) {
         this.postId = postId;
         this.createDate = createDate;
         this.modifiedDate = modifiedDate;
@@ -67,12 +62,10 @@ public class PostInfoDTO {
         this.contents = contents;
         this.image = image;
         this.externalURL = externalURL;
-        this.likeCount = likeCount;
-        this.viewCount = viewCount;
         this.commentCount = commentCount;
     }
 
-    public PostInfoDTO(Long postId, LocalDateTime createDate, LocalDateTime modifiedDate, VisibilityScope visibilityScope, boolean isActive, AuthorInfoDTO author, String title, String contents, String image, String externalURL, int likeCount, int viewCount, int commentCount) {
+    public PostInfoDTO(Long postId, LocalDateTime createDate, LocalDateTime modifiedDate, VisibilityScope visibilityScope, boolean isActive, AuthorInfoDTO author, String title, String contents, String image, String externalURL, int commentCount) {
         this.postId = postId;
         this.createDate = createDate;
         this.modifiedDate = modifiedDate;
@@ -83,8 +76,6 @@ public class PostInfoDTO {
         this.contents = contents;
         this.image = image;
         this.externalURL = externalURL;
-        this.likeCount = likeCount;
-        this.viewCount = viewCount;
         this.commentCount = commentCount;
     }
 
