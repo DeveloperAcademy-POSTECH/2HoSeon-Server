@@ -70,7 +70,7 @@ public class PostInfoDTO {
         this.createDate = createDate;
         this.modifiedDate = modifiedDate;
         this.visibilityScope = visibilityScope;
-        this.postStatus = isActive ? PostStatus.ACTIVE : PostStatus.COMPLETE;
+        this.postStatus = isActive ? PostStatus.ACTIVE : PostStatus.CLOSED;
         this.author = author;
         this.title = title;
         this.contents = contents;
