@@ -79,10 +79,6 @@ public class Member extends BaseTimeEntity {
         this.deviceToken = deviceToken;
     }
 
-    public void setUserProfileImage(String profileImage) {
-        this.profileImage = profileImage;
-    }
-
     protected Member() {
     }
 
