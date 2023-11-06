@@ -17,7 +17,7 @@ import lombok.Data;
  * @modifyed : $
  **/
 @Data
-@Schema(name = "PostListResponseDTO", description = "게시글 응답 DTO")
+@Schema(name = "VoteResultResponseDTO", description = "투표 응답 DTO")
 @Builder
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class VoteResultResponseDTO {
