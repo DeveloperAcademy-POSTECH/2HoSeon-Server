@@ -1,6 +1,6 @@
 package com.twohoseon.app.service.post;
 
-import com.twohoseon.app.dto.request.CommentCreateRequestDTO;
+import com.twohoseon.app.dto.request.comment.CommentCreateRequestDTO;
 import com.twohoseon.app.dto.response.PostCommentInfoDTO;
 import com.twohoseon.app.service.CommonService;
 import org.springframework.transaction.annotation.Transactional;

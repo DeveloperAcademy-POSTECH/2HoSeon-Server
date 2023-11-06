@@ -1,7 +1,6 @@
 package com.twohoseon.app.service.post;
 
-import com.twohoseon.app.dto.request.post.PostCreateRequestDTO;
-import com.twohoseon.app.dto.request.post.PostUpdateRequestDTO;
+import com.twohoseon.app.dto.request.post.PostRequestDTO;
 import com.twohoseon.app.dto.request.review.ReviewRequestDTO;
 import com.twohoseon.app.dto.response.PostInfoDTO;
 import com.twohoseon.app.dto.response.VoteCountsDTO;
@@ -49,16 +48,16 @@ public class PostServiceImpl implements PostService {
     private final NotificationService notificationService;
 
     @Override
-    public void createPost(PostCreateRequestDTO postCreateRequestDTO) {
+    public void createPost(PostRequestDTO postRequestDTO) {
         //TODO 이미지 추가를 위해 PostCreateRequestDTO 수정 및 Request Type 변경 필요(json to form-data)
         Member author = getMemberFromRequest();
         Post post = Post.builder()
                 .author(author)
-                .visibilityScope(postCreateRequestDTO.getVisibilityScope())
-                .title(postCreateRequestDTO.getTitle())
-                .contents(postCreateRequestDTO.getContents())
-                .price(postCreateRequestDTO.getPrice())
-                .externalURL(postCreateRequestDTO.getExternalURL())
+                .visibilityScope(postRequestDTO.getVisibilityScope())
+                .title(postRequestDTO.getTitle())
+                .contents(postRequestDTO.getContents())
+                .price(postRequestDTO.getPrice())
+                .externalURL(postRequestDTO.getExternalURL())
                 .build();
         postRepository.save(post);
         try {
@@ -84,7 +83,7 @@ public class PostServiceImpl implements PostService {
 
     @Override
     @Transactional
-    public void updatePost(Long postId, PostUpdateRequestDTO postUpdateRequestDTO) {
+    public void updatePost(Long postId, PostRequestDTO postRequestDTO) {
         Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new PostNotFoundException());
         Member author = post.getAuthor();
@@ -92,7 +91,7 @@ public class PostServiceImpl implements PostService {
         if (!author.equals(member))
             throw new PermissionDeniedException();
 
-        post.updatePost(postUpdateRequestDTO);
+        post.updatePost(postRequestDTO);
         postRepository.save(post);
     }
 
