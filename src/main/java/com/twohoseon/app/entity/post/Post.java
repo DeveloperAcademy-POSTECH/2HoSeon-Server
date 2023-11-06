@@ -112,7 +112,7 @@ public class Post extends BaseTimeEntity {
     @Column
     @Comment("구매 여부")
     @Builder.Default
-    private Boolean isBought = false;
+    private VoteResult voteResult = VoteResult.DRAW;
 
     @ManyToMany
     @JoinTable(name = "Review_subscribed_members",
@@ -136,9 +136,13 @@ public class Post extends BaseTimeEntity {
     }
 
     public void setPostToComplete() {
-        this.postStatus = PostStatus.COMPLETE;
-
-
+        this.postStatus = PostStatus.CLOSED;
+        if (agreeCount > disagreeCount)
+            this.voteResult = VoteResult.BUY;
+        else if (agreeCount < disagreeCount)
+            this.voteResult = VoteResult.NOT_BUY;
+        else
+            this.voteResult = VoteResult.DRAW;
     }
 
     public void incrementLikeCount() {
