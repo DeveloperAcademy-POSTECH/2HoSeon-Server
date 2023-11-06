@@ -2,7 +2,6 @@ package com.twohoseon.app.dto.request.review;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
-import org.springframework.web.multipart.MultipartFile;
 
 /**
  * @author : hyunwoopark
@@ -21,8 +20,6 @@ public class ReviewRequestDTO {
     private String contents;
     @Schema(name = "price", description = "제품 가격")
     private int price;
-    @Schema(name = "image", description = "후기 이미지")
-    private MultipartFile image;
     @Schema(name = "isPurchased", description = "구매 여부")
     private boolean isPurchased;
 }

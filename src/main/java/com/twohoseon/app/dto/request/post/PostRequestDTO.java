@@ -21,8 +21,6 @@ public class PostRequestDTO {
     private String title;
     @Schema(name = "contents", description = "게시글 내용")
     private String contents;
-    @Schema(name = "image", description = "게시글 이미지, 아마 multipart로 받아야 할듯")
-    private String image;
     @Schema(name = "price", description = "가격")
     private Integer price;
     @Schema(name = "externalURL", description = "게시글 외부 URL")
