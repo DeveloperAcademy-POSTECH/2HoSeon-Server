@@ -8,6 +8,7 @@ import com.twohoseon.app.repository.member.MemberRepository;
 import com.twohoseon.app.repository.post.PostRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import net.coobird.thumbnailator.Thumbnailator;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -57,6 +58,10 @@ public class ImageServiceImpl implements ImageService {
 
         try {
             file.transferTo(savePath);
+
+            String thumbnailSaveName = fileDir + "profiles" + File.separator + "thumb_" + fileName;
+            File thumbnailFile = new File(thumbnailSaveName);
+            Thumbnailator.createThumbnail(savePath.toFile(), thumbnailFile, 150, 150);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -86,6 +91,10 @@ public class ImageServiceImpl implements ImageService {
 
             try {
                 file.transferTo(savePath);
+
+                String thumbnailSaveName = fileDir + "posts" + File.separator + "thumb_" + fileName;
+                File thumbnailFile = new File(thumbnailSaveName);
+                Thumbnailator.createThumbnail(savePath.toFile(), thumbnailFile, 150, 150);
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -117,6 +126,10 @@ public class ImageServiceImpl implements ImageService {
 
         try {
             file.transferTo(savePath);
+
+            String thumbnailSaveName = fileDir + "reviews" + File.separator + "thumb_" + fileName;
+            File thumbnailFile = new File(thumbnailSaveName);
+            Thumbnailator.createThumbnail(savePath.toFile(), thumbnailFile, 150, 150);
         } catch (IOException e) {
             e.printStackTrace();
         }
