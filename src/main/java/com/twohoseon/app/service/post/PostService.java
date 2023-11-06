@@ -8,6 +8,7 @@ import com.twohoseon.app.enums.VoteType;
 import com.twohoseon.app.enums.post.PostStatus;
 import com.twohoseon.app.service.CommonService;
 import org.springframework.data.domain.Pageable;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -23,7 +24,7 @@ import java.util.List;
 
 public interface PostService extends CommonService {
 
-    void createPost(PostRequestDTO postRequestDTO);
+    void createPost(PostRequestDTO postRequestDTO, MultipartFile file);
 
     public List<PostInfoDTO> fetchPosts(Pageable pageable, PostStatus postStatus);
 
@@ -34,13 +35,13 @@ public interface PostService extends CommonService {
 
     PostInfoDTO fetchPost(Long postId);
 
-    void updatePost(Long postId, PostRequestDTO postRequestDTO);
+    void updatePost(Long postId, PostRequestDTO postRequestDTO, MultipartFile file);
 
     void deletePost(Long postId);
 
-    void createReview(Long postId, ReviewRequestDTO reviewRequestDTO);
+    void createReview(Long postId, ReviewRequestDTO reviewRequestDTO, MultipartFile file);
 
-    void updateReview(Long postId, ReviewRequestDTO reviewRequestDTO);
+    void updateReview(Long postId, ReviewRequestDTO reviewRequestDTO, MultipartFile file);
 
     void deleteReview(Long postId);
 
