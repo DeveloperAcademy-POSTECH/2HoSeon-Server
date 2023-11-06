@@ -2,6 +2,7 @@ package com.twohoseon.app.dto.request.review;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
+import org.springframework.web.multipart.MultipartFile;
 
 /**
  * @author : hyunwoopark
@@ -11,14 +12,17 @@ import lombok.Getter;
  * @date : 11/5/23 2:36 AM
  * @modifyed : $
  **/
-@Schema(name = "ReviewCreateRequestDTO", description = "후기 생성 요청 DTO")
+@Schema(name = "ReviewRequestDTO", description = "후기 생성 요청 DTO")
 @Getter
 public class ReviewRequestDTO {
-    @Schema(name = "title", description = "게시글 제목")
+    @Schema(name = "title", description = "후기 제목")
     private String title;
-    @Schema(name = "contents", description = "게시글 내용")
+    @Schema(name = "contents", description = "후기 내용")
     private String contents;
-    @Schema(name = "image", description = "게시글 이미지, 아마 multipart로 받아야 할듯")
-    private String image;
-
+    @Schema(name = "price", description = "제품 가격")
+    private int price;
+    @Schema(name = "image", description = "후기 이미지")
+    private MultipartFile image;
+    @Schema(name = "isPurchased", description = "구매 여부")
+    private boolean isPurchased;
 }
