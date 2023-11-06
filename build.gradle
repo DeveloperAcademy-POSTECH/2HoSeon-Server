@@ -65,6 +65,8 @@ dependencies {
 
     implementation 'org.springframework.boot:spring-boot-starter-quartz:3.1.2'
 
+    implementation group: 'net.coobird', name: 'thumbnailator', version: '0.4.11'
+
     compileOnly 'org.projectlombok:lombok'
     annotationProcessor 'org.projectlombok:lombok'
 

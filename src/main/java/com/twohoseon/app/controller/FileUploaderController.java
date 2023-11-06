@@ -14,6 +14,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.List;
+
 import static org.springframework.http.ResponseEntity.ok;
 
 /**
@@ -50,9 +52,10 @@ public class FileUploaderController {
 
     @Operation(summary = "게시글 사진 업로드")
     @PostMapping("/posts/upload")
-    public ResponseEntity<GeneralResponseDTO> uploadPostImage(@RequestParam("imageFile") MultipartFile imageFile, @RequestParam("postId") Long postId) {
+    public ResponseEntity<GeneralResponseDTO> uploadPostImage(@RequestParam(value = "imageFiles") List<MultipartFile> imageFiles,
+                                                              @RequestParam("postId") Long postId) {
 
-        imageService.uploadPostImage(imageFile, postId);
+        imageService.uploadPostImage(imageFiles, postId);
 
         GeneralResponseDTO responseDTO = GeneralResponseDTO.builder()
                 .status(StatusEnum.OK)
@@ -64,8 +67,10 @@ public class FileUploaderController {
 
     @Operation(summary = "후기 사진 업로드")
     @PostMapping("/reviews/upload")
-    public ResponseEntity<GeneralResponseDTO> uploadReviewImage(@RequestParam("imageFile") MultipartFile imageFile) {
+    public ResponseEntity<GeneralResponseDTO> uploadReviewImage(@RequestParam("imageFile") MultipartFile imageFile,
+                                                                @RequestParam("reviewId") Long reviewId) {
 
+        imageService.uploadReviewImage(imageFile, reviewId);
 
         GeneralResponseDTO responseDTO = GeneralResponseDTO.builder()
                 .status(StatusEnum.OK)

@@ -1,6 +1,6 @@
 package com.twohoseon.app.service.post;
 
-import jakarta.transaction.Transactional;
+import com.twohoseon.app.service.CommonService;
 
 /**
  * @author : yongjukim
@@ -11,11 +11,9 @@ import jakarta.transaction.Transactional;
  * @modifyed : $
  **/
 
-public interface PostLikeService {
+public interface PostLikeService extends CommonService {
 
-    @Transactional
     void likePost(Long postId);
 
-    @Transactional
     void unlikePost(Long postId);
 }

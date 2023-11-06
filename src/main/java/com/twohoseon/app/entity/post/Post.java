@@ -211,4 +211,8 @@ public class Post extends BaseTimeEntity {
     public void subscribe(Member member) {
         subscribers.add(member);
     }
+
+    public void setImageList(List<String> imageList) {
+        this.imageList = imageList;
+    }
 }
