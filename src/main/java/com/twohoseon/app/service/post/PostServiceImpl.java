@@ -11,8 +11,8 @@ import com.twohoseon.app.enums.post.PostStatus;
 import com.twohoseon.app.exception.PermissionDeniedException;
 import com.twohoseon.app.exception.PostNotFoundException;
 import com.twohoseon.app.exception.ReviewExistException;
-import com.twohoseon.app.repository.member.MemberRepository;
 import com.twohoseon.app.repository.post.PostRepository;
+import com.twohoseon.app.service.image.ImageService;
 import com.twohoseon.app.service.notification.NotificationService;
 import com.twohoseon.app.service.schedule.JobSchedulingService;
 import jakarta.transaction.Transactional;
@@ -21,6 +21,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.quartz.SchedulerException;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
@@ -40,20 +41,27 @@ import java.util.concurrent.ExecutionException;
 @RequiredArgsConstructor
 @Slf4j
 public class PostServiceImpl implements PostService {
-    private final MemberRepository memberRepository;
     private final PostRepository postRepository;
     private final JobSchedulingService jobSchedulingService;
     private final NotificationService notificationService;
+    private final ImageService imageService;
 
     @Override
-    public void createPost(PostRequestDTO postRequestDTO) {
+    public void createPost(PostRequestDTO postRequestDTO, MultipartFile file) {
         //TODO 이미지 추가를 위해 PostCreateRequestDTO 수정 및 Request Type 변경 필요(json to form-data)
         Member author = getMemberFromRequest();
+
+        String image = null;
+        if (!file.isEmpty()) {
+            image = imageService.uploadImage(file, "posts");
+        }
+
         Post post = Post.builder()
                 .author(author)
                 .visibilityScope(postRequestDTO.getVisibilityScope())
                 .title(postRequestDTO.getTitle())
                 .contents(postRequestDTO.getContents())
+                .image(image)
                 .price(postRequestDTO.getPrice())
                 .externalURL(postRequestDTO.getExternalURL())
                 .build();
@@ -81,7 +89,7 @@ public class PostServiceImpl implements PostService {
 
     @Override
     @Transactional
-    public void updatePost(Long postId, PostRequestDTO postRequestDTO) {
+    public void updatePost(Long postId, PostRequestDTO postRequestDTO, MultipartFile file) {
         Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new PostNotFoundException());
         Member author = post.getAuthor();
@@ -89,7 +97,11 @@ public class PostServiceImpl implements PostService {
         if (!author.equals(member))
             throw new PermissionDeniedException();
 
-        post.updatePost(postRequestDTO);
+        String image = null;
+        if (!file.isEmpty()) {
+            image = imageService.updateImage(file, "posts", postId);
+        }
+        post.updatePost(postRequestDTO, image);
         postRepository.save(post);
     }
 
@@ -106,7 +118,7 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public void createReview(Long postId, ReviewRequestDTO reviewRequestDTO) {
+    public void createReview(Long postId, ReviewRequestDTO reviewRequestDTO, MultipartFile file) {
         Member member = getMemberFromRequest();
         Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new PostNotFoundException());
@@ -115,7 +127,9 @@ public class PostServiceImpl implements PostService {
         if (post.isReviewExist()) {
             throw new ReviewExistException();
         }
-        post.createReview(reviewRequestDTO);
+        String image = imageService.uploadImage(file, "reviews");
+
+        post.createReview(reviewRequestDTO, image);
         postRepository.save(post);
         CompletableFuture.runAsync(() -> {
             try {
@@ -127,13 +141,20 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public void updateReview(Long postId, ReviewRequestDTO reviewRequestDTO) {
+    public void updateReview(Long postId, ReviewRequestDTO reviewRequestDTO, MultipartFile file) {
         Member member = getMemberFromRequest();
         Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new PostNotFoundException());
         if (!post.isAuthor(member))
             throw new PermissionDeniedException();
-        post.updateReview(reviewRequestDTO);
+
+        String image = null;
+        if (!file.isEmpty()) {
+            image = imageService.updateImage(file, "reviews", post.getReview().getId());
+        }
+
+        post.updateReview(reviewRequestDTO, image);
+        postRepository.save(post);
     }
 
     @Override

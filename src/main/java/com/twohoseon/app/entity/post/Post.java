@@ -67,9 +67,9 @@ public class Post extends BaseTimeEntity {
 
     @NotNull
     @Column
-    @Comment("포스트 상태")
     @Enumerated(EnumType.STRING)
     @Builder.Default
+    @Comment("포스트 상태")
     private PostStatus postStatus = PostStatus.ACTIVE;
 
     @NotNull
@@ -90,12 +90,6 @@ public class Post extends BaseTimeEntity {
 
     @NotNull
     @Column
-    @Comment("좋아요 수")
-    @Builder.Default
-    private Integer likeCount = 0;
-
-    @NotNull
-    @Column
     @Comment("투표 찬성 수")
     @Builder.Default
     private Integer agreeCount = 0;
@@ -106,11 +100,10 @@ public class Post extends BaseTimeEntity {
     @Builder.Default
     private Integer disagreeCount = 0;
 
-    @ElementCollection(fetch = FetchType.EAGER)
+    @Nullable
     @Column
-    @Comment("이미지 리스트")
-    @Builder.Default
-    private List<String> imageList = new ArrayList<>();
+    @Comment("이미지")
+    private String image;
 
     @OneToMany(mappedBy = "id.post", orphanRemoval = true, fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @Builder.Default
@@ -165,14 +158,6 @@ public class Post extends BaseTimeEntity {
             this.voteResult = VoteResult.DRAW;
     }
 
-    public void incrementLikeCount() {
-        this.likeCount += 1;
-    }
-
-    public void decrementLike() {
-        this.likeCount -= 1;
-    }
-
     public void createVote(Member voter, VoteType voteType) {
         Vote vote = Vote.builder()
                 .id(VoteId.builder()
@@ -201,7 +186,7 @@ public class Post extends BaseTimeEntity {
     }
 
     //For Post Update
-    public void updatePost(PostRequestDTO postRequestDTO) {
+    public void updatePost(PostRequestDTO postRequestDTO, String image) {
         //TODO 이미지 부분 List<String>으로 변경
         if (postRequestDTO.getTitle() != null)
             this.title = postRequestDTO.getTitle();
@@ -209,36 +194,37 @@ public class Post extends BaseTimeEntity {
             this.contents = postRequestDTO.getContents();
         if (postRequestDTO.getExternalURL() != null)
             this.externalURL = postRequestDTO.getExternalURL();
-        if (postRequestDTO.getImage() != null)
-            this.imageList.add(postRequestDTO.getImage());
+        if (image != null)
+            this.image = image;
         if (postRequestDTO.getVisibilityScope() != null)
             this.visibilityScope = postRequestDTO.getVisibilityScope();
     }
 
-    private void updatePost(ReviewRequestDTO reviewRequestDTO) {
+    private void updatePost(ReviewRequestDTO reviewRequestDTO, String image) {
         if (reviewRequestDTO.getTitle() != null)
             this.title = reviewRequestDTO.getTitle();
         if (reviewRequestDTO.getContents() != null)
             this.contents = reviewRequestDTO.getContents();
         //TODO 멀티파트 처리후 이미지 링크 저장 필
-//        if (reviewRequestDTO.getImage() != null)
-//            this.imageList.add(reviewRequestDTO.getImage());
+        if (image != null)
+            this.image = image;
     }
 
-    public void createReview(ReviewRequestDTO reviewRequestDTO) {
+    public void createReview(ReviewRequestDTO reviewRequestDTO, String image) {
         Post review = Post.builder()
                 .postStatus(PostStatus.REVIEW)
                 .author(this.author)
                 .visibilityScope(this.visibilityScope)
                 .title(reviewRequestDTO.getTitle())
+                .image(image)
                 .contents(reviewRequestDTO.getContents())
                 .isPurchased(reviewRequestDTO.isPurchased())
                 .build();
         this.review = review;
     }
 
-    public void updateReview(ReviewRequestDTO reviewRequestDTO) {
-        this.review.updatePost(reviewRequestDTO);
+    public void updateReview(ReviewRequestDTO reviewRequestDTO, String image) {
+        this.review.updatePost(reviewRequestDTO, image);
     }
 
     public Post deleteReview() {

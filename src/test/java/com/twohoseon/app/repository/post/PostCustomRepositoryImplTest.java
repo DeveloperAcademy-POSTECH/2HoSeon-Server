@@ -106,7 +106,7 @@ class PostCustomRepositoryImplTest {
                         post.id.as("post_id"),
                         post.createDate,
                         post.modifiedDate,
-                        post.postType,
+//                        post.postType,
 //                        post.postStatus,
                         Projections.constructor(AuthorInfoDTO.class,
                                 member.id,
@@ -116,8 +116,7 @@ class PostCustomRepositoryImplTest {
                         post.contents,
                         post.image,
                         post.externalURL,
-                        post.likeCount,
-                        post.viewCount,
+//                        post.viewCount,
                         post.commentCount
                 ))
                 .from(post)

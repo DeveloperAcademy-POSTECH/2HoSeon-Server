@@ -1,10 +1,8 @@
 package com.twohoseon.app.service.image;
 
-import com.twohoseon.app.entity.member.Member;
 import com.twohoseon.app.entity.post.Post;
 import com.twohoseon.app.exception.InvalidFileTypeException;
 import com.twohoseon.app.exception.PostNotFoundException;
-import com.twohoseon.app.repository.member.MemberRepository;
 import com.twohoseon.app.repository.post.PostRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -15,10 +13,9 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URLDecoder;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.UUID;
 
 /**
@@ -38,13 +35,10 @@ public class ImageServiceImpl implements ImageService {
     @Value("${file.dir}")
     private String fileDir;
 
-    private final MemberRepository memberRepository;
     private final PostRepository postRepository;
 
     @Override
-    public void uploadProfileImage(MultipartFile file) {
-
-        Member member = getMemberFromRequest();
+    public String uploadImage(MultipartFile file, String path) {
 
         if (!file.getContentType().startsWith("image")) {
             throw new InvalidFileTypeException();
@@ -53,89 +47,56 @@ public class ImageServiceImpl implements ImageService {
         String originalName = file.getOriginalFilename();
         String fileName = UUID.randomUUID().toString() + originalName.substring(originalName.lastIndexOf("."));
 
-        String saveName = fileDir + "profiles" + File.separator + fileName;
+        String saveName = fileDir + path + File.separator + fileName;
         Path savePath = Paths.get(saveName);
 
         try {
             file.transferTo(savePath);
 
-            String thumbnailSaveName = fileDir + "profiles" + File.separator + "thumb_" + fileName;
+            String thumbnailSaveName = fileDir + path + File.separator + "thumb_" + fileName;
             File thumbnailFile = new File(thumbnailSaveName);
             Thumbnailator.createThumbnail(savePath.toFile(), thumbnailFile, 50, 50);
         } catch (IOException e) {
             e.printStackTrace();
         }
 
-        member.setUserProfileImage(fileName);
-        memberRepository.save(member);
+        return fileName;
     }
 
-    //TODO 이미지 파일 무조건 하나
     @Override
-    public void uploadPostImage(List<MultipartFile> files, Long postId) {
+    public String updateImage(MultipartFile file, String path, Long postId) {
         Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new PostNotFoundException());
-
-        List<String> imageList = new ArrayList<>();
-
-        for (MultipartFile file : files) {
-            if (!file.getContentType().startsWith("image")) {
-                throw new InvalidFileTypeException();
-            }
-
-            String originalName = file.getOriginalFilename();
-            String fileName = UUID.randomUUID().toString() + originalName.substring(originalName.lastIndexOf("."));
-            imageList.add(fileName);
-
-            String saveName = fileDir + "posts" + File.separator + fileName;
-            Path savePath = Paths.get(saveName);
-
-            try {
-                file.transferTo(savePath);
-
-                String thumbnailSaveName = fileDir + "posts" + File.separator + "thumb_" + fileName;
-                File thumbnailFile = new File(thumbnailSaveName);
-                Thumbnailator.createThumbnail(savePath.toFile(), thumbnailFile, 100, 100);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-
-        }
-
-        post.setImageList(imageList);
-        postRepository.save(post);
-    }
-
-    @Override
-    public void uploadReviewImage(MultipartFile file, Long reviewId) {
-
-        Post post = postRepository.findById(reviewId)
-                .orElseThrow(() -> new PostNotFoundException());
-
-        List<String> imageList = new ArrayList<>();
 
         if (!file.getContentType().startsWith("image")) {
             throw new InvalidFileTypeException();
         }
 
+        File removeFile = null;
+
         String originalName = file.getOriginalFilename();
         String fileName = UUID.randomUUID().toString() + originalName.substring(originalName.lastIndexOf("."));
-        imageList.add(fileName);
-
-        String saveName = fileDir + "reviews" + File.separator + fileName;
+        String saveName = fileDir + path + File.separator + fileName;
         Path savePath = Paths.get(saveName);
 
         try {
+            if (post.getImage() != null) {
+                removeFile = new File(fileDir + path + File.separator + URLDecoder.decode("thumb_" + post.getImage(), "UTF-8"));
+                removeFile.delete();
+                removeFile = new File(fileDir + path + File.separator + URLDecoder.decode(post.getImage(), "UTF-8"));
+                removeFile.delete();
+            }
+
             file.transferTo(savePath);
 
-            String thumbnailSaveName = fileDir + "reviews" + File.separator + "thumb_" + fileName;
+            String thumbnailSaveName = fileDir + path + File.separator + "thumb_" + fileName;
             File thumbnailFile = new File(thumbnailSaveName);
             Thumbnailator.createThumbnail(savePath.toFile(), thumbnailFile, 100, 100);
         } catch (IOException e) {
             e.printStackTrace();
         }
 
-        post.setImageList(imageList);
         postRepository.save(post);
+        return fileName;
     }
 }

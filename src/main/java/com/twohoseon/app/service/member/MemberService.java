@@ -4,6 +4,7 @@ import com.twohoseon.app.dto.request.member.ProfileRequestDTO;
 import com.twohoseon.app.entity.member.Member;
 import com.twohoseon.app.service.CommonService;
 import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.Optional;
 
@@ -16,7 +17,7 @@ import java.util.Optional;
  * @modifyed : $
  **/
 public interface MemberService extends UserDetailsService, CommonService {
-    void setUserProfile(ProfileRequestDTO profileRequestDTO);
+    void setUserProfile(ProfileRequestDTO profileRequestDTO, MultipartFile imageFile);
 
     boolean validateDuplicateUserNickname(String userNickname);
 

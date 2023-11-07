@@ -54,7 +54,6 @@ public class PostCustomRepositoryImpl implements PostCustomRepository {
                         post.contents,
 //                        post.image,
                         post.externalURL,
-                        post.likeCount,
 //                        post.viewCount,
                         post.commentCount
                 ))
@@ -106,7 +105,6 @@ public class PostCustomRepositoryImpl implements PostCustomRepository {
                         post.contents,
 //                        post.image,
                         post.externalURL,
-                        post.likeCount,
 //                        post.viewCount,
                         post.commentCount
                 ))
@@ -146,7 +144,6 @@ public class PostCustomRepositoryImpl implements PostCustomRepository {
                         post.contents,
 //                        post.image,
                         post.externalURL,
-                        post.likeCount,
 //                        post.viewCount,
                         post.commentCount
                 ))

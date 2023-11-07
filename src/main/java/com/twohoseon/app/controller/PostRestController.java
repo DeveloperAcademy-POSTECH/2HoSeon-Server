@@ -1,12 +1,12 @@
 package com.twohoseon.app.controller;
 
+import com.twohoseon.app.dto.request.comment.CommentCreateRequestDTO;
+import com.twohoseon.app.dto.request.comment.CommentFetchRequestDTO;
+import com.twohoseon.app.dto.request.comment.CommentUpdateRequestDTO;
 import com.twohoseon.app.dto.request.post.PostRequestDTO;
 import com.twohoseon.app.dto.request.post.VoteCreateRequestDTO;
 import com.twohoseon.app.dto.request.review.ReviewRequestDTO;
-import com.twohoseon.app.dto.response.GeneralResponseDTO;
-import com.twohoseon.app.dto.response.PostListResponseDTO;
-import com.twohoseon.app.dto.response.PostResponseDTO;
-import com.twohoseon.app.dto.response.VoteResultResponseDTO;
+import com.twohoseon.app.dto.response.*;
 import com.twohoseon.app.enums.StatusEnum;
 import com.twohoseon.app.enums.post.PostStatus;
 import com.twohoseon.app.repository.post.PostRepository;
@@ -18,12 +18,17 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.util.List;
 
 import static org.springframework.http.ResponseEntity.ok;
 
@@ -48,9 +53,10 @@ public class PostRestController {
     private final PostRepository postRepository;
 
     @Operation(summary = "게시글 작성")
-    @PostMapping
-    public ResponseEntity<GeneralResponseDTO> createPost(@RequestBody PostRequestDTO postRequestDTO) {
-        postService.createPost(postRequestDTO);
+    @PostMapping(consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE})
+    public ResponseEntity<GeneralResponseDTO> createPost(@RequestPart("postRequest") PostRequestDTO postRequestDTO,
+                                                         @RequestPart("imageFile") MultipartFile file) {
+        postService.createPost(postRequestDTO, file);
         GeneralResponseDTO responseDTO = GeneralResponseDTO.builder()
                 .status(StatusEnum.OK)
                 .message("success")
@@ -59,9 +65,11 @@ public class PostRestController {
     }
 
     @Operation(summary = "게시글 수정")
-    @PutMapping("/{postId}")
-    public ResponseEntity<GeneralResponseDTO> updatePost(@PathVariable Long postId, @RequestBody PostRequestDTO postUpdateRequestDTO) {
-        postService.updatePost(postId, postUpdateRequestDTO);
+    @PutMapping(value = "/{postId}", consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE})
+    public ResponseEntity<GeneralResponseDTO> updatePost(@PathVariable Long postId,
+                                                         @RequestPart("postRequest") PostRequestDTO postUpdateRequestDTO,
+                                                         @RequestPart("imageFile") MultipartFile file) {
+        postService.updatePost(postId, postUpdateRequestDTO, file);
         GeneralResponseDTO responseDTO = GeneralResponseDTO.builder()
                 .status(StatusEnum.OK)
                 .message("success")
@@ -88,9 +96,11 @@ public class PostRestController {
     }
 
     @Operation(summary = "리뷰 작성")
-    @PostMapping("/{postId}/reviews")
-    public ResponseEntity<GeneralResponseDTO> createReview(@PathVariable Long postId, @RequestBody ReviewRequestDTO reviewRequestDTO) {
-        postService.createReview(postId, reviewRequestDTO);
+    @PostMapping(value = "/{postId}/reviews", consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE})
+    public ResponseEntity<GeneralResponseDTO> createReview(@PathVariable Long postId,
+                                                           @RequestPart("reviewRequest") ReviewRequestDTO reviewRequestDTO,
+                                                           @RequestPart("imageFile") @NotNull MultipartFile file) {
+        postService.createReview(postId, reviewRequestDTO, file);
         GeneralResponseDTO responseDTO = GeneralResponseDTO.builder()
                 .status(StatusEnum.OK)
                 .message("success")
@@ -99,9 +109,11 @@ public class PostRestController {
     }
 
     @Operation(summary = "리뷰 수정")
-    @PutMapping("/{postId}/reviews")
-    public ResponseEntity<GeneralResponseDTO> updateReview(@PathVariable Long postId, @RequestBody ReviewRequestDTO reviewRequestDTO) {
-        postService.updateReview(postId, reviewRequestDTO);
+    @PutMapping(value = "/{postId}/reviews", consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE})
+    public ResponseEntity<GeneralResponseDTO> updateReview(@PathVariable Long postId,
+                                                           @RequestPart("reviewRequest") ReviewRequestDTO reviewRequestDTO,
+                                                           @RequestPart("imageFile") MultipartFile file) {
+        postService.updateReview(postId, reviewRequestDTO, file);
         GeneralResponseDTO responseDTO = GeneralResponseDTO.builder()
                 .status(StatusEnum.OK)
                 .message("success")
@@ -193,41 +205,6 @@ public class PostRestController {
                 .data(postService.createVote(postId, voteCreateRequestDTO.getVoteType()))
                 .build();
         return ok(responseDTO);
-    }
-
-
-    //TODO 좋아요
-    //TODO 좋아요 취소
-
-
-    @Operation(summary = "좋아요 등록")
-    @PostMapping("/{postId}/likes")
-    public ResponseEntity<GeneralResponseDTO> likePost(@PathVariable Long postId) {
-
-        postLikeService.likePost(postId);
-
-        GeneralResponseDTO.GeneralResponseDTOBuilder responseDTOBuilder = GeneralResponseDTO.builder();
-
-        responseDTOBuilder
-                .status(StatusEnum.OK)
-                .message("check success");
-
-        return ok(responseDTOBuilder.build());
-    }
-
-    @Operation(summary = "좋아요 취소")
-    @DeleteMapping("/{postId}/likes")
-    public ResponseEntity<GeneralResponseDTO> unlikePost(@PathVariable Long postId) {
-
-        postLikeService.unlikePost(postId);
-
-        GeneralResponseDTO.GeneralResponseDTOBuilder responseDTOBuilder = GeneralResponseDTO.builder();
-
-        responseDTOBuilder
-                .status(StatusEnum.OK)
-                .message("delete success");
-
-        return ok(responseDTOBuilder.build());
     }
 
 }

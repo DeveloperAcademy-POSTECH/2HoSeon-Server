@@ -4,12 +4,14 @@ import com.twohoseon.app.dto.request.member.ProfileRequestDTO;
 import com.twohoseon.app.entity.member.Member;
 import com.twohoseon.app.repository.member.MemberRepository;
 import com.twohoseon.app.security.MemberDetails;
+import com.twohoseon.app.service.image.ImageService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.Optional;
 
@@ -26,6 +28,7 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class MemberServiceImpl implements MemberService {
     private final MemberRepository memberRepository;
+    private final ImageService imageService;
 
     @Override
     public UserDetails loadUserByUsername(String providerId) throws UsernameNotFoundException {
@@ -36,15 +39,18 @@ public class MemberServiceImpl implements MemberService {
 
     @Override
     @Transactional
-    public void setUserProfile(ProfileRequestDTO profileRequestDTO) {
+    public void setUserProfile(ProfileRequestDTO profileRequestDTO, MultipartFile imageFile) {
 
         Member member = getMemberFromRequest();
         log.debug("profileRequestDTO = " + profileRequestDTO.toString());
-//        member.updateAdditionalUserInfo(
-//                profileRequestDTO.getProfileImage(),
-//                profileRequestDTO.getNickname(),
-//                profileRequestDTO.getSchool()
-//        );
+
+        String imageName = imageService.uploadImage(imageFile, "profiles");
+
+        member.updateAdditionalUserInfo(
+                imageName,
+                profileRequestDTO.getNickname(),
+                profileRequestDTO.getSchool()
+        );
         memberRepository.save(member);
     }
 
