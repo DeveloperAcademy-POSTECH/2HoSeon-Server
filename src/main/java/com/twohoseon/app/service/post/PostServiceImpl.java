@@ -51,7 +51,10 @@ public class PostServiceImpl implements PostService {
         //TODO 이미지 추가를 위해 PostCreateRequestDTO 수정 및 Request Type 변경 필요(json to form-data)
         Member author = getMemberFromRequest();
 
-        String image = imageService.uploadImage(file, "posts");
+        String image = null;
+        if (!file.isEmpty()) {
+            image = imageService.uploadImage(file, "posts");
+        }
 
         Post post = Post.builder()
                 .author(author)
@@ -94,8 +97,10 @@ public class PostServiceImpl implements PostService {
         if (!author.equals(member))
             throw new PermissionDeniedException();
 
-        String image = imageService.updateImage(file, "posts", postId);
-
+        String image = null;
+        if (!file.isEmpty()) {
+            image = imageService.updateImage(file, "posts", postId);
+        }
         post.updatePost(postRequestDTO, image);
         postRepository.save(post);
     }
@@ -143,7 +148,10 @@ public class PostServiceImpl implements PostService {
         if (!post.isAuthor(member))
             throw new PermissionDeniedException();
 
-        String image = imageService.updateImage(file, "reviews", post.getReview().getId());
+        String image = null;
+        if (!file.isEmpty()) {
+            image = imageService.updateImage(file, "reviews", post.getReview().getId());
+        }
 
         post.updateReview(reviewRequestDTO, image);
         postRepository.save(post);
