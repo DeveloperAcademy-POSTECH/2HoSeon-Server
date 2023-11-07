@@ -14,6 +14,7 @@ import com.twohoseon.app.service.post.PostCommentService;
 import com.twohoseon.app.service.post.PostService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
@@ -93,7 +94,7 @@ public class PostRestController {
     @PostMapping(value = "/{postId}/reviews", consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE})
     public ResponseEntity<GeneralResponseDTO> createReview(@PathVariable Long postId,
                                                            @RequestPart("reviewRequest") ReviewRequestDTO reviewRequestDTO,
-                                                           @RequestPart("imageFile") MultipartFile file) {
+                                                           @RequestPart("imageFile") @NotNull MultipartFile file) {
         postService.createReview(postId, reviewRequestDTO, file);
         GeneralResponseDTO responseDTO = GeneralResponseDTO.builder()
                 .status(StatusEnum.OK)
