@@ -4,6 +4,7 @@ import com.twohoseon.app.dto.response.PostInfoDTO;
 import com.twohoseon.app.dto.response.VoteCountsDTO;
 import com.twohoseon.app.dto.response.post.SearchPostInfo;
 import com.twohoseon.app.enums.post.PostStatus;
+import com.twohoseon.app.enums.post.VisibilityScope;
 import org.springframework.data.domain.Pageable;
 
 import java.util.List;
@@ -28,9 +29,9 @@ public interface PostCustomRepository {
 
     VoteCountsDTO getVoteInfo(long postId);
 
-    List<SearchPostInfo> findActivePostsByKeyword(Pageable pageable, String keyword);
+    List<SearchPostInfo> findActivePostsByKeyword(VisibilityScope visibilityScope, Pageable pageable, String keyword);
 
-    List<SearchPostInfo> findClosedPostsByKeyword(Pageable pageable, String keyword);
+    List<SearchPostInfo> findClosedPostsByKeyword(VisibilityScope visibilityScope, Pageable pageable, String keyword);
 
-    List<SearchPostInfo> findReviewPostsByKeyword(Pageable pageable, String keyword);
+    List<SearchPostInfo> findReviewPostsByKeyword(VisibilityScope visibilityScope, Pageable pageable, String keyword);
 }

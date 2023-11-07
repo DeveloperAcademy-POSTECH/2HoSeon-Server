@@ -10,6 +10,7 @@ import com.twohoseon.app.dto.response.VoteCountsDTO;
 import com.twohoseon.app.dto.response.VoteInfoDTO;
 import com.twohoseon.app.dto.response.post.SearchPostInfo;
 import com.twohoseon.app.enums.post.PostStatus;
+import com.twohoseon.app.enums.post.VisibilityScope;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
@@ -191,7 +192,7 @@ public class PostCustomRepositoryImpl implements PostCustomRepository {
 
 
     @Override
-    public List<SearchPostInfo> findActivePostsByKeyword(Pageable pageable, String keyword) {
+    public List<SearchPostInfo> findActivePostsByKeyword(VisibilityScope visibilityScope, Pageable pageable, String keyword) {
         List<SearchPostInfo> result = jpaQueryFactory
                 .select(Projections.constructor(SearchPostInfo.class,
                         post.id,
@@ -212,15 +213,16 @@ public class PostCustomRepositoryImpl implements PostCustomRepository {
                 .leftJoin(post.author, member)
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
-                .where((post.title.contains(keyword)
-                        .or(post.contents.contains(keyword)))
-                        .and(post.postStatus.eq(PostStatus.ACTIVE)))
+                .where((post.title.contains(keyword).or(post.contents.contains(keyword)))
+                        .and(post.postStatus.eq(PostStatus.ACTIVE))
+                        .and(post.visibilityScope.eq(visibilityScope))
+                )
                 .fetch();
         return result;
     }
 
     @Override
-    public List<SearchPostInfo> findClosedPostsByKeyword(Pageable pageable, String keyword) {
+    public List<SearchPostInfo> findClosedPostsByKeyword(VisibilityScope visibilityScope, Pageable pageable, String keyword) {
         List<SearchPostInfo> result = jpaQueryFactory
                 .select(Projections.constructor(SearchPostInfo.class,
                         post.id,
@@ -242,15 +244,16 @@ public class PostCustomRepositoryImpl implements PostCustomRepository {
                 .leftJoin(post.author, member)
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
-                .where((post.title.contains(keyword)
-                        .or(post.contents.contains(keyword)))
-                        .and(post.postStatus.eq(PostStatus.CLOSED)))
+                .where((post.title.contains(keyword).or(post.contents.contains(keyword)))
+                        .and(post.postStatus.eq(PostStatus.CLOSED))
+                        .and(post.visibilityScope.eq(visibilityScope))
+                )
                 .fetch();
         return result;
     }
 
     @Override
-    public List<SearchPostInfo> findReviewPostsByKeyword(Pageable pageable, String keyword) {
+    public List<SearchPostInfo> findReviewPostsByKeyword(VisibilityScope visibilityScope, Pageable pageable, String keyword) {
         List<SearchPostInfo> result = jpaQueryFactory
                 .select(Projections.constructor(SearchPostInfo.class,
                         post.id,
@@ -274,7 +277,9 @@ public class PostCustomRepositoryImpl implements PostCustomRepository {
                 .limit(pageable.getPageSize())
                 .where((post.title.contains(keyword)
                         .or(post.contents.contains(keyword)))
-                        .and(post.postStatus.eq(PostStatus.REVIEW)))
+                        .and(post.postStatus.eq(PostStatus.REVIEW))
+                        .and(post.visibilityScope.eq(visibilityScope))
+                )
                 .fetch();
         return result;
     }

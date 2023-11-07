@@ -4,6 +4,7 @@ import com.twohoseon.app.dto.response.post.SearchPostInfo;
 import com.twohoseon.app.dto.response.post.SearchResponseDTO;
 import com.twohoseon.app.enums.StatusEnum;
 import com.twohoseon.app.enums.post.PostStatus;
+import com.twohoseon.app.enums.post.VisibilityScope;
 import com.twohoseon.app.service.search.SearchService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -53,12 +54,12 @@ public class SearchRestController {
     )
     @GetMapping
     public ResponseEntity<SearchResponseDTO> searchKeyword(@RequestParam(defaultValue = "ACTIVE") PostStatus postStatus,
+                                                           @RequestParam(defaultValue = "GLOBAL") VisibilityScope visibilityScope,
                                                            @RequestParam(defaultValue = "0") int page,
                                                            @RequestParam(defaultValue = "10") int size,
                                                            @RequestParam(defaultValue = "") String keyword) {
         Pageable pageable = PageRequest.of(page, size);
-        List<SearchPostInfo> postInfoList = searchService.getSearchByKeyword(postStatus, pageable, keyword);
-
+        List<SearchPostInfo> postInfoList = searchService.getSearchByKeyword(postStatus, visibilityScope, pageable, keyword);
         SearchResponseDTO response = SearchResponseDTO.builder()
                 .status(StatusEnum.OK)
                 .message("search success")
