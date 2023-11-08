@@ -44,12 +44,6 @@ public class PostInfoDTO {
     int commentCount;
     @Schema(name = "price", type = "int", description = "가격")
     int price;
-
-    @Schema(name = "agreeCount", type = "int", description = "사라 수")
-    int agreeCount;
-    @Schema(name = "disagreeCount", type = "int", description = "사지마라 수")
-    int disagreeCount;
-
     @Schema(name = "isVoted", type = "boolean", description = "투표 여부")
 //    @JsonProperty("isVoted")
     boolean isVoted;
@@ -59,10 +53,10 @@ public class PostInfoDTO {
     List<VoteInfoDTO> voteInfoList;
 
     @Schema(name = "isMine", type = "boolean", description = "내가 쓴 글인지 여부")
-    boolean isMine;
+    Boolean isMine;
 
     @Schema(name = "isNotified", type = "boolean", description = "알림을 받을 것인지 여부")
-    boolean isNotified;
+    Boolean isNotified;
 
     public PostInfoDTO(Long postId, LocalDateTime createDate, LocalDateTime modifiedDate, VisibilityScope visibilityScope, PostStatus postStatus, AuthorInfoDTO author, String title, String contents, String image, String externalURL, int commentCount, int voteCount, int price) {
         this.postId = postId;
@@ -79,23 +73,6 @@ public class PostInfoDTO {
         this.voteCount = voteCount;
         this.price = price;
     }
-
-//    public PostInfoDTO(Long postId, LocalDateTime createDate, LocalDateTime modifiedDate, VisibilityScope visibilityScope, PostStatus postStatus, AuthorInfoDTO author, String title, String contents, String image, String externalURL, int commentCount, int voteCount, int price, boolean isNotified) {
-//        this.postId = postId;
-//        this.createDate = createDate;
-//        this.modifiedDate = modifiedDate;
-//        this.visibilityScope = visibilityScope;
-//        this.postStatus = postStatus;
-//        this.author = author;
-//        this.title = title;
-//        this.contents = contents;
-//        this.image = image;
-//        this.externalURL = externalURL;
-//        this.commentCount = commentCount;
-//        this.voteCount = voteCount;
-//        this.price = price;
-//        this.isNotified = isNotified;
-//    }
 
     public void setVoteCounts(VoteCountsDTO voteCounts) {
         this.voteCounts = voteCounts;
@@ -120,13 +97,5 @@ public class PostInfoDTO {
     public void setIsNotified(boolean isNotified) {
         this.isNotified = isNotified;
     }
-//
-//    public void setAgreeCount(int agreeCount) {
-//        this.agreeCount = agreeCount;
-//    }
-//
-//    public void setDisagreeCount(int disagreeCount) {
-//        this.disagreeCount = disagreeCount;
-//    }
 
 }
