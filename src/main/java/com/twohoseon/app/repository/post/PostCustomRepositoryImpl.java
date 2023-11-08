@@ -45,17 +45,20 @@ public class PostCustomRepositoryImpl implements PostCustomRepository {
                         post.id.as("post_id"),
                         post.createDate,
                         post.modifiedDate,
-//                        post.postType,
+                        post.visibilityScope,
+                        post.postStatus,
                         Projections.constructor(AuthorInfoDTO.class,
                                 member.id,
                                 member.nickname,
-                                member.profileImage),
+                                member.profileImage,
+                                member.consumerType),
                         post.title,
                         post.contents,
-//                        post.image,
+                        post.image,
                         post.externalURL,
-//                        post.viewCount,
-                        post.commentCount
+                        post.commentCount,
+                        post.agreeCount.add(post.disagreeCount),
+                        post.price
                 ))
                 .from(post)
                 .leftJoin(post.author, member)
@@ -63,31 +66,19 @@ public class PostCustomRepositoryImpl implements PostCustomRepository {
                 .limit(pageable.getPageSize())
                 .orderBy(post.createDate.desc())
                 .distinct();
-        if (postStatus == PostStatus.ACTIVE) {
-            jpaQuery.where(post.createDate.after(oneDayAgo));
-        } else {
-            jpaQuery.where(post.createDate.before(oneDayAgo));
-        }
+
         List<PostInfoDTO> postInfoList = jpaQuery.fetch();
         for (PostInfoDTO postInfoDTO : postInfoList) {
             postInfoDTO.setVoteCounts(getVoteInfo(postInfoDTO.getPostId()));
             postInfoDTO.setIsVoted(getIsVotedPost(postInfoDTO.getPostId(), memberId));
             postInfoDTO.setIsMine(postInfoDTO.getAuthor().getId() == memberId);
-            postInfoDTO.setPostStatus(postStatus);
-            //TODO 여기서 계산후 값을 넣어주면 된다.
-//            Date oneDayAgo = new Date(System.currentTimeMillis() - (24 * 60 * 60 * 1000));
-//
-//            return queryFactory
-//                    .selectFrom(post)
-//                    .where(post.creationDate.after(oneDayAgo))
-//                    .fetch();
         }
 
         return postInfoList;
     }
 
     @Override
-    public PostInfoDTO findPostById(long postId, long memberId) {
+    public PostInfoDTO findPostById(Long postId, long memberId) {
         //추가할 곳
         LocalDateTime oneDayAgo = LocalDateTime.now().minusDays(1);
         PostInfoDTO postInfo = jpaQueryFactory
@@ -95,18 +86,20 @@ public class PostCustomRepositoryImpl implements PostCustomRepository {
                         post.id.as("post_id"),
                         post.createDate,
                         post.modifiedDate,
-//                        post.postType,
-                        post.createDate.after(oneDayAgo),
+                        post.visibilityScope,
+                        post.postStatus,
                         Projections.constructor(AuthorInfoDTO.class,
                                 member.id,
                                 member.nickname,
-                                member.profileImage),
+                                member.profileImage,
+                                member.consumerType),
                         post.title,
                         post.contents,
-//                        post.image,
+                        post.image,
                         post.externalURL,
-//                        post.viewCount,
-                        post.commentCount
+                        post.commentCount,
+                        post.agreeCount.add(post.disagreeCount),
+                        post.price
                 ))
                 .from(post)
                 .where(post.id.eq(postId))
@@ -114,12 +107,15 @@ public class PostCustomRepositoryImpl implements PostCustomRepository {
                 .orderBy(post.createDate.desc())
                 .fetchOne();
 
+        assert postInfo != null;
         boolean isVoted = getIsVotedPost(postInfo.getPostId(), memberId);
         postInfo.setVoteCounts(getVoteInfo(postInfo.getPostId()));
         postInfo.setIsVoted(isVoted);
         if (postInfo.getAuthor().getId() == memberId)
             postInfo.setVoteInfoList(getVoteInfoList(postId));
+        postInfo.setIsNotified(getIsNotified(postId, memberId));
         postInfo.setIsMine(postInfo.getAuthor().getId() == memberId);
+        postInfo.setVoteInfoList(getVoteInfoList(postId));
         return postInfo;
     }
 
@@ -289,11 +285,19 @@ public class PostCustomRepositoryImpl implements PostCustomRepository {
                 .fetchOne() != null;
     }
 
+    private boolean getIsNotified(long postId, long memberId) {
+        return jpaQueryFactory
+                .selectFrom(post)
+                .where(post.id.eq(postId).and(post.subscribers.any().id.eq(memberId)))
+                .fetchOne() != null;
+    }
+
     private List<VoteInfoDTO> getVoteInfoList(long postId) {
         return jpaQueryFactory
                 .select(
                         Projections.constructor(VoteInfoDTO.class,
-                                vote.isAgree
+                                vote.isAgree,
+                                vote.consumerType
                                 //TODO 반드시 수정할 것 이 있을거임 소비성향
                         ))
                 .from(vote)

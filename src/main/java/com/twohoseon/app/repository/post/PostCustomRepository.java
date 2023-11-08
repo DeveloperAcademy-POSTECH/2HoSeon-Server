@@ -19,9 +19,7 @@ import java.util.List;
 public interface PostCustomRepository {
     List<PostInfoDTO> findAllPosts(Pageable pageable, PostStatus postStatus, long memberId);
 
-//    PostInfoDTO findPostById(long postId);
-
-    PostInfoDTO findPostById(long postId, long memberId);
+    PostInfoDTO findPostById(Long postId, long memberId);
 
     List<PostInfoDTO> findAllPostsByKeyword(Pageable pageable, String keyword, long memberId);
 
