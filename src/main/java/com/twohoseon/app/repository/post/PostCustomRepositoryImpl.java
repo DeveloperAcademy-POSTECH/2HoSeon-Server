@@ -10,7 +10,9 @@ import com.twohoseon.app.dto.response.VoteCountsDTO;
 import com.twohoseon.app.dto.response.VoteInfoDTO;
 import com.twohoseon.app.dto.response.post.SearchPostInfo;
 import com.twohoseon.app.enums.post.PostStatus;
+import com.twohoseon.app.enums.post.VisibilityScope;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 
@@ -30,6 +32,7 @@ import static com.twohoseon.app.entity.post.vote.QVote.vote;
  * @date : 10/19/23 10:40 PM
  * @modifyed : $
  **/
+@Slf4j
 @RequiredArgsConstructor
 @Repository
 public class PostCustomRepositoryImpl implements PostCustomRepository {
@@ -37,7 +40,7 @@ public class PostCustomRepositoryImpl implements PostCustomRepository {
     private final JPAQueryFactory jpaQueryFactory;
 
     @Override
-    public List<PostInfoDTO> findAllPosts(Pageable pageable, PostStatus postStatus, long memberId) {
+    public List<PostInfoDTO> findAllPosts(Pageable pageable, long memberId, VisibilityScope visibilityScope) {
         LocalDateTime oneDayAgo = LocalDateTime.now().minusDays(1);
 
         JPAQuery<PostInfoDTO> jpaQuery = jpaQueryFactory
@@ -62,6 +65,7 @@ public class PostCustomRepositoryImpl implements PostCustomRepository {
                 ))
                 .from(post)
                 .leftJoin(post.author, member)
+                .where(post.postStatus.ne(PostStatus.REVIEW).and(post.visibilityScope.eq(visibilityScope)))
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
                 .orderBy(post.createDate.desc())
@@ -71,7 +75,6 @@ public class PostCustomRepositoryImpl implements PostCustomRepository {
         for (PostInfoDTO postInfoDTO : postInfoList) {
             postInfoDTO.setVoteCounts(getVoteInfo(postInfoDTO.getPostId()));
             postInfoDTO.setIsVoted(getIsVotedPost(postInfoDTO.getPostId(), memberId));
-            postInfoDTO.setIsMine(postInfoDTO.getAuthor().getId() == memberId);
         }
 
         return postInfoList;

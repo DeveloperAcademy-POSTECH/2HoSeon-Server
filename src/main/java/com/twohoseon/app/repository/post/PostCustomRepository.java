@@ -3,7 +3,7 @@ package com.twohoseon.app.repository.post;
 import com.twohoseon.app.dto.response.PostInfoDTO;
 import com.twohoseon.app.dto.response.VoteCountsDTO;
 import com.twohoseon.app.dto.response.post.SearchPostInfo;
-import com.twohoseon.app.enums.post.PostStatus;
+import com.twohoseon.app.enums.post.VisibilityScope;
 import org.springframework.data.domain.Pageable;
 
 import java.util.List;
@@ -17,7 +17,7 @@ import java.util.List;
  * @modifyed : $
  **/
 public interface PostCustomRepository {
-    List<PostInfoDTO> findAllPosts(Pageable pageable, PostStatus postStatus, long memberId);
+    List<PostInfoDTO> findAllPosts(Pageable pageable, long memberId, VisibilityScope visibilityScope);
 
     PostInfoDTO findPostById(Long postId, long memberId);
 

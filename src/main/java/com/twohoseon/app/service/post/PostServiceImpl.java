@@ -7,7 +7,7 @@ import com.twohoseon.app.dto.response.VoteCountsDTO;
 import com.twohoseon.app.entity.member.Member;
 import com.twohoseon.app.entity.post.Post;
 import com.twohoseon.app.enums.VoteType;
-import com.twohoseon.app.enums.post.PostStatus;
+import com.twohoseon.app.enums.post.VisibilityScope;
 import com.twohoseon.app.exception.PermissionDeniedException;
 import com.twohoseon.app.exception.PostNotFoundException;
 import com.twohoseon.app.exception.ReviewExistException;
@@ -75,9 +75,9 @@ public class PostServiceImpl implements PostService {
 
     @Override
     @Transactional
-    public List<PostInfoDTO> fetchPosts(Pageable pageable, PostStatus postStatus) {
+    public List<PostInfoDTO> fetchPosts(Pageable pageable, VisibilityScope visibilityScope) {
         Member member = getMemberFromRequest();
-        return postRepository.findAllPosts(pageable, postStatus, member.getId());
+        return postRepository.findAllPosts(pageable, member.getId(), visibilityScope);
     }
 
     @Override

@@ -8,7 +8,7 @@ import com.twohoseon.app.dto.response.PostListResponseDTO;
 import com.twohoseon.app.dto.response.PostResponseDTO;
 import com.twohoseon.app.dto.response.VoteResultResponseDTO;
 import com.twohoseon.app.enums.StatusEnum;
-import com.twohoseon.app.enums.post.PostStatus;
+import com.twohoseon.app.enums.post.VisibilityScope;
 import com.twohoseon.app.service.post.PostService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -128,13 +128,13 @@ public class PostRestController {
     @Operation(summary = "게시글 조회", description = "게시글 조회")
     public ResponseEntity<PostListResponseDTO> fetchPosts(@RequestParam(defaultValue = "0", value = "page") int page,
                                                           @RequestParam(defaultValue = "10", value = "size") int size,
-                                                          @RequestParam(defaultValue = "ACTIVE", value = "postStatus") PostStatus postStatus) {
+                                                          @RequestParam(value = "visibilitiyScope") VisibilityScope visibilityScope) {
         Pageable pageable = PageRequest.of(page, size);
 
         PostListResponseDTO responseDTO = PostListResponseDTO.builder()
                 .status(StatusEnum.OK)
                 .message("success")
-                .data(postService.fetchPosts(pageable, postStatus))
+                .data(postService.fetchPosts(pageable, visibilityScope))
                 .build();
         return ok(responseDTO);
     }
