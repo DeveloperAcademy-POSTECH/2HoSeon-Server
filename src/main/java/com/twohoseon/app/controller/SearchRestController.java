@@ -52,10 +52,10 @@ public class SearchRestController {
             )
     )
     @GetMapping
-    public ResponseEntity<SearchResponseDTO> searchKeyword(@RequestParam(defaultValue = "ACTIVE") PostStatus postStatus,
-                                                           @RequestParam(defaultValue = "0") int page,
-                                                           @RequestParam(defaultValue = "10") int size,
-                                                           @RequestParam(defaultValue = "") String keyword) {
+    public ResponseEntity<SearchResponseDTO> searchKeyword(@RequestParam(defaultValue = "ACTIVE", value = "postStatus") PostStatus postStatus,
+                                                           @RequestParam(defaultValue = "0", value = "page") int page,
+                                                           @RequestParam(defaultValue = "10", value = "size") int size,
+                                                           @RequestParam(defaultValue = "", value = "keyword") String keyword) {
         Pageable pageable = PageRequest.of(page, size);
         List<SearchPostInfo> postInfoList = searchService.getSearchByKeyword(postStatus, pageable, keyword);
 

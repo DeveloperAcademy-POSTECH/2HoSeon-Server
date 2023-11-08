@@ -54,7 +54,7 @@ public class CommentRestController {
 
     @Operation(summary = "포스트 댓글 조회")
     @GetMapping
-    public ResponseEntity<CommentResponseDTO> readPostComment(@RequestParam Long postId) {
+    public ResponseEntity<CommentResponseDTO> readPostComment(@RequestParam("postId") Long postId) {
         List<CommentInfoDTO> commentList = commentService.getPostComments(postId);
 
         CommentResponseDTO commentResponseDTO = CommentResponseDTO.builder()
@@ -114,7 +114,7 @@ public class CommentRestController {
 
     @Operation(summary = "대댓글 조회")
     @GetMapping("/{commentId}/sub-comments")
-    public ResponseEntity<CommentResponseDTO> getPostCommentChildren(@PathVariable Long commentId) {
+    public ResponseEntity<CommentResponseDTO> getPostCommentChildren(@PathVariable(value = "commentId") Long commentId) {
 
         List<CommentInfoDTO> postCommentLists = commentService.getSubComments(commentId);
         commentRepository.getSubComments(commentId);
