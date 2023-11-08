@@ -21,5 +21,5 @@ import lombok.Data;
 public class VoteInfoDTO {
     //TODO 투표를 했는가 like voted
     boolean isAgree;
-    ConsumerType consumerType;
+    private ConsumerType consumerType;
 }
