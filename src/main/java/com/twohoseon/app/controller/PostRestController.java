@@ -1,17 +1,16 @@
 package com.twohoseon.app.controller;
 
-import com.twohoseon.app.dto.request.comment.CommentCreateRequestDTO;
-import com.twohoseon.app.dto.request.comment.CommentFetchRequestDTO;
-import com.twohoseon.app.dto.request.comment.CommentUpdateRequestDTO;
 import com.twohoseon.app.dto.request.post.PostRequestDTO;
 import com.twohoseon.app.dto.request.post.VoteCreateRequestDTO;
 import com.twohoseon.app.dto.request.review.ReviewRequestDTO;
-import com.twohoseon.app.dto.response.*;
+import com.twohoseon.app.dto.response.GeneralResponseDTO;
+import com.twohoseon.app.dto.response.PostListResponseDTO;
+import com.twohoseon.app.dto.response.PostResponseDTO;
+import com.twohoseon.app.dto.response.VoteResultResponseDTO;
 import com.twohoseon.app.enums.StatusEnum;
 import com.twohoseon.app.enums.post.PostStatus;
 import com.twohoseon.app.repository.post.PostRepository;
 import com.twohoseon.app.service.comment.CommentService;
-import com.twohoseon.app.service.post.PostLikeService;
 import com.twohoseon.app.service.post.PostService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -27,8 +26,6 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-
-import java.util.List;
 
 import static org.springframework.http.ResponseEntity.ok;
 
@@ -48,7 +45,7 @@ import static org.springframework.http.ResponseEntity.ok;
 @RequestMapping("/api/posts")
 public class PostRestController {
     private final PostService postService;
-    private final PostLikeService postLikeService;
+
     private final CommentService commentService;
     private final PostRepository postRepository;
 
@@ -131,34 +128,7 @@ public class PostRestController {
                 .build();
         return ok(responseDTO);
     }
-//
-//    @Operation(summary = "리뷰 조회")
-//    @GetMapping("/{postId}/reviews")
-//    public ResponseEntity<GeneralResponseDTO> readReview(@PathVariable Long postId) {
-//        //TODO 리뷰 조회 구현하기.
-//        return ok().build();
-//    }
-//
-//    @Operation(summary = "리뷰 댓글 작성")
-//    @PostMapping("/{postId}/reviews/comments")
-//    public ResponseEntity<GeneralResponseDTO> createReviewComment(@PathVariable Long postId, @RequestBody CommentCreateRequestDTO commentCreateRequestDTO) {
-//        //TODO 리뷰 댓글 작성 구현하기.
-//        return ok().build();
-//    }
-//
-//    @Operation(summary = "리뷰 댓글 수정")
-//    @PutMapping("/{postId}/reviews/comments/{commentId}")
-//    public ResponseEntity<GeneralResponseDTO> updateReviewComment(@PathVariable Long postId, @PathVariable Long commentId, @RequestBody CommentUpdateRequestDTO commentUpdateRequestDTO) {
-//        //TODO 리뷰 댓글 수정 구현하기.
-//        return ok().build();
-//    }
-//
-//    @Operation(summary = "리뷰 댓글 삭제")
-//    @DeleteMapping("/{postId}/reviews/comments/{commentId}")
-//    public ResponseEntity<GeneralResponseDTO> deleteReviewComment(@PathVariable Long postId, @PathVariable Long commentId) {
-//        //TODO 리뷰 댓글 삭제 구현하기.
-//        return ok().build();
-//    }
+
 
     @GetMapping
     @Operation(summary = "게시글 조회")
