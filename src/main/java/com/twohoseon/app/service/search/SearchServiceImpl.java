@@ -1,6 +1,6 @@
 package com.twohoseon.app.service.search;
 
-import com.twohoseon.app.dto.response.post.SearchPostInfo;
+import com.twohoseon.app.dto.response.post.PostSummary;
 import com.twohoseon.app.enums.post.PostStatus;
 import com.twohoseon.app.enums.post.VisibilityScope;
 import com.twohoseon.app.repository.post.PostRepository;
@@ -28,7 +28,7 @@ public class SearchServiceImpl implements SearchService {
 
     @Override
     @Transactional
-    public List<SearchPostInfo> getSearchByKeyword(PostStatus postStatus, VisibilityScope visibilityScope, Pageable pageable, String keyword) {
+    public List<PostSummary> getSearchByKeyword(PostStatus postStatus, VisibilityScope visibilityScope, Pageable pageable, String keyword) {
 //        return postRepository.findPostsByKeyword(pageable, keyword, postStatus);
         switch (postStatus) {
             case ACTIVE -> {

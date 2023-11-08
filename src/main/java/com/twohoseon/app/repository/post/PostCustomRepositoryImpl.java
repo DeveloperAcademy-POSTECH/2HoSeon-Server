@@ -1,5 +1,6 @@
 package com.twohoseon.app.repository.post;
 
+import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.CaseBuilder;
 import com.querydsl.jpa.impl.JPAQuery;
@@ -8,7 +9,9 @@ import com.twohoseon.app.dto.response.AuthorInfoDTO;
 import com.twohoseon.app.dto.response.PostInfoDTO;
 import com.twohoseon.app.dto.response.VoteCountsDTO;
 import com.twohoseon.app.dto.response.VoteInfoDTO;
-import com.twohoseon.app.dto.response.post.SearchPostInfo;
+import com.twohoseon.app.dto.response.post.PostSummary;
+import com.twohoseon.app.enums.ConsumerType;
+import com.twohoseon.app.enums.ReviewType;
 import com.twohoseon.app.enums.post.PostStatus;
 import com.twohoseon.app.enums.post.VisibilityScope;
 import lombok.RequiredArgsConstructor;
@@ -192,9 +195,11 @@ public class PostCustomRepositoryImpl implements PostCustomRepository {
 
 
     @Override
-    public List<SearchPostInfo> findActivePostsByKeyword(VisibilityScope visibilityScope, Pageable pageable, String keyword) {
-        List<SearchPostInfo> result = jpaQueryFactory
-                .select(Projections.constructor(SearchPostInfo.class,
+    public List<PostSummary> findActivePostsByKeyword(VisibilityScope visibilityScope, Pageable pageable, String keyword) {
+        List<PostSummary> result = jpaQueryFactory
+                .select(Projections.constructor(PostSummary.class,
+                        post.createDate,
+                        post.modifiedDate,
                         post.id,
                         Projections.constructor(AuthorInfoDTO.class,
                                 member.id,
@@ -217,14 +222,17 @@ public class PostCustomRepositoryImpl implements PostCustomRepository {
                         .and(post.postStatus.eq(PostStatus.ACTIVE))
                         .and(post.visibilityScope.eq(visibilityScope))
                 )
+                .orderBy(post.createDate.desc())
                 .fetch();
         return result;
     }
 
     @Override
-    public List<SearchPostInfo> findClosedPostsByKeyword(VisibilityScope visibilityScope, Pageable pageable, String keyword) {
-        List<SearchPostInfo> result = jpaQueryFactory
-                .select(Projections.constructor(SearchPostInfo.class,
+    public List<PostSummary> findClosedPostsByKeyword(VisibilityScope visibilityScope, Pageable pageable, String keyword) {
+        List<PostSummary> result = jpaQueryFactory
+                .select(Projections.constructor(PostSummary.class,
+                        post.createDate,
+                        post.modifiedDate,
                         post.id,
                         Projections.constructor(AuthorInfoDTO.class,
                                 member.id,
@@ -248,14 +256,17 @@ public class PostCustomRepositoryImpl implements PostCustomRepository {
                         .and(post.postStatus.eq(PostStatus.CLOSED))
                         .and(post.visibilityScope.eq(visibilityScope))
                 )
+                .orderBy(post.createDate.desc())
                 .fetch();
         return result;
     }
 
     @Override
-    public List<SearchPostInfo> findReviewPostsByKeyword(VisibilityScope visibilityScope, Pageable pageable, String keyword) {
-        List<SearchPostInfo> result = jpaQueryFactory
-                .select(Projections.constructor(SearchPostInfo.class,
+    public List<PostSummary> findReviewPostsByKeyword(VisibilityScope visibilityScope, Pageable pageable, String keyword) {
+        List<PostSummary> result = jpaQueryFactory
+                .select(Projections.constructor(PostSummary.class,
+                        post.createDate,
+                        post.modifiedDate,
                         post.id,
                         Projections.constructor(AuthorInfoDTO.class,
                                 member.id,
@@ -280,6 +291,77 @@ public class PostCustomRepositoryImpl implements PostCustomRepository {
                         .and(post.postStatus.eq(PostStatus.REVIEW))
                         .and(post.visibilityScope.eq(visibilityScope))
                 )
+                .orderBy(post.createDate.desc())
+                .fetch();
+        return result;
+    }
+
+    @Override
+    public List<PostSummary> findRecentReviews(VisibilityScope visibilityScope, ReviewType reviewType, ConsumerType consumerType) {
+        BooleanBuilder whereClause = new BooleanBuilder(post.postStatus.eq(PostStatus.REVIEW)
+                .and(post.visibilityScope.eq(visibilityScope)))
+                .and(post.postStatus.eq(PostStatus.REVIEW))
+                .and(member.consumerType.eq(consumerType));
+
+        // ReviewType에 따른 조건 추가
+        switch (reviewType) {
+            case PURCHASED -> whereClause.and(post.isPurchased.isTrue());
+            case NOT_PURCHASED -> whereClause.and(post.isPurchased.isFalse());
+        }
+
+        List<PostSummary> result = jpaQueryFactory
+                .select(Projections.constructor(PostSummary.class,
+                        post.createDate,
+                        post.modifiedDate,
+                        post.id,
+                        post.postStatus,
+                        post.title,
+                        post.contents.substring(0, 25)
+                ))
+                .from(post)
+                .leftJoin(post.author, member)
+                .limit(3)
+                .where(whereClause)
+                .orderBy(post.createDate.desc())
+                .fetch();
+        return result;
+    }
+
+    @Override
+    public List<PostSummary> findReviews(Pageable pageable, VisibilityScope visibilityScope, ReviewType reviewType) {
+        BooleanBuilder whereClause = new BooleanBuilder(post.postStatus.eq(PostStatus.REVIEW)
+                .and(post.visibilityScope.eq(visibilityScope)))
+                .and(post.postStatus.eq(PostStatus.REVIEW));
+
+        // ReviewType에 따른 조건 추가
+        switch (reviewType) {
+            case PURCHASED -> whereClause.and(post.isPurchased.isTrue());
+            case NOT_PURCHASED -> whereClause.and(post.isPurchased.isFalse());
+        }
+        List<PostSummary> result = jpaQueryFactory
+                .select(Projections.constructor(PostSummary.class,
+                        post.createDate,
+                        post.modifiedDate,
+                        post.id,
+                        Projections.constructor(AuthorInfoDTO.class,
+                                member.id,
+                                member.nickname,
+                                member.profileImage,
+                                member.consumerType),
+                        post.postStatus,
+                        post.commentCount,
+                        post.title,
+                        post.image,
+                        post.contents.substring(0, 25),
+                        post.price,
+                        post.isPurchased
+                ))
+                .from(post)
+                .leftJoin(post.author, member)
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize())
+                .where(whereClause)
+                .orderBy(post.createDate.desc())
                 .fetch();
         return result;
     }

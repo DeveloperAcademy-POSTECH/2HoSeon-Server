@@ -7,6 +7,8 @@ import com.twohoseon.app.enums.post.PostStatus;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
 
+import java.time.LocalDateTime;
+
 /**
  * @author : hyunwoopark
  * @version : 1.0.0
@@ -17,8 +19,12 @@ import lombok.Getter;
  **/
 @Getter
 @JsonInclude(JsonInclude.Include.NON_NULL)
-@Schema(name = "SearchPostInfo", description = "검색 결과 게시글 정보")
-public class SearchPostInfo {
+@Schema(name = "PostSummary", description = "검색 결과 게시글 정보")
+public class PostSummary {
+    @Schema(name = "createDate", type = "LocalDateTime", description = "게시글 생성 시간")
+    private LocalDateTime createDate;
+    @Schema(name = "modifiedDate", type = "LocalDateTime", description = "게시글 수정 시간")
+    private LocalDateTime modifiedDate;
     @Schema(name = "postId", type = "long", description = "게시글 ID")
     private Long postId;
     @Schema(name = "authorInfo", type = "AuthorInfoDTO", description = "게시글 작성자 정보")
@@ -45,8 +51,10 @@ public class SearchPostInfo {
     private boolean isPurchased;
 
 
-    //진행중인 투표
-    public SearchPostInfo(Long postId, AuthorInfoDTO authorInfo, PostStatus postStatus, int voteCount, String title, String image, String contents, int price, int commentCount) {
+    //진행중인 투표 검색
+    public PostSummary(LocalDateTime createDate, LocalDateTime modifiedDate, Long postId, AuthorInfoDTO authorInfo, PostStatus postStatus, int voteCount, String title, String image, String contents, int price, int commentCount) {
+        this.createDate = createDate;
+        this.modifiedDate = modifiedDate;
         this.postId = postId;
         this.authorInfo = authorInfo;
         this.postStatus = postStatus;
@@ -58,8 +66,10 @@ public class SearchPostInfo {
         this.commentCount = commentCount;
     }
 
-    //종료된 투표
-    public SearchPostInfo(Long postId, AuthorInfoDTO authorInfo, PostStatus postStatus, int voteCount, int commentCount, VoteResult voteResult, String title, String image, String contents, int price) {
+    //종료된 투표 검색
+    public PostSummary(LocalDateTime createDate, LocalDateTime modifiedDate, Long postId, AuthorInfoDTO authorInfo, PostStatus postStatus, int voteCount, int commentCount, VoteResult voteResult, String title, String image, String contents, int price) {
+        this.createDate = createDate;
+        this.modifiedDate = modifiedDate;
         this.postId = postId;
         this.authorInfo = authorInfo;
         this.postStatus = postStatus;
@@ -72,8 +82,10 @@ public class SearchPostInfo {
         this.price = price;
     }
 
-    //후기
-    public SearchPostInfo(Long postId, AuthorInfoDTO authorInfo, PostStatus postStatus, int viewCount, int commentCount, String title, String image, String contents, int price, boolean isPurchased) {
+    //후기 검색 결과
+    public PostSummary(LocalDateTime createDate, LocalDateTime modifiedDate, Long postId, AuthorInfoDTO authorInfo, PostStatus postStatus, int viewCount, int commentCount, String title, String image, String contents, int price, boolean isPurchased) {
+        this.createDate = createDate;
+        this.modifiedDate = modifiedDate;
         this.postId = postId;
         this.authorInfo = authorInfo;
         this.postStatus = postStatus;
@@ -84,5 +96,30 @@ public class SearchPostInfo {
         this.contents = contents;
         this.price = price;
         this.isPurchased = isPurchased;
+    }
+
+    //소비 후기 탭 fetch
+    public PostSummary(LocalDateTime createDate, LocalDateTime modifiedDate, Long postId, AuthorInfoDTO authorInfo, PostStatus postStatus, int commentCount, String title, String image, String contents, int price, boolean isPurchased) {
+        this.createDate = createDate;
+        this.modifiedDate = modifiedDate;
+        this.postId = postId;
+        this.authorInfo = authorInfo;
+        this.postStatus = postStatus;
+        this.commentCount = commentCount;
+        this.title = title;
+        this.image = image;
+        this.contents = contents;
+        this.price = price;
+        this.isPurchased = isPurchased;
+    }
+
+    //소비 후기 탭 최근 후기 fetch
+    public PostSummary(LocalDateTime createDate, LocalDateTime modifiedDate, Long postId, PostStatus postStatus, String title, String contents) {
+        this.createDate = createDate;
+        this.modifiedDate = modifiedDate;
+        this.postId = postId;
+        this.postStatus = postStatus;
+        this.title = title;
+        this.contents = contents;
     }
 }
