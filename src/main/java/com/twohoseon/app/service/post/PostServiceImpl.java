@@ -4,10 +4,15 @@ import com.twohoseon.app.dto.request.post.PostRequestDTO;
 import com.twohoseon.app.dto.request.review.ReviewRequestDTO;
 import com.twohoseon.app.dto.response.PostInfoDTO;
 import com.twohoseon.app.dto.response.VoteCountsDTO;
+import com.twohoseon.app.dto.response.post.PostSummary;
+import com.twohoseon.app.dto.response.post.ReviewFetch;
 import com.twohoseon.app.entity.member.Member;
 import com.twohoseon.app.entity.post.Post;
+import com.twohoseon.app.enums.ConsumerType;
+import com.twohoseon.app.enums.ReviewType;
 import com.twohoseon.app.enums.VoteType;
 import com.twohoseon.app.enums.post.PostStatus;
+import com.twohoseon.app.enums.post.VisibilityScope;
 import com.twohoseon.app.exception.PermissionDeniedException;
 import com.twohoseon.app.exception.PostNotFoundException;
 import com.twohoseon.app.exception.ReviewExistException;
@@ -176,6 +181,21 @@ public class PostServiceImpl implements PostService {
                 .orElseThrow(() -> new PostNotFoundException());
         post.subscribe(member);
         postRepository.save(post);
+    }
+
+    @Override
+    public ReviewFetch fetchReviews(VisibilityScope visibilityScope, Pageable pageable, ReviewType reviewType) {
+        Member member = getMemberFromRequest();
+        ConsumerType consumerType = member.getConsumerType();
+        List<PostSummary> recentReviews = postRepository.findRecentReviews(visibilityScope, reviewType, consumerType);
+        List<PostSummary> reviews = postRepository.findReviews(pageable, visibilityScope, reviewType);
+        return ReviewFetch.builder()
+                .recentReviews(recentReviews)
+                .reviewType(reviewType)
+                .reviews(reviews)
+                .build();
+//        postRepository.findReviews(pageable, reviewType, consumerType);
+
     }
 
     @Override
