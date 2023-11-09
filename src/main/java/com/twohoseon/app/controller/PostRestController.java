@@ -9,6 +9,8 @@ import com.twohoseon.app.dto.response.PostResponseDTO;
 import com.twohoseon.app.dto.response.VoteResultResponseDTO;
 import com.twohoseon.app.enums.StatusEnum;
 import com.twohoseon.app.enums.post.VisibilityScope;
+import com.twohoseon.app.repository.post.PostRepository;
+import com.twohoseon.app.service.comment.CommentService;
 import com.twohoseon.app.service.post.PostService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -43,6 +45,9 @@ import static org.springframework.http.ResponseEntity.ok;
 @RequestMapping("/api/posts")
 public class PostRestController {
     private final PostService postService;
+
+    private final CommentService commentService;
+    private final PostRepository postRepository;
 
     @Operation(summary = "게시글 작성", description = "게시글 작성")
     @PostMapping(consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
@@ -83,8 +88,13 @@ public class PostRestController {
     @Operation(summary = "후기 구독", description = "후기 구독")
     @PostMapping("/{postId}/subscribe")
     public ResponseEntity<GeneralResponseDTO> subscribePost(@PathVariable("postId") Long postId) {
+        //TODO 중복 구독 핸들링
         postService.subscribePost(postId);
-        return ok().build();
+        GeneralResponseDTO responseDTO = GeneralResponseDTO.builder()
+                .status(StatusEnum.OK)
+                .message("success")
+                .build();
+        return ok(responseDTO);
     }
 
     @Operation(summary = "리뷰 작성", description = "리뷰 작성")
@@ -123,6 +133,7 @@ public class PostRestController {
                 .build();
         return ok(responseDTO);
     }
+
 
     @GetMapping
     @Operation(summary = "게시글 조회", description = "게시글 조회")

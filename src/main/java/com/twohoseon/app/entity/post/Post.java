@@ -15,9 +15,7 @@ import jakarta.validation.constraints.NotNull;
 import lombok.*;
 import org.hibernate.annotations.Comment;
 
-import java.util.ArrayList;
 import java.util.LinkedHashSet;
-import java.util.List;
 import java.util.Set;
 
 /**
@@ -218,7 +216,7 @@ public class Post extends BaseTimeEntity {
                 .title(reviewRequestDTO.getTitle())
                 .image(image)
                 .contents(reviewRequestDTO.getContents())
-                .isPurchased(reviewRequestDTO.isPurchased())
+                .isPurchased(reviewRequestDTO.getIsPurchased())
                 .build();
         this.review = review;
     }
