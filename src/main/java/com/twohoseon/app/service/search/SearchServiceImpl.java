@@ -1,7 +1,8 @@
 package com.twohoseon.app.service.search;
 
-import com.twohoseon.app.dto.response.post.SearchPostInfo;
+import com.twohoseon.app.dto.response.post.PostSummary;
 import com.twohoseon.app.enums.post.PostStatus;
+import com.twohoseon.app.enums.post.VisibilityScope;
 import com.twohoseon.app.repository.post.PostRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -27,17 +28,17 @@ public class SearchServiceImpl implements SearchService {
 
     @Override
     @Transactional
-    public List<SearchPostInfo> getSearchByKeyword(PostStatus postStatus, Pageable pageable, String keyword) {
+    public List<PostSummary> getSearchByKeyword(PostStatus postStatus, VisibilityScope visibilityScope, Pageable pageable, String keyword) {
 //        return postRepository.findPostsByKeyword(pageable, keyword, postStatus);
         switch (postStatus) {
             case ACTIVE -> {
-                return postRepository.findActivePostsByKeyword(pageable, keyword);
+                return postRepository.findActivePostsByKeyword(visibilityScope, pageable, keyword);
             }
             case CLOSED -> {
-                return postRepository.findClosedPostsByKeyword(pageable, keyword);
+                return postRepository.findClosedPostsByKeyword(visibilityScope, pageable, keyword);
             }
             case REVIEW -> {
-                return postRepository.findReviewPostsByKeyword(pageable, keyword);
+                return postRepository.findReviewPostsByKeyword(visibilityScope, pageable, keyword);
             }
         }
         return null;

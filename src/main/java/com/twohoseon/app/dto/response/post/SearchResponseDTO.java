@@ -31,5 +31,5 @@ public class SearchResponseDTO {
     private String message;
 
     @Schema(name = "data", type = "List<PostInfoDTO>", description = "응답 데이터")
-    private List<SearchPostInfo> data;
+    private List<PostSummary> data;
 }

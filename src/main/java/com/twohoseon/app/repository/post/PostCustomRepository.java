@@ -2,7 +2,10 @@ package com.twohoseon.app.repository.post;
 
 import com.twohoseon.app.dto.response.PostInfoDTO;
 import com.twohoseon.app.dto.response.VoteCountsDTO;
-import com.twohoseon.app.dto.response.post.SearchPostInfo;
+import com.twohoseon.app.dto.response.post.PostSummary;
+import com.twohoseon.app.entity.member.Member;
+import com.twohoseon.app.enums.ConsumerType;
+import com.twohoseon.app.enums.ReviewType;
 import com.twohoseon.app.enums.post.VisibilityScope;
 import org.springframework.data.domain.Pageable;
 
@@ -17,18 +20,22 @@ import java.util.List;
  * @modifyed : $
  **/
 public interface PostCustomRepository {
-    List<PostInfoDTO> findAllPosts(Pageable pageable, long memberId, VisibilityScope visibilityScope);
+    List<PostInfoDTO> findAllPosts(Pageable pageable, Member memberId, VisibilityScope visibilityScope);
+
+//    PostInfoDTO findPostById(long postId);
 
     PostInfoDTO findPostById(Long postId, long memberId);
 
-    List<PostInfoDTO> findAllPostsByKeyword(Pageable pageable, String keyword, long memberId);
-
-
     VoteCountsDTO getVoteInfo(long postId);
 
-    List<SearchPostInfo> findActivePostsByKeyword(Pageable pageable, String keyword);
+    List<PostSummary> findActivePostsByKeyword(VisibilityScope visibilityScope, Pageable pageable, String keyword);
 
-    List<SearchPostInfo> findClosedPostsByKeyword(Pageable pageable, String keyword);
+    List<PostSummary> findClosedPostsByKeyword(VisibilityScope visibilityScope, Pageable pageable, String keyword);
 
-    List<SearchPostInfo> findReviewPostsByKeyword(Pageable pageable, String keyword);
+    List<PostSummary> findReviewPostsByKeyword(VisibilityScope visibilityScope, Pageable pageable, String keyword);
+
+
+    List<PostSummary> findRecentReviews(VisibilityScope visibilityScope, ReviewType reviewType, ConsumerType consumerType);
+
+    List<PostSummary> findReviews(Pageable pageable, VisibilityScope visibilityScope, ReviewType reviewType);
 }

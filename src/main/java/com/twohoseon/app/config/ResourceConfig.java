@@ -17,7 +17,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 @Configuration
 public class ResourceConfig implements WebMvcConfigurer {
 
-    @Value("file:${file.dir}")
+    @Value("file:${app.upload.path}")
     private String filePath;
 
     @Override

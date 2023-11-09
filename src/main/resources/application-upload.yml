@@ -2,7 +2,7 @@ spring:
   servlet:
     multipart:
       enabled: true
-      location: /Users/pingse/Desktop/ex/
+      location: ${app.upload.path}
       max-request-size: 30MB
       max-file-size: 10MB
 

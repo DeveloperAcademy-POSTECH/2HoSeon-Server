@@ -2,9 +2,7 @@ package com.twohoseon.app.entity.post.vote;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.twohoseon.app.enums.ConsumerType;
-import jakarta.persistence.Column;
-import jakarta.persistence.EmbeddedId;
-import jakarta.persistence.Entity;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -24,6 +22,7 @@ public class Vote {
     Boolean isAgree;
 
     @Column
+    @Enumerated(EnumType.STRING)
     ConsumerType consumerType;
 
     protected Vote() {
