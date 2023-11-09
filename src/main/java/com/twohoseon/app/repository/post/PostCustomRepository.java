@@ -28,14 +28,14 @@ public interface PostCustomRepository {
 
     VoteCountsDTO getVoteInfo(long postId);
 
-    List<PostSummary> findActivePostsByKeyword(VisibilityScope visibilityScope, Pageable pageable, String keyword);
+    List<PostSummary> findActivePostsByKeyword(VisibilityScope visibilityScope, Member reqMember, Pageable pageable, String keyword);
 
-    List<PostSummary> findClosedPostsByKeyword(VisibilityScope visibilityScope, Pageable pageable, String keyword);
+    List<PostSummary> findClosedPostsByKeyword(VisibilityScope visibilityScope, Member reqMember, Pageable pageable, String keyword);
 
-    List<PostSummary> findReviewPostsByKeyword(VisibilityScope visibilityScope, Pageable pageable, String keyword);
+    List<PostSummary> findReviewPostsByKeyword(VisibilityScope visibilityScope, Member reqMember, Pageable pageable, String keyword);
 
 
-    List<PostSummary> findRecentReviews(VisibilityScope visibilityScope, ReviewType reviewType, ConsumerType consumerType);
+    List<PostSummary> findRecentReviews(VisibilityScope visibilityScope, Member reqMember, ReviewType reviewType, ConsumerType consumerType);
 
-    List<PostSummary> findReviews(Pageable pageable, VisibilityScope visibilityScope, ReviewType reviewType);
+    List<PostSummary> findReviews(Pageable pageable, Member reqMember, VisibilityScope visibilityScope, ReviewType reviewType);
 }
