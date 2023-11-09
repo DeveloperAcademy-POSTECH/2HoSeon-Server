@@ -114,7 +114,7 @@ public class PostRestController {
     @PutMapping(value = "/{postId}/reviews", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
     public ResponseEntity<GeneralResponseDTO> updateReview(@PathVariable("postId") Long postId,
                                                            @RequestPart(value = "reviewRequest") ReviewRequestDTO reviewRequestDTO,
-                                                           @RequestPart(value = "imageFile") MultipartFile file) {
+                                                           @RequestPart(value = "imageFile", required = false) MultipartFile file) {
         postService.updateReview(postId, reviewRequestDTO, file);
         GeneralResponseDTO responseDTO = GeneralResponseDTO.builder()
                 .status(StatusEnum.OK)

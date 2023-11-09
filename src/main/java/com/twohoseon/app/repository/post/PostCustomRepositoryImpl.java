@@ -47,7 +47,7 @@ public class PostCustomRepositoryImpl implements PostCustomRepository {
         BooleanBuilder whereClause = new BooleanBuilder(post.postStatus.ne(PostStatus.REVIEW)
                 .and(post.visibilityScope.eq(visibilityScope))
         );
-        if (visibilityScope == visibilityScope.SCHOOL) {
+        if (visibilityScope == VisibilityScope.SCHOOL) {
             whereClause.and(post.author.school.eq(reqMember.getSchool()));
         }
 
@@ -154,7 +154,14 @@ public class PostCustomRepositoryImpl implements PostCustomRepository {
 
 
     @Override
-    public List<PostSummary> findActivePostsByKeyword(VisibilityScope visibilityScope, Pageable pageable, String keyword) {
+    public List<PostSummary> findActivePostsByKeyword(VisibilityScope visibilityScope, Member reqMember, Pageable pageable, String keyword) {
+        BooleanBuilder whereClause = new BooleanBuilder((post.title.contains(keyword).or(post.contents.contains(keyword)))
+                .and(post.postStatus.eq(PostStatus.ACTIVE))
+                .and(post.visibilityScope.eq(visibilityScope))
+        );
+        if (visibilityScope == VisibilityScope.SCHOOL) {
+            whereClause.and(post.author.school.eq(reqMember.getSchool()));
+        }
         List<PostSummary> result = jpaQueryFactory
                 .select(Projections.constructor(PostSummary.class,
                         post.createDate,
@@ -177,17 +184,22 @@ public class PostCustomRepositoryImpl implements PostCustomRepository {
                 .leftJoin(post.author, member)
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
-                .where((post.title.contains(keyword).or(post.contents.contains(keyword)))
-                        .and(post.postStatus.eq(PostStatus.ACTIVE))
-                        .and(post.visibilityScope.eq(visibilityScope))
-                )
+                .where(whereClause)
+
                 .orderBy(post.createDate.desc())
                 .fetch();
         return result;
     }
 
     @Override
-    public List<PostSummary> findClosedPostsByKeyword(VisibilityScope visibilityScope, Pageable pageable, String keyword) {
+    public List<PostSummary> findClosedPostsByKeyword(VisibilityScope visibilityScope, Member reqMember, Pageable pageable, String keyword) {
+        BooleanBuilder whereClause = new BooleanBuilder((post.title.contains(keyword).or(post.contents.contains(keyword)))
+                .and(post.postStatus.eq(PostStatus.CLOSED))
+                .and(post.visibilityScope.eq(visibilityScope))
+        );
+        if (visibilityScope == VisibilityScope.SCHOOL) {
+            whereClause.and(post.author.school.eq(reqMember.getSchool()));
+        }
         List<PostSummary> result = jpaQueryFactory
                 .select(Projections.constructor(PostSummary.class,
                         post.createDate,
@@ -211,17 +223,22 @@ public class PostCustomRepositoryImpl implements PostCustomRepository {
                 .leftJoin(post.author, member)
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
-                .where((post.title.contains(keyword).or(post.contents.contains(keyword)))
-                        .and(post.postStatus.eq(PostStatus.CLOSED))
-                        .and(post.visibilityScope.eq(visibilityScope))
-                )
+                .where(whereClause)
                 .orderBy(post.createDate.desc())
                 .fetch();
         return result;
     }
 
     @Override
-    public List<PostSummary> findReviewPostsByKeyword(VisibilityScope visibilityScope, Pageable pageable, String keyword) {
+    public List<PostSummary> findReviewPostsByKeyword(VisibilityScope visibilityScope, Member reqMember, Pageable pageable, String keyword) {
+        BooleanBuilder whereClause = new BooleanBuilder((post.title.contains(keyword)
+                .or(post.contents.contains(keyword)))
+                .and(post.postStatus.eq(PostStatus.REVIEW))
+                .and(post.visibilityScope.eq(visibilityScope))
+        );
+        if (visibilityScope == VisibilityScope.SCHOOL) {
+            whereClause.and(post.author.school.eq(reqMember.getSchool()));
+        }
         List<PostSummary> result = jpaQueryFactory
                 .select(Projections.constructor(PostSummary.class,
                         post.createDate,
@@ -245,23 +262,22 @@ public class PostCustomRepositoryImpl implements PostCustomRepository {
                 .leftJoin(post.author, member)
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
-                .where((post.title.contains(keyword)
-                        .or(post.contents.contains(keyword)))
-                        .and(post.postStatus.eq(PostStatus.REVIEW))
-                        .and(post.visibilityScope.eq(visibilityScope))
-                )
+                .where(whereClause)
                 .orderBy(post.createDate.desc())
                 .fetch();
         return result;
     }
 
     @Override
-    public List<PostSummary> findRecentReviews(VisibilityScope visibilityScope, ReviewType reviewType, ConsumerType consumerType) {
+    public List<PostSummary> findRecentReviews(VisibilityScope visibilityScope, Member reqMember, ReviewType reviewType, ConsumerType consumerType) {
         BooleanBuilder whereClause = new BooleanBuilder(post.postStatus.eq(PostStatus.REVIEW)
                 .and(post.visibilityScope.eq(visibilityScope)))
                 .and(post.postStatus.eq(PostStatus.REVIEW))
                 .and(member.consumerType.eq(consumerType));
 
+        if (visibilityScope == VisibilityScope.SCHOOL) {
+            whereClause.and(post.author.school.eq(reqMember.getSchool()));
+        }
         // ReviewType에 따른 조건 추가
         switch (reviewType) {
             case PURCHASED -> whereClause.and(post.isPurchased.isTrue());
@@ -287,11 +303,14 @@ public class PostCustomRepositoryImpl implements PostCustomRepository {
     }
 
     @Override
-    public List<PostSummary> findReviews(Pageable pageable, VisibilityScope visibilityScope, ReviewType reviewType) {
+    public List<PostSummary> findReviews(Pageable pageable, Member reqMember, VisibilityScope visibilityScope, ReviewType reviewType) {
         BooleanBuilder whereClause = new BooleanBuilder(post.postStatus.eq(PostStatus.REVIEW)
                 .and(post.visibilityScope.eq(visibilityScope)))
                 .and(post.postStatus.eq(PostStatus.REVIEW));
 
+        if (visibilityScope == VisibilityScope.SCHOOL) {
+            whereClause.and(post.author.school.eq(reqMember.getSchool()));
+        }
         // ReviewType에 따른 조건 추가
         switch (reviewType) {
             case PURCHASED -> whereClause.and(post.isPurchased.isTrue());

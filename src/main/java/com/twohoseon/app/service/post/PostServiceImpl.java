@@ -153,7 +153,7 @@ public class PostServiceImpl implements PostService {
             throw new PermissionDeniedException();
 
         String image = null;
-        if (!file.isEmpty()) {
+        if (file != null && file.isEmpty()) {
             image = imageService.updateImage(file, "reviews", post.getReview().getId());
         }
 
@@ -184,10 +184,10 @@ public class PostServiceImpl implements PostService {
 
     @Override
     public ReviewFetch fetchReviews(VisibilityScope visibilityScope, Pageable pageable, ReviewType reviewType) {
-        Member member = getMemberFromRequest();
-        ConsumerType consumerType = member.getConsumerType();
-        List<PostSummary> recentReviews = postRepository.findRecentReviews(visibilityScope, reviewType, consumerType);
-        List<PostSummary> reviews = postRepository.findReviews(pageable, visibilityScope, reviewType);
+        Member reqMember = getMemberFromRequest();
+        ConsumerType consumerType = reqMember.getConsumerType();
+        List<PostSummary> recentReviews = postRepository.findRecentReviews(visibilityScope, reqMember, reviewType, consumerType);
+        List<PostSummary> reviews = postRepository.findReviews(pageable, reqMember, visibilityScope, reviewType);
         return ReviewFetch.builder()
                 .recentReviews(recentReviews)
                 .reviewType(reviewType)
