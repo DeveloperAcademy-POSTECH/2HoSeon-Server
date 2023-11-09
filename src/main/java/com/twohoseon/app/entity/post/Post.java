@@ -203,7 +203,10 @@ public class Post extends BaseTimeEntity {
             this.title = reviewRequestDTO.getTitle();
         if (reviewRequestDTO.getContents() != null)
             this.contents = reviewRequestDTO.getContents();
-        //TODO 멀티파트 처리후 이미지 링크 저장 필
+        if (reviewRequestDTO.getPrice() != null)
+            this.price = reviewRequestDTO.getPrice();
+        if (reviewRequestDTO.getIsPurchased() != null)
+            this.isPurchased = reviewRequestDTO.getIsPurchased();
         if (image != null)
             this.image = image;
     }
