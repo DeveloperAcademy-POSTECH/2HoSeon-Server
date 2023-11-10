@@ -219,6 +219,7 @@ public class Post extends BaseTimeEntity {
                 .title(reviewRequestDTO.getTitle())
                 .image(image)
                 .contents(reviewRequestDTO.getContents())
+                .price(reviewRequestDTO.getPrice())
                 .isPurchased(reviewRequestDTO.getIsPurchased())
                 .build();
         this.review = review;
