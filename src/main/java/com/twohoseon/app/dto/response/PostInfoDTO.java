@@ -17,6 +17,7 @@ import java.util.List;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @Schema(name = "PostInfoDTO", description = "게시글 정보 DTO")
 public class PostInfoDTO {
+
     @Schema(name = "postId", type = "long", description = "게시글 ID")
     Long postId;
     @Schema(name = "createDate", type = "LocalDateTime", description = "게시글 생성일")
@@ -34,7 +35,7 @@ public class PostInfoDTO {
     @Schema(name = "contents", type = "String", description = "게시글 내용")
     String contents;
     @Schema(name = "image", type = "String", description = "게시글 이미지")
-    String image;
+    String image = null;
     @Schema(name = "externalURL", type = "String", description = "게시글 외부 URL")
     String externalURL;
 
@@ -45,7 +46,6 @@ public class PostInfoDTO {
     @Schema(name = "price", type = "int", description = "가격")
     int price;
     @Schema(name = "isVoted", type = "boolean", description = "투표 여부")
-//    @JsonProperty("isVoted")
     boolean isVoted;
     @Schema(name = "voteCounts", type = "VoteInfoDTO", description = "투표 정보")
     VoteCountsDTO voteCounts;
@@ -67,7 +67,8 @@ public class PostInfoDTO {
         this.author = author;
         this.title = title;
         this.contents = contents;
-        this.image = image;
+        if (image != null)
+            this.image = "https://test.hyunwoo.tech/images/posts/" + image;
         this.externalURL = externalURL;
         this.commentCount = commentCount;
         this.voteCount = voteCount;

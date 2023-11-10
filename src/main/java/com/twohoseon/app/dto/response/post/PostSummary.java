@@ -60,7 +60,7 @@ public class PostSummary {
         this.postStatus = postStatus;
         this.voteCount = voteCount;
         this.title = title;
-        this.image = image;
+        this.image = image != null ? "https://test.hyunwoo.tech/images/reviews/" + image : null;
         this.contents = contents;
         this.price = price;
         this.commentCount = commentCount;
@@ -77,7 +77,7 @@ public class PostSummary {
         this.commentCount = commentCount;
         this.voteResult = voteResult;
         this.title = title;
-        this.image = image;
+        this.image = image != null ? "https://test.hyunwoo.tech/images/reviews/" + image : null;
         this.contents = contents;
         this.price = price;
     }
@@ -92,7 +92,7 @@ public class PostSummary {
         this.viewCount = viewCount;
         this.commentCount = commentCount;
         this.title = title;
-        this.image = image;
+        this.image = image != null ? "https://test.hyunwoo.tech/images/reviews/" + image : null;
         this.contents = contents;
         this.price = price;
         this.isPurchased = isPurchased;
@@ -107,7 +107,7 @@ public class PostSummary {
         this.postStatus = postStatus;
         this.commentCount = commentCount;
         this.title = title;
-        this.image = image;
+        this.image = image != null ? "https://test.hyunwoo.tech/images/reviews/" + image : null;
         this.contents = contents;
         this.price = price;
         this.isPurchased = isPurchased;

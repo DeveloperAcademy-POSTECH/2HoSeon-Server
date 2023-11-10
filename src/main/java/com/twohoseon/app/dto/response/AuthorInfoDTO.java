@@ -29,7 +29,7 @@ public class AuthorInfoDTO {
     public AuthorInfoDTO(long id, String nickname, String profileImage, ConsumerType consumerType) {
         this.id = id;
         this.nickname = nickname;
-        this.profileImage = profileImage;
+        this.profileImage = "https://test.hyunwoo.tech/images/profiles/" + profileImage;
         this.consumerType = consumerType;
     }
 }
