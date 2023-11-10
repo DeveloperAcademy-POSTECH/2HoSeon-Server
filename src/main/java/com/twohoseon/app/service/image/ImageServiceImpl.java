@@ -1,8 +1,6 @@
 package com.twohoseon.app.service.image;
 
-import com.twohoseon.app.entity.post.Post;
 import com.twohoseon.app.exception.InvalidFileTypeException;
-import com.twohoseon.app.exception.PostNotFoundException;
 import com.twohoseon.app.repository.post.PostRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -13,6 +11,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -64,39 +63,16 @@ public class ImageServiceImpl implements ImageService {
     }
 
     @Override
-    public String updateImage(MultipartFile file, String path, Long postId) {
-        Post post = postRepository.findById(postId)
-                .orElseThrow(() -> new PostNotFoundException());
-
-        if (!file.getContentType().startsWith("image")) {
-            throw new InvalidFileTypeException();
-        }
-
+    public void deleteImage(String Image, String path) {
         File removeFile = null;
 
-        String originalName = file.getOriginalFilename();
-        String fileName = UUID.randomUUID().toString() + originalName.substring(originalName.lastIndexOf("."));
-        String saveName = fileDir + path + File.separator + fileName;
-        Path savePath = Paths.get(saveName);
-
         try {
-            if (post.getImage() != null) {
-                removeFile = new File(fileDir + path + File.separator + URLDecoder.decode("thumb_" + post.getImage(), "UTF-8"));
-                removeFile.delete();
-                removeFile = new File(fileDir + path + File.separator + URLDecoder.decode(post.getImage(), "UTF-8"));
-                removeFile.delete();
-            }
-
-            file.transferTo(savePath);
-
-            String thumbnailSaveName = fileDir + path + File.separator + "thumb_" + fileName;
-            File thumbnailFile = new File(thumbnailSaveName);
-            Thumbnailator.createThumbnail(savePath.toFile(), thumbnailFile, 100, 100);
-        } catch (IOException e) {
-            e.printStackTrace();
+            removeFile = new File(fileDir + path + File.separator + URLDecoder.decode("thumb_" + Image, "UTF-8"));
+            removeFile.delete();
+            removeFile = new File(fileDir + path + File.separator + URLDecoder.decode(Image, "UTF-8"));
+            removeFile.delete();
+        } catch (UnsupportedEncodingException e) {
+            throw new RuntimeException(e);
         }
-
-        postRepository.save(post);
-        return fileName;
     }
 }

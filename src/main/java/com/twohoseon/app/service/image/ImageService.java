@@ -14,6 +14,5 @@ import org.springframework.web.multipart.MultipartFile;
 public interface ImageService extends CommonService {
     String uploadImage(MultipartFile file, String path);
 
-    String updateImage(MultipartFile file, String path, Long postId);
-
+    void deleteImage(String Image, String path);
 }
