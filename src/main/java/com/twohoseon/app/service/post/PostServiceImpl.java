@@ -56,7 +56,7 @@ public class PostServiceImpl implements PostService {
         Member author = getMemberFromRequest();
 
         String image = null;
-        if (!file.isEmpty()) {
+        if (file != null && !file.isEmpty()) {
             image = imageService.uploadImage(file, "posts");
         }
 
@@ -91,6 +91,7 @@ public class PostServiceImpl implements PostService {
         return postInfoDTO;
     }
 
+    //TODO 업로드 수정
     @Override
     @Transactional
     public void updatePost(Long postId, PostRequestDTO postRequestDTO, MultipartFile file) {
@@ -102,8 +103,14 @@ public class PostServiceImpl implements PostService {
             throw new PermissionDeniedException();
 
         String image = null;
-        if (!file.isEmpty()) {
-            image = imageService.updateImage(file, "posts", postId);
+
+        if (file != null && !file.isEmpty()) {
+            if (post.getImage() == null) {
+                image = imageService.uploadImage(file, "posts");
+            } else {
+                imageService.deleteImage(post.getImage().toString(), "posts");
+                image = imageService.uploadImage(file, "posts");
+            }
         }
         post.updatePost(postRequestDTO, image);
         postRepository.save(post);
@@ -131,7 +138,14 @@ public class PostServiceImpl implements PostService {
         if (post.isReviewExist()) {
             throw new ReviewExistException();
         }
-        String image = imageService.uploadImage(file, "reviews");
+        if (reviewRequestDTO.getIsPurchased() == true && file.isEmpty() && file == null) {
+            throw new RuntimeException();
+        }
+
+        String image = null;
+        if (file != null && !file.isEmpty()) {
+            image = imageService.uploadImage(file, "reviews");
+        }
 
         post.createReview(reviewRequestDTO, image);
         postRepository.save(post);
@@ -144,6 +158,7 @@ public class PostServiceImpl implements PostService {
         });
     }
 
+    //TODO 업로드 수정
     @Override
     public void updateReview(Long postId, ReviewRequestDTO reviewRequestDTO, MultipartFile file) {
         Member member = getMemberFromRequest();
@@ -151,10 +166,18 @@ public class PostServiceImpl implements PostService {
                 .orElseThrow(() -> new PostNotFoundException());
         if (!post.isAuthor(member))
             throw new PermissionDeniedException();
+        if (reviewRequestDTO.getIsPurchased() == true && post.getReview().getImage() == null && file == null && file.isEmpty()) {
+            throw new RuntimeException();
+        }
 
         String image = null;
-        if (file != null && file.isEmpty()) {
-            image = imageService.updateImage(file, "reviews", post.getReview().getId());
+        if (file != null && !file.isEmpty()) {
+            if (post.getReview().getImage() == null) {
+                image = imageService.uploadImage(file, "reviews");
+            } else {
+                imageService.deleteImage(post.getReview().getImage().toString(), "reviews");
+                image = imageService.uploadImage(file, "reviews");
+            }
         }
 
         post.updateReview(reviewRequestDTO, image);

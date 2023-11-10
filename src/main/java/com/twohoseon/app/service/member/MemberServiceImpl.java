@@ -44,7 +44,16 @@ public class MemberServiceImpl implements MemberService {
         Member member = getMemberFromRequest();
         log.debug("profileRequestDTO = " + profileRequestDTO.toString());
 
-        String imageName = imageService.uploadImage(imageFile, "profiles");
+        String imageName = null;
+        if (imageFile != null && !imageFile.isEmpty()) {
+
+            if (member.getProfileImage() == null) {
+                imageName = imageService.uploadImage(imageFile, "profiles");
+            } else {
+                imageService.deleteImage(member.getProfileImage().toString(), "profiles");
+                imageName = imageService.uploadImage(imageFile, "profiles");
+            }
+        }
 
         member.updateAdditionalUserInfo(
                 imageName,
