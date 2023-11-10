@@ -38,4 +38,8 @@ public interface PostCustomRepository {
     List<PostSummary> findRecentReviews(VisibilityScope visibilityScope, Member reqMember, ReviewType reviewType, ConsumerType consumerType);
 
     List<PostSummary> findReviews(Pageable pageable, Member reqMember, VisibilityScope visibilityScope, ReviewType reviewType);
+
+    PostSummary getPostSummaryInReviewDetail(Long postId);
+
+    PostInfoDTO getReviewDetailByPostId(Long postId);
 }

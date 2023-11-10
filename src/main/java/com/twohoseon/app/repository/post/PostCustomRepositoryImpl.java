@@ -5,10 +5,10 @@ import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.CaseBuilder;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
-import com.twohoseon.app.dto.response.AuthorInfoDTO;
 import com.twohoseon.app.dto.response.PostInfoDTO;
 import com.twohoseon.app.dto.response.VoteCountsDTO;
 import com.twohoseon.app.dto.response.VoteInfoDTO;
+import com.twohoseon.app.dto.response.post.AuthorInfoDTO;
 import com.twohoseon.app.dto.response.post.PostSummary;
 import com.twohoseon.app.entity.member.Member;
 import com.twohoseon.app.enums.ConsumerType;
@@ -344,6 +344,57 @@ public class PostCustomRepositoryImpl implements PostCustomRepository {
         return result;
     }
 
+    @Override
+    public PostSummary getPostSummaryInReviewDetail(Long postId) {
+        PostSummary result = jpaQueryFactory.select(Projections.constructor(PostSummary.class,
+                        post.createDate,
+                        post.modifiedDate,
+                        post.id,
+                        Projections.constructor(AuthorInfoDTO.class,
+                                member.id,
+                                member.nickname,
+                                member.profileImage,
+                                member.consumerType),
+                        post.postStatus,
+                        post.voteResult,
+                        post.title,
+                        post.image,
+                        post.contents.substring(0, 25),
+                        post.price
+                ))
+                .from(post)
+                .leftJoin(post.author, member)
+                .where(post.id.eq(postId))
+                .orderBy(post.createDate.desc())
+                .fetchOne();
+        return result;
+    }
+
+    @Override
+    public PostInfoDTO getReviewDetailByPostId(Long postId) {
+        PostInfoDTO result = jpaQueryFactory.select(Projections.constructor(PostInfoDTO.class,
+                        post.createDate,
+                        post.modifiedDate,
+                        post.id,
+                        Projections.constructor(AuthorInfoDTO.class,
+                                member.id,
+                                member.nickname,
+                                member.profileImage,
+                                member.consumerType),
+                        post.postStatus,
+                        post.title,
+                        post.image,
+                        post.contents.substring(0, 25),
+                        post.price,
+                        post.isPurchased
+                ))
+                .from(post)
+                .leftJoin(post.author, member)
+                .where(post.id.eq(postId))
+                .fetchOne();
+        return result;
+    }
+
 
     private boolean getIsVotedPost(long postId, long memberId) {
         return jpaQueryFactory
@@ -367,7 +418,6 @@ public class PostCustomRepositoryImpl implements PostCustomRepository {
                         Projections.constructor(VoteInfoDTO.class,
                                 vote.isAgree,
                                 vote.consumerType
-                                //TODO 반드시 수정할 것 이 있을거임 소비성향
                         ))
                 .from(vote)
                 .where(vote.id.post.id.eq(postId))

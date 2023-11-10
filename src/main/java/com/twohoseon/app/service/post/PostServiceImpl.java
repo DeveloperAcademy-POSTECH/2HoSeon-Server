@@ -5,6 +5,7 @@ import com.twohoseon.app.dto.request.review.ReviewRequestDTO;
 import com.twohoseon.app.dto.response.PostInfoDTO;
 import com.twohoseon.app.dto.response.VoteCountsDTO;
 import com.twohoseon.app.dto.response.post.PostSummary;
+import com.twohoseon.app.dto.response.post.ReviewDetail;
 import com.twohoseon.app.dto.response.post.ReviewFetch;
 import com.twohoseon.app.entity.member.Member;
 import com.twohoseon.app.entity.post.Post;
@@ -15,6 +16,7 @@ import com.twohoseon.app.enums.post.VisibilityScope;
 import com.twohoseon.app.exception.PermissionDeniedException;
 import com.twohoseon.app.exception.PostNotFoundException;
 import com.twohoseon.app.exception.ReviewExistException;
+import com.twohoseon.app.exception.VoteExistException;
 import com.twohoseon.app.repository.post.PostRepository;
 import com.twohoseon.app.service.image.ImageService;
 import com.twohoseon.app.service.notification.NotificationService;
@@ -193,8 +195,18 @@ public class PostServiceImpl implements PostService {
                 .reviewType(reviewType)
                 .reviews(reviews)
                 .build();
-//        postRepository.findReviews(pageable, reviewType, consumerType);
+    }
 
+    @Override
+    public ReviewDetail getReviewDetail(Long postId) {
+        Member member = getMemberFromRequest();
+        PostSummary originalPost = postRepository.getPostSummaryInReviewDetail(postId);
+        PostInfoDTO reviewPost = postRepository.getReviewDetailByPostId(postId);
+        return ReviewDetail.builder()
+                .originalPost(originalPost)
+                .reviewPost(reviewPost)
+                .isMine(originalPost.getAuthor().getId().equals(member.getId()))
+                .build();
     }
 
     @Override
