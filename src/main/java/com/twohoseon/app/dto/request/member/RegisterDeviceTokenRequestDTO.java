@@ -14,6 +14,6 @@ import lombok.Getter;
 @Getter
 @Schema(name = "RegisterDeviceTokenRequestDTO", description = "디바이스 토큰 등록 요청")
 public class RegisterDeviceTokenRequestDTO {
-    @Schema(name = "deviceToken", description = "디바이스 토큰")
+    @Schema(name = "deviceToken", type = "String", description = "디바이스 토큰")
     private String deviceToken;
 }

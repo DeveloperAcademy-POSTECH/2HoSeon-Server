@@ -1,6 +1,7 @@
 package com.twohoseon.app.dto.response;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.twohoseon.app.dto.response.post.AuthorInfoDTO;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
