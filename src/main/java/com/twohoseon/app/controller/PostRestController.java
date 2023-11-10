@@ -17,7 +17,6 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
@@ -52,7 +51,7 @@ public class PostRestController {
     @Operation(summary = "게시글 작성", description = "게시글 작성")
     @PostMapping(consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
     public ResponseEntity<GeneralResponseDTO> createPost(@RequestPart(value = "postRequest") PostRequestDTO postRequestDTO,
-                                                         @RequestPart(value = "imageFile") MultipartFile file) {
+                                                         @RequestPart(value = "imageFile", required = false) MultipartFile file) {
         postService.createPost(postRequestDTO, file);
         GeneralResponseDTO responseDTO = GeneralResponseDTO.builder()
                 .status(StatusEnum.OK)
@@ -65,7 +64,7 @@ public class PostRestController {
     @PutMapping(value = "/{postId}", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
     public ResponseEntity<GeneralResponseDTO> updatePost(@PathVariable("postId") Long postId,
                                                          @RequestPart(value = "postRequest") PostRequestDTO postUpdateRequestDTO,
-                                                         @RequestPart(value = "imageFile") MultipartFile file) {
+                                                         @RequestPart(value = "imageFile", required = false) MultipartFile file) {
         postService.updatePost(postId, postUpdateRequestDTO, file);
         GeneralResponseDTO responseDTO = GeneralResponseDTO.builder()
                 .status(StatusEnum.OK)
@@ -101,7 +100,7 @@ public class PostRestController {
     @PostMapping(value = "/{postId}/reviews", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
     public ResponseEntity<GeneralResponseDTO> createReview(@PathVariable("postId") Long postId,
                                                            @RequestPart(value = "reviewRequest") ReviewRequestDTO reviewRequestDTO,
-                                                           @RequestPart(value = "imageFile") @NotNull MultipartFile file) {
+                                                           @RequestPart(value = "imageFile", required = false) MultipartFile file) {
         postService.createReview(postId, reviewRequestDTO, file);
         GeneralResponseDTO responseDTO = GeneralResponseDTO.builder()
                 .status(StatusEnum.OK)

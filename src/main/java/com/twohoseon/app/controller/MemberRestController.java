@@ -32,7 +32,7 @@ public class MemberRestController {
     @Operation(summary = "회원 정보 수정", description = "회원 정보 수정")
     @PostMapping(value = "/api/profiles", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
     public ResponseEntity<GeneralResponseDTO> setMemberInfo(@RequestPart(value = "profileRequest") ProfileRequestDTO profileRequestDTO,
-                                                            @RequestPart(value = "imageFile") MultipartFile imageFile) {
+                                                            @RequestPart(value = "imageFile", required = false) MultipartFile imageFile) {
         memberService.setUserProfile(profileRequestDTO, imageFile);
 
         GeneralResponseDTO generalResponseDTO = GeneralResponseDTO.builder()
