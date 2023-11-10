@@ -17,15 +17,7 @@ public class AuthorInfoDTO {
     String profileImage;
     @Schema(name = "consumerType", type = "ConsumerType", description = "소비 성향")
     ConsumerType consumerType;
-
-
-//    public AuthorInfoDTO(long id, String nickname, String profileImage, String consumerType) {
-//        this.id = id;
-//        this.nickname = nickname;
-//        this.profileImage = profileImage;
-//        this.consumerType = ConsumerType.valueOf(consumerType);
-//    }
-
+    
     public AuthorInfoDTO(long id, String nickname, String profileImage, ConsumerType consumerType) {
         this.id = id;
         this.nickname = nickname;

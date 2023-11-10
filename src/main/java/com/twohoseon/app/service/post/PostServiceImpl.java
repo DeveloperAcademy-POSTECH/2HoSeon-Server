@@ -54,7 +54,6 @@ public class PostServiceImpl implements PostService {
 
     @Override
     public void createPost(PostRequestDTO postRequestDTO, MultipartFile file) {
-        //TODO 이미지 추가를 위해 PostCreateRequestDTO 수정 및 Request Type 변경 필요(json to form-data)
         Member author = getMemberFromRequest();
 
         String image = null;
