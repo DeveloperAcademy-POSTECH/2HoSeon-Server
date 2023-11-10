@@ -69,9 +69,12 @@ public class Member extends BaseTimeEntity {
 
 
     public void updateAdditionalUserInfo(String profileImage, String nickname, School school) {
-        this.profileImage = profileImage;
-        this.nickname = nickname;
-        this.school = school;
+        if (profileImage != null)
+            this.profileImage = profileImage;
+        if (nickname != null)
+            this.nickname = nickname;
+        if (school != null)
+            this.school = school;
     }
 
 
