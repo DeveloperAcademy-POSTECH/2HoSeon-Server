@@ -242,4 +242,11 @@ public class Post extends BaseTimeEntity {
         return this.agreeCount + this.disagreeCount;
     }
 
+    public boolean hasVoteFromMember(Member member) {
+        for (Vote vote : votes) {
+            if (vote.getId().getVoter().equals(member))
+                return true;
+        }
+        return false;
+    }
 }

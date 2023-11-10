@@ -203,6 +203,9 @@ public class PostServiceImpl implements PostService {
         Member member = getMemberFromRequest();
         Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new PostNotFoundException());
+        if (post.hasVoteFromMember(member)) {
+            throw new VoteExistException();
+        }
         post.createVote(member, voteType);
         postRepository.save(post);
         return postRepository.getVoteInfo(postId);

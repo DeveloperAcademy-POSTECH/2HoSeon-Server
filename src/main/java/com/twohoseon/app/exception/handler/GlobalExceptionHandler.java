@@ -274,6 +274,13 @@ public class GlobalExceptionHandler {
         return ErrorResponse.toResponseEntity(ErrorCode.REVIEW_DUPLICATE_ERROR);
     }
 
+    @ExceptionHandler(VoteExistException.class)
+    protected ResponseEntity<ErrorResponse> handleVoteExistException(VoteExistException ex) {
+        log.error("handleVoteExistException: Vote is already exist", ex);
+        return ErrorResponse.toResponseEntity(ErrorCode.VOTE_DUPLICATE_ERROR);
+    }
+
+
     // ==================================================================================================================
 
     /**
