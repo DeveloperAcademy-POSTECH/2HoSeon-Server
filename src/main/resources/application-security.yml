@@ -13,5 +13,6 @@ spring:
               - name
               - email
         provider:
-          authorization-uri: https://appleid.apple.com/auth/authorize?response_mode=form_post
-          token-uri: https://appleid.apple.com/auth/token
+          apple:
+            authorization-uri: https://appleid.apple.com/auth/authorize?response_mode=form_post
+            token-uri: https://appleid.apple.com/auth/token
