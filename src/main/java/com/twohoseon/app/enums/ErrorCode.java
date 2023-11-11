@@ -116,8 +116,11 @@ public enum ErrorCode {
     REVIEW_DUPLICATE_ERROR(409, "E014", "Review is already exist"),
 
     //투표를 중복해서 작성할 수 없음
-    VOTE_DUPLICATE_ERROR(409, "E015", "Vote is already exist");
-    
+    VOTE_DUPLICATE_ERROR(409, "E015", "Vote is already exist"),
+
+    //유효하지 않은 리프레쉬 토큰
+    INVALID_REFRESH_TOKEN_ERROR(401, "E016", "Invalid Refresh Token");
+
     /**
      * ******************************* Error Code Constructor ***************************************
      */

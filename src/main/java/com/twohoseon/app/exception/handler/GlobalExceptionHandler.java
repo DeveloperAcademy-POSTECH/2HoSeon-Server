@@ -280,6 +280,12 @@ public class GlobalExceptionHandler {
         return ErrorResponse.toResponseEntity(ErrorCode.VOTE_DUPLICATE_ERROR);
     }
 
+    @ExceptionHandler(InvalidRefreshTokenException.class)
+    protected ResponseEntity<ErrorResponse> handleInvalidRefreshTokenException(InvalidRefreshTokenException ex) {
+        log.error("handleInvalidRefreshTokenException: Invalid Refresh Token", ex);
+        return ErrorResponse.toResponseEntity(ErrorCode.INVALID_REFRESH_TOKEN_ERROR);
+    }
+
 
     // ==================================================================================================================
 
