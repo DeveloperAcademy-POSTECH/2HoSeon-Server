@@ -37,10 +37,10 @@ public class ReviewRestController {
 
     @GetMapping
     @Operation(summary = "리뷰 탭 게시글 조회")
-    public ResponseEntity<ReviewFetch> fetchReviews(@RequestParam(defaultValue = "GLOBAL", value = "visibilityScope") VisibilityScope visibilityScope,
-                                                    @RequestParam(defaultValue = "ALL", value = "reviewType") ReviewType reviewType,
-                                                    @RequestParam(defaultValue = "0", value = "page") int page,
-                                                    @RequestParam(defaultValue = "10", value = "size") int size) {
+    public ResponseEntity<ReviewFetchResponse> fetchReviews(@RequestParam(defaultValue = "GLOBAL", value = "visibilityScope") VisibilityScope visibilityScope,
+                                                            @RequestParam(defaultValue = "ALL", value = "reviewType") ReviewType reviewType,
+                                                            @RequestParam(defaultValue = "0", value = "page") int page,
+                                                            @RequestParam(defaultValue = "10", value = "size") int size) {
 
         Pageable pageable = PageRequest.of(page, size);
         ReviewFetch reviewFetch = postService.fetchReviews(visibilityScope, pageable, reviewType);
