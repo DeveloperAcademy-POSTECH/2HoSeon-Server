@@ -185,7 +185,6 @@ public class Post extends BaseTimeEntity {
 
     //For Post Update
     public void updatePost(PostRequestDTO postRequestDTO, String image) {
-        //TODO 이미지 부분 List<String>으로 변경
         if (postRequestDTO.getTitle() != null)
             this.title = postRequestDTO.getTitle();
         if (postRequestDTO.getContents() != null)
@@ -243,4 +242,11 @@ public class Post extends BaseTimeEntity {
         return this.agreeCount + this.disagreeCount;
     }
 
+    public boolean hasVoteFromMember(Member member) {
+        for (Vote vote : votes) {
+            if (vote.getId().getVoter().equals(member))
+                return true;
+        }
+        return false;
+    }
 }

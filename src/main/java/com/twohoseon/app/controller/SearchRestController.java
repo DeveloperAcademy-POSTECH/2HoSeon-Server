@@ -1,7 +1,7 @@
 package com.twohoseon.app.controller;
 
 import com.twohoseon.app.dto.response.post.PostSummary;
-import com.twohoseon.app.dto.response.post.SearchResponseDTO;
+import com.twohoseon.app.dto.response.post.SearchResponse;
 import com.twohoseon.app.enums.StatusEnum;
 import com.twohoseon.app.enums.post.PostStatus;
 import com.twohoseon.app.enums.post.VisibilityScope;
@@ -49,18 +49,18 @@ public class SearchRestController {
             description = "검색 성공",
             content = @Content(
                     mediaType = "application/json",
-                    schema = @Schema(implementation = SearchResponseDTO.class)
+                    schema = @Schema(implementation = SearchResponse.class)
             )
     )
     @GetMapping
-    public ResponseEntity<SearchResponseDTO> searchKeyword(@RequestParam(defaultValue = "ACTIVE") PostStatus postStatus,
-                                                           @RequestParam(defaultValue = "GLOBAL") VisibilityScope visibilityScope,
-                                                           @RequestParam(defaultValue = "0") int page,
-                                                           @RequestParam(defaultValue = "10") int size,
-                                                           @RequestParam(defaultValue = "") String keyword) {
+    public ResponseEntity<SearchResponse> searchKeyword(@RequestParam(defaultValue = "ACTIVE") PostStatus postStatus,
+                                                        @RequestParam(defaultValue = "GLOBAL") VisibilityScope visibilityScope,
+                                                        @RequestParam(defaultValue = "0") int page,
+                                                        @RequestParam(defaultValue = "10") int size,
+                                                        @RequestParam(defaultValue = "") String keyword) {
         Pageable pageable = PageRequest.of(page, size);
         List<PostSummary> postInfoList = searchService.getSearchByKeyword(postStatus, visibilityScope, pageable, keyword);
-        SearchResponseDTO response = SearchResponseDTO.builder()
+        SearchResponse response = SearchResponse.builder()
                 .status(StatusEnum.OK)
                 .message("search success")
                 .data(postInfoList)

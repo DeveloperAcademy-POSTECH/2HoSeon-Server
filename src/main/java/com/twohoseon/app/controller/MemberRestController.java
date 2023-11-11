@@ -46,7 +46,7 @@ public class MemberRestController {
     @Operation(summary = "닉네임 중복 확인", description = "닉네임 중복 확인")
     @PostMapping("/api/profiles/isValidNickname")
     public ResponseEntity<GeneralResponseDTO> checkNicknameDuplicate(@RequestBody NicknameValidCheckRequest request) {
-        String userNickname = request.getUserNickname();
+        String userNickname = request.getNickname();
         GeneralResponseDTO.GeneralResponseDTOBuilder resultBuilder = GeneralResponseDTO.builder();
         boolean isExist = memberService.validateDuplicateUserNickname(userNickname);
         log.debug("userNickname : {}", userNickname);

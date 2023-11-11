@@ -1,5 +1,6 @@
 package com.twohoseon.app.dto.request.member;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
 
 /**
@@ -11,6 +12,8 @@ import lombok.Getter;
  * @modifyed : $
  **/
 @Getter
+@Schema(name = "NicknameValidCheckRequest", description = "닉네임 중복 확인 요청 DTO")
 public class NicknameValidCheckRequest {
-    private String userNickname;
+    @Schema(name = "nickname", type = "String", description = "닉네임")
+    private String nickname;
 }

@@ -15,5 +15,6 @@ import lombok.Getter;
 @Getter
 @Schema(name = "VoteCreateRequestDTO", description = "투표 생성 요청 DTO")
 public class VoteCreateRequestDTO {
+    @Schema(name = "voteType", type = "VoteType", description = "게시글 ID")
     private VoteType voteType;
 }

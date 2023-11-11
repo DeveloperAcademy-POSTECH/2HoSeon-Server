@@ -7,6 +7,7 @@ import com.twohoseon.app.dto.response.GeneralResponseDTO;
 import com.twohoseon.app.dto.response.PostListResponseDTO;
 import com.twohoseon.app.dto.response.PostResponseDTO;
 import com.twohoseon.app.dto.response.VoteResultResponseDTO;
+import com.twohoseon.app.dto.response.post.ReviewDetailResponse;
 import com.twohoseon.app.enums.StatusEnum;
 import com.twohoseon.app.enums.post.VisibilityScope;
 import com.twohoseon.app.repository.post.PostRepository;
@@ -105,6 +106,17 @@ public class PostRestController {
         GeneralResponseDTO responseDTO = GeneralResponseDTO.builder()
                 .status(StatusEnum.OK)
                 .message("success")
+                .build();
+        return ok(responseDTO);
+    }
+
+    @Operation(summary = "리뷰 상세 조회", description = "리뷰 상세 조회")
+    @GetMapping("/{postId}/reviews")
+    public ResponseEntity<ReviewDetailResponse> fetchReview(@PathVariable("postId") Long postId) {
+        ReviewDetailResponse responseDTO = ReviewDetailResponse.builder()
+                .status(StatusEnum.OK)
+                .message("success")
+                .data(postService.getReviewDetail(postId))
                 .build();
         return ok(responseDTO);
     }

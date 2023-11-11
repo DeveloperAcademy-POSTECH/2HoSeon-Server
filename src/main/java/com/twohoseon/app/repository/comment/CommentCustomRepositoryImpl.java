@@ -2,8 +2,8 @@ package com.twohoseon.app.repository.comment;
 
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
-import com.twohoseon.app.dto.response.AuthorInfoDTO;
 import com.twohoseon.app.dto.response.CommentInfoDTO;
+import com.twohoseon.app.dto.response.post.AuthorInfoDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 

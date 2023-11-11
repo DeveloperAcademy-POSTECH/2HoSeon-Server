@@ -15,14 +15,14 @@ import lombok.Getter;
 @Getter
 @Schema(name = "PostRequestDTO", description = "게시글 생성 요청 DTO")
 public class PostRequestDTO {
-    @Schema(name = "visibilityScope", description = "게시글 공개 범위")
+    @Schema(name = "visibilityScope", type = "VisibilityScope", description = "게시글 공개 범위")
     private VisibilityScope visibilityScope;
-    @Schema(name = "title", description = "게시글 제목")
+    @Schema(name = "title", type = "String", description = "게시글 제목")
     private String title;
-    @Schema(name = "contents", description = "게시글 내용")
+    @Schema(name = "contents", type = "String", description = "게시글 내용")
     private String contents;
-    @Schema(name = "price", description = "가격")
+    @Schema(name = "price", type = "Integer", description = "가격")
     private Integer price;
-    @Schema(name = "externalURL", description = "게시글 외부 URL")
+    @Schema(name = "externalURL", type = "String", description = "게시글 외부 URL")
     private String externalURL;
 }

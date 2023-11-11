@@ -1,7 +1,7 @@
 package com.twohoseon.app.controller;
 
-import com.twohoseon.app.dto.response.PostListResponseDTO;
 import com.twohoseon.app.dto.response.post.ReviewFetch;
+import com.twohoseon.app.dto.response.post.ReviewFetchResponse;
 import com.twohoseon.app.enums.ReviewType;
 import com.twohoseon.app.enums.StatusEnum;
 import com.twohoseon.app.enums.post.VisibilityScope;
@@ -44,13 +44,12 @@ public class ReviewRestController {
 
         Pageable pageable = PageRequest.of(page, size);
         ReviewFetch reviewFetch = postService.fetchReviews(visibilityScope, pageable, reviewType);
-        PostListResponseDTO responseDTO = PostListResponseDTO.builder()
+        ReviewFetchResponse response = ReviewFetchResponse.builder()
                 .status(StatusEnum.OK)
                 .message("success")
-                .data(null)
+                .data(reviewFetch)
                 .build();
-//        return ok(responseDTO);
-        return ResponseEntity.ok(reviewFetch);
+        return ResponseEntity.ok(response);
     }
 
 }

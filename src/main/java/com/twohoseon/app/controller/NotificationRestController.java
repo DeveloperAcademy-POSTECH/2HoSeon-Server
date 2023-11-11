@@ -3,6 +3,7 @@ package com.twohoseon.app.controller;
 import com.twohoseon.app.dto.request.member.RegisterDeviceTokenRequestDTO;
 import com.twohoseon.app.dto.response.GeneralResponseDTO;
 import com.twohoseon.app.service.member.MemberService;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -21,6 +22,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/notifications")
+@Tag(name = "Notification", description = "알림 관련 API")
 public class NotificationRestController {
     private final MemberService memberService;
 
