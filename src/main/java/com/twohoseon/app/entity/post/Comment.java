@@ -25,6 +25,7 @@ import java.util.List;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@Table(name = "post_comment")
 public class Comment extends BaseTimeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
