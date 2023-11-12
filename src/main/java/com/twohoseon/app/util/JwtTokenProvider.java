@@ -3,7 +3,10 @@ package com.twohoseon.app.util;
 import com.twohoseon.app.dto.response.TokenDTO;
 import com.twohoseon.app.entity.member.RefreshToken;
 import com.twohoseon.app.repository.member.RefreshTokenRepository;
-import io.jsonwebtoken.*;
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.JwsHeader;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -82,27 +85,14 @@ public class JwtTokenProvider {
         return (String) header.get("providerId");
     }
 
-    public boolean tokenValidation(String token, boolean isAccessToken) {
-        try {
-            Jwts.parser().setSigningKey(jwtSecret).parseClaimsJws(token);
-            Claims claims = Jwts.parser()
-                    .setSigningKey(jwtSecret)
-                    .parseClaimsJws(token)
-                    .getBody();
-            String type = claims.get("type", String.class);
-            return type != null && type.equals(isAccessToken ? "access" : "refresh");
-        } catch (SignatureException ex) {
-            log.info("Invalid JWT signature");
-        } catch (MalformedJwtException ex) {
-            log.info("Invalid JWT token");
-        } catch (ExpiredJwtException ex) {
-            log.info("Expired JWT token");
-        } catch (UnsupportedJwtException ex) {
-            log.info("Unsupported JWT token");
-        } catch (IllegalArgumentException ex) {
-            log.info("JWT claims string is empty");
-        }
-        return false;
+    public boolean tokenValidation(String token, boolean isAccessToken) throws RuntimeException {
+        Jwts.parser().setSigningKey(jwtSecret).parseClaimsJws(token);
+        Claims claims = Jwts.parser()
+                .setSigningKey(jwtSecret)
+                .parseClaimsJws(token)
+                .getBody();
+        String type = claims.get("type", String.class);
+        return type != null && type.equals(isAccessToken ? "access" : "refresh");
     }
 
     public String getHeaderToken(HttpServletRequest request, String type) {

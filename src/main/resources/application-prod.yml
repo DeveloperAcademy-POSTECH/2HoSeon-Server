@@ -7,6 +7,7 @@ spring:
 oauth:
   apple:
     client-id: com.twohosun.TwoHoSun
-
+server:
+  port: 8443
 file:
   dir: /home/ubuntu/images/

@@ -10,3 +10,5 @@ spring:
 oauth:
   apple:
     client-id: com.twohosun.service
+server:
+  port: 443

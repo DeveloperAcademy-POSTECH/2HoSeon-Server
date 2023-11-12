@@ -16,12 +16,6 @@ import java.util.List;
  **/
 
 public interface PostRepository extends JpaRepository<Post, Long>, PostCustomRepository {
-//    Page<Post> findAllBy(Pageable pageable);
-
-//    List<PostDto> findAllBy();
-
-//    List<PostInfo> findAllBy(Pageable pageable);
-
     @EntityGraph(attributePaths = "author")
     List<Post> findAllBy();
 }

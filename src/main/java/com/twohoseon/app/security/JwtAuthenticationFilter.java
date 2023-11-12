@@ -1,13 +1,17 @@
 package com.twohoseon.app.security;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.twohoseon.app.dto.response.GeneralResponseDTO;
+import com.twohoseon.app.dto.ErrorResponse;
 import com.twohoseon.app.entity.member.Member;
-import com.twohoseon.app.enums.StatusEnum;
+import com.twohoseon.app.enums.ErrorCode;
 import com.twohoseon.app.enums.UserRole;
 import com.twohoseon.app.repository.member.MemberRepository;
 import com.twohoseon.app.service.member.MemberService;
 import com.twohoseon.app.util.JwtTokenProvider;
+import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.MalformedJwtException;
+import io.jsonwebtoken.SignatureException;
+import io.jsonwebtoken.UnsupportedJwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -51,7 +55,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         if (accessToken != null) {
             // 어세스 토큰값이 유효하다면 setAuthentication를 통해
             // security context에 인증 정보저장
-            if (jwtTokenProvider.tokenValidation(accessToken, true)) {
+            try {
+                jwtTokenProvider.tokenValidation(accessToken, true);
                 String providerId = jwtTokenProvider.getProviderIdFromToken(accessToken);
 
                 Member member = memberRepository.findByProviderId(providerId)
@@ -66,20 +71,24 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 if (member.getRole() == UserRole.ROLE_ADMIN) {
                     log.info("ROLE_ADMIN");
                 } else if (member.getSchool() == null) {
-                    jwtExceptionHandler(response,
-                            GeneralResponseDTO.builder()
-                                    .status(StatusEnum.CONFLICT)
-                                    .message("UNREGISTERED_USER")
-                                    .build());
+                    jwtExceptionHandler(response, ErrorResponse.of(ErrorCode.NOT_COMPLETED_SIGNUP_ERROR));
                     return;
                 }
-            } else {
-                jwtExceptionHandler(response,
-                        GeneralResponseDTO.builder()
-                                .status(StatusEnum.BAD_REQUEST)
-                                .message("Invalid JWT signature")
-                                .build());
-                return;
+            } catch (SignatureException ex) {
+                log.info("Invalid JWT signature");
+                jwtExceptionHandler(response, ErrorResponse.of(ErrorCode.INVALID_SIGNATURE_ERROR));
+            } catch (MalformedJwtException ex) {
+                log.info("Invalid JWT token");
+                jwtExceptionHandler(response, ErrorResponse.of(ErrorCode.MALFORMED_TOKEN_ERROR));
+            } catch (ExpiredJwtException ex) {
+                log.info("Expired JWT token");
+                jwtExceptionHandler(response, ErrorResponse.of(ErrorCode.EXPIRED_TOKEN_ERROR));
+            } catch (UnsupportedJwtException ex) {
+                log.info("Unsupported JWT token");
+                jwtExceptionHandler(response, ErrorResponse.of(ErrorCode.UNSUPPORTED_TOKEN_ERROR));
+            } catch (IllegalArgumentException ex) {
+                log.info("JWT claims string is empty");
+                jwtExceptionHandler(response, ErrorResponse.of(ErrorCode.EMPTY_CLAIMS_ERROR));
             }
         }
         filterChain.doFilter(request, response);
@@ -93,10 +102,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     }
 
     // Jwt 예외처리
-    public void jwtExceptionHandler(HttpServletResponse response, GeneralResponseDTO result) throws IOException {
-
+    public void jwtExceptionHandler(HttpServletResponse response, ErrorResponse errorResponse) throws IOException {
         response.setContentType("application/json;charset=UTF-8");
-        response.setStatus(result.getStatus().getStatusCode());
-        response.getWriter().write(new ObjectMapper().writeValueAsString(result));
+        response.setStatus(errorResponse.getStatus());
+        response.getWriter().write(new ObjectMapper().writeValueAsString(errorResponse));
     }
 }

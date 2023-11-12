@@ -5,6 +5,7 @@ import com.twohoseon.app.dto.request.review.ReviewRequestDTO;
 import com.twohoseon.app.dto.response.PostInfoDTO;
 import com.twohoseon.app.dto.response.VoteCountsDTO;
 import com.twohoseon.app.dto.response.post.PostSummary;
+import com.twohoseon.app.dto.response.post.ReviewDetail;
 import com.twohoseon.app.dto.response.post.ReviewFetch;
 import com.twohoseon.app.entity.member.Member;
 import com.twohoseon.app.entity.post.Post;
@@ -15,6 +16,7 @@ import com.twohoseon.app.enums.post.VisibilityScope;
 import com.twohoseon.app.exception.PermissionDeniedException;
 import com.twohoseon.app.exception.PostNotFoundException;
 import com.twohoseon.app.exception.ReviewExistException;
+import com.twohoseon.app.exception.VoteExistException;
 import com.twohoseon.app.repository.post.PostRepository;
 import com.twohoseon.app.service.image.ImageService;
 import com.twohoseon.app.service.notification.NotificationService;
@@ -52,7 +54,6 @@ public class PostServiceImpl implements PostService {
 
     @Override
     public void createPost(PostRequestDTO postRequestDTO, MultipartFile file) {
-        //TODO 이미지 추가를 위해 PostCreateRequestDTO 수정 및 Request Type 변경 필요(json to form-data)
         Member author = getMemberFromRequest();
 
         String image = null;
@@ -216,8 +217,18 @@ public class PostServiceImpl implements PostService {
                 .reviewType(reviewType)
                 .reviews(reviews)
                 .build();
-//        postRepository.findReviews(pageable, reviewType, consumerType);
+    }
 
+    @Override
+    public ReviewDetail getReviewDetail(Long postId) {
+        Member member = getMemberFromRequest();
+        PostSummary originalPost = postRepository.getPostSummaryInReviewDetail(postId);
+        PostInfoDTO reviewPost = postRepository.getReviewDetailByPostId(postId);
+        return ReviewDetail.builder()
+                .originalPost(originalPost)
+                .reviewPost(reviewPost)
+                .isMine(originalPost.getAuthor().getId().equals(member.getId()))
+                .build();
     }
 
     @Override
@@ -226,6 +237,9 @@ public class PostServiceImpl implements PostService {
         Member member = getMemberFromRequest();
         Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new PostNotFoundException());
+        if (post.hasVoteFromMember(member)) {
+            throw new VoteExistException();
+        }
         post.createVote(member, voteType);
         postRepository.save(post);
         return postRepository.getVoteInfo(postId);

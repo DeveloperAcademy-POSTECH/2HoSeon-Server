@@ -19,7 +19,8 @@ import lombok.Data;
 @Schema(name = "VoteInfoDTO", description = "투표 정보 DTO")
 @AllArgsConstructor
 public class VoteInfoDTO {
-    //TODO 투표를 했는가 like voted
-    boolean isAgree;
+    @Schema(name = "isAgree", type = "boolean", description = "찬성 여부")
+    private Boolean isAgree;
+    @Schema(name = "consumerType", type = "ConsumerType", description = "소비자 타입")
     private ConsumerType consumerType;
 }

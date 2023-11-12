@@ -18,7 +18,7 @@ public class ReviewRequestDTO {
     private String title;
     @Schema(name = "contents", type = "String", description = "후기 내용")
     private String contents;
-    @Schema(name = "price", type = "int", description = "제품 가격")
+    @Schema(name = "price", type = "Integer", description = "제품 가격")
     private Integer price;
     @Schema(name = "isPurchased", type = "Boolean", description = "구매 여부")
     private Boolean isPurchased;

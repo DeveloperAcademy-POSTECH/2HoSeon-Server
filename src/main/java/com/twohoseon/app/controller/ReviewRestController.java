@@ -1,7 +1,7 @@
 package com.twohoseon.app.controller;
 
-import com.twohoseon.app.dto.response.PostListResponseDTO;
 import com.twohoseon.app.dto.response.post.ReviewFetch;
+import com.twohoseon.app.dto.response.post.ReviewFetchResponse;
 import com.twohoseon.app.enums.ReviewType;
 import com.twohoseon.app.enums.StatusEnum;
 import com.twohoseon.app.enums.post.VisibilityScope;
@@ -37,20 +37,19 @@ public class ReviewRestController {
 
     @GetMapping
     @Operation(summary = "리뷰 탭 게시글 조회")
-    public ResponseEntity<ReviewFetch> fetchReviews(@RequestParam(defaultValue = "GLOBAL", value = "visibilityScope") VisibilityScope visibilityScope,
-                                                    @RequestParam(defaultValue = "ALL", value = "reviewType") ReviewType reviewType,
-                                                    @RequestParam(defaultValue = "0", value = "page") int page,
-                                                    @RequestParam(defaultValue = "10", value = "size") int size) {
+    public ResponseEntity<ReviewFetchResponse> fetchReviews(@RequestParam(defaultValue = "GLOBAL", value = "visibilityScope") VisibilityScope visibilityScope,
+                                                            @RequestParam(defaultValue = "ALL", value = "reviewType") ReviewType reviewType,
+                                                            @RequestParam(defaultValue = "0", value = "page") int page,
+                                                            @RequestParam(defaultValue = "10", value = "size") int size) {
 
         Pageable pageable = PageRequest.of(page, size);
         ReviewFetch reviewFetch = postService.fetchReviews(visibilityScope, pageable, reviewType);
-        PostListResponseDTO responseDTO = PostListResponseDTO.builder()
+        ReviewFetchResponse response = ReviewFetchResponse.builder()
                 .status(StatusEnum.OK)
                 .message("success")
-                .data(null)
+                .data(reviewFetch)
                 .build();
-//        return ok(responseDTO);
-        return ResponseEntity.ok(reviewFetch);
+        return ResponseEntity.ok(response);
     }
 
 }
