@@ -89,8 +89,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             } catch (IllegalArgumentException ex) {
                 log.info("JWT claims string is empty");
                 jwtExceptionHandler(response, ErrorResponse.of(ErrorCode.EMPTY_CLAIMS_ERROR));
-            } finally {
-                return;
             }
         }
         filterChain.doFilter(request, response);
