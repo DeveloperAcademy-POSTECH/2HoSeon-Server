@@ -10,4 +10,4 @@ oauth:
 server:
   port: 8443
 file:
-  dir: /home/ubuntu/images/
+  dir: ${app.upload.prod-path}

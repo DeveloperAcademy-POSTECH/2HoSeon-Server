@@ -2,7 +2,7 @@ spring:
   servlet:
     multipart:
       enabled: true
-      location: ${app.upload.path}
+      location: ${file.dir}
       max-request-size: 30MB
       max-file-size: 10MB
 
