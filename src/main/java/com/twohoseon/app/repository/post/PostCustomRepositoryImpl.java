@@ -3,6 +3,7 @@ package com.twohoseon.app.repository.post;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.CaseBuilder;
+import com.querydsl.core.types.dsl.Wildcard;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.twohoseon.app.dto.response.PostInfoDTO;
@@ -117,7 +118,7 @@ public class PostCustomRepositoryImpl implements PostCustomRepository {
                 .fetchOne();
 
         assert postInfo != null;
-        boolean isVoted = getIsVotedPost(postInfo.getPostId(), memberId);
+        Boolean isVoted = getIsVotedPost(postInfo.getPostId(), memberId);
         postInfo.setVoteCounts(getVoteInfo(postInfo.getPostId()));
         postInfo.setIsVoted(isVoted);
         if (postInfo.getAuthor().getId() == memberId)
@@ -345,6 +346,37 @@ public class PostCustomRepositoryImpl implements PostCustomRepository {
     }
 
     @Override
+    public List<PostSummary> findReviewsById(Pageable pageable, Member reqMember, VisibilityScope visibilityScope) {
+        BooleanBuilder whereClause = new BooleanBuilder(post.postStatus.eq(PostStatus.REVIEW))
+                .and(post.author.eq(reqMember));
+
+        if (!visibilityScope.equals(VisibilityScope.ALL)) {
+            whereClause.and(post.visibilityScope.eq(visibilityScope));
+        }
+
+        List<PostSummary> result = jpaQueryFactory
+                .select(Projections.constructor(PostSummary.class,
+                        post.createDate,
+                        post.modifiedDate,
+                        post.id,
+                        post.postStatus,
+                        post.title,
+                        post.image,
+                        post.contents.substring(0, 25),
+                        post.price,
+                        post.isPurchased
+                ))
+                .from(post)
+                .leftJoin(post.author, member)
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize())
+                .where(whereClause)
+                .orderBy(post.createDate.desc())
+                .fetch();
+        return result;
+    }
+
+    @Override
     public PostSummary getPostSummaryInReviewDetail(Long postId) {
         PostSummary result = jpaQueryFactory.select(Projections.constructor(PostSummary.class,
                         post.createDate,
@@ -396,13 +428,13 @@ public class PostCustomRepositoryImpl implements PostCustomRepository {
     }
 
 
-    private boolean getIsVotedPost(long postId, long memberId) {
+    private Boolean getIsVotedPost(long postId, long memberId) {
         return jpaQueryFactory
-                .select(vote)
+                .select(vote.isAgree)
                 .from(vote)
                 .where(vote.id.post.id.eq(postId)
                         .and(vote.id.voter.id.eq(memberId)))
-                .fetchOne() != null;
+                .fetchOne();
     }
 
     private boolean getIsNotified(long postId, long memberId) {
@@ -422,6 +454,23 @@ public class PostCustomRepositoryImpl implements PostCustomRepository {
                 .from(vote)
                 .where(vote.id.post.id.eq(postId))
                 .fetch();
+    }
+
+    @Override
+    public long getTotalReviewCount(Member reqMember, VisibilityScope visibilityScope) {
+
+        BooleanBuilder whereClause = new BooleanBuilder(post.postStatus.eq(PostStatus.REVIEW))
+                .and(post.author.eq(reqMember));
+
+        if (!visibilityScope.equals(VisibilityScope.ALL)) {
+            whereClause.and(post.visibilityScope.eq(visibilityScope));
+        }
+
+        return jpaQueryFactory
+                .select(Wildcard.count)
+                .from(post)
+                .where(whereClause)
+                .fetchOne();
     }
 
 
