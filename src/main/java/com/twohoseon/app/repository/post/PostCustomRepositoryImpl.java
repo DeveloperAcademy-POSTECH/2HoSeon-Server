@@ -84,7 +84,7 @@ public class PostCustomRepositoryImpl implements PostCustomRepository {
         List<PostInfoDTO> postInfoList = jpaQuery.fetch();
         for (PostInfoDTO postInfoDTO : postInfoList) {
             postInfoDTO.setVoteCounts(getVoteInfo(postInfoDTO.getPostId()));
-            postInfoDTO.setIsVoted(getIsVotedPost(postInfoDTO.getPostId(), reqMember.getId()));
+            postInfoDTO.setMyChoice(getIsVotedPost(postInfoDTO.getPostId(), reqMember.getId()));
         }
 
         return postInfoList;
@@ -121,7 +121,7 @@ public class PostCustomRepositoryImpl implements PostCustomRepository {
         assert postInfo != null;
         Boolean isVoted = getIsVotedPost(postInfo.getPostId(), memberId);
         postInfo.setVoteCounts(getVoteInfo(postInfo.getPostId()));
-        postInfo.setIsVoted(isVoted);
+        postInfo.setMyChoice(isVoted);
         if (postInfo.getAuthor().getId() == memberId)
             postInfo.setVoteInfoList(getVoteInfoList(postId));
         postInfo.setIsNotified(getIsNotified(postId, memberId));
