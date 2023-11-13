@@ -17,11 +17,12 @@ public class AuthorInfoDTO {
     String profileImage;
     @Schema(name = "consumerType", type = "ConsumerType", description = "소비 성향")
     ConsumerType consumerType;
-    
+
     public AuthorInfoDTO(long id, String nickname, String profileImage, ConsumerType consumerType) {
         this.id = id;
         this.nickname = nickname;
-        this.profileImage = "https://test.hyunwoo.tech/images/profiles/" + profileImage;
+        if (profileImage != null)
+            this.profileImage = "https://test.hyunwoo.tech/images/profiles/" + profileImage;
         this.consumerType = consumerType;
     }
 }

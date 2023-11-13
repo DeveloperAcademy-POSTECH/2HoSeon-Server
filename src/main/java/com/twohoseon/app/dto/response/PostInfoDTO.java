@@ -86,7 +86,8 @@ public class PostInfoDTO {
         this.author = author;
         this.postStatus = postStatus;
         this.title = title;
-        this.image = image;
+        if (image != null)
+            this.image = "https://test.hyunwoo.tech/images/reviews/" + image;
         this.contents = contents;
         this.price = price;
         this.isPurchased = isPurchased;
