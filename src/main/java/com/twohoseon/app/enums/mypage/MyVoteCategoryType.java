@@ -21,6 +21,6 @@ public enum MyVoteCategoryType {
     SCHOOL_VOTES,
     @Schema(name = "ACTIVE_VOTES", description = "진행중인 투표")
     ACTIVE_VOTES,
-    @Schema(name = "FINISHED_VOTES", description = "종료된 투표")
-    FINISHED_VOTES;
+    @Schema(name = "CLOSED_VOTES", description = "종료된 투표")
+    CLOSED_VOTES;
 }

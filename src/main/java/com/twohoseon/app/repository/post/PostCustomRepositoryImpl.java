@@ -436,7 +436,7 @@ public class PostCustomRepositoryImpl implements PostCustomRepository {
                 .from(post);
         switch (myVoteCategoryType) {
             case ACTIVE_VOTES -> whereClause.and(post.postStatus.eq(PostStatus.ACTIVE));
-            case FINISHED_VOTES -> whereClause.and(post.postStatus.eq(PostStatus.CLOSED));
+            case CLOSED_VOTES -> whereClause.and(post.postStatus.eq(PostStatus.CLOSED));
             case GLOBAL_VOTES -> whereClause.and(post.visibilityScope.eq(VisibilityScope.GLOBAL));
             case SCHOOL_VOTES -> whereClause.and(post.author.school.eq(reqMember.getSchool()));
         }
@@ -450,7 +450,7 @@ public class PostCustomRepositoryImpl implements PostCustomRepository {
         BooleanBuilder whereClause = new BooleanBuilder();
         switch (myVoteCategoryType) {
             case ACTIVE_VOTES -> whereClause.and(post.postStatus.eq(PostStatus.ACTIVE));
-            case FINISHED_VOTES -> whereClause.and(post.postStatus.eq(PostStatus.CLOSED));
+            case CLOSED_VOTES -> whereClause.and(post.postStatus.eq(PostStatus.CLOSED));
             case GLOBAL_VOTES -> whereClause.and(post.visibilityScope.eq(VisibilityScope.GLOBAL));
             case SCHOOL_VOTES -> whereClause.and(post.author.school.eq(reqMember.getSchool()));
         }
