@@ -20,6 +20,7 @@ import java.time.LocalDateTime;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @Schema(name = "PostSummary", description = "검색 결과 게시글 정보")
 public class PostSummary {
+    
     @Schema(name = "createDate", type = "LocalDateTime", description = "게시글 생성 시간")
     private LocalDateTime createDate;
     @Schema(name = "modifiedDate", type = "LocalDateTime", description = "게시글 수정 시간")
@@ -48,6 +49,8 @@ public class PostSummary {
     private int price;
     @Schema(name = "isPurchased", type = "boolean", description = "구매 여부")
     private boolean isPurchased;
+    @Schema(name = "hasReview", type = "boolean", description = "후기 작성 여부")
+    private Boolean hasReview;
 
 
     //진행중인 투표 검색
@@ -137,5 +140,17 @@ public class PostSummary {
         this.price = price;
     }
 
-
+    // 마이페이지 투표 fetch
+    public PostSummary(LocalDateTime createDate, LocalDateTime modifiedDate, Long postId, PostStatus postStatus, VoteResult voteResult, String title, String image, String contents, int price, Boolean hasReview) {
+        this.createDate = createDate;
+        this.modifiedDate = modifiedDate;
+        this.postId = postId;
+        this.postStatus = postStatus;
+        this.voteResult = voteResult;
+        this.title = title;
+        this.image = image;
+        this.contents = contents;
+        this.price = price;
+        this.hasReview = hasReview;
+    }
 }
