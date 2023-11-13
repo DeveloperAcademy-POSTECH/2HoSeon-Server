@@ -12,6 +12,7 @@ spring:
         - db
         - security
         - upload
+        - quartz
       prod:
         - prod
         - common
@@ -19,6 +20,8 @@ spring:
         - server
         - db
         - security
+        - upload
+        - quartz
 
 logging:
   level:
