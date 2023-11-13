@@ -4,6 +4,7 @@ import com.twohoseon.app.dto.request.post.PostRequestDTO;
 import com.twohoseon.app.dto.request.review.ReviewRequestDTO;
 import com.twohoseon.app.dto.response.PostInfoDTO;
 import com.twohoseon.app.dto.response.VoteCountsDTO;
+import com.twohoseon.app.dto.response.mypage.MypageFetch;
 import com.twohoseon.app.dto.response.post.ReviewDetail;
 import com.twohoseon.app.dto.response.post.ReviewFetch;
 import com.twohoseon.app.enums.ReviewType;
@@ -51,6 +52,8 @@ public interface PostService extends CommonService {
     void subscribePost(Long postId);
 
     ReviewFetch fetchReviews(VisibilityScope visibilityScope, Pageable pageable, ReviewType reviewType);
+
+    MypageFetch fetchMyReviews(VisibilityScope visibilityScope, Pageable pageable);
 
     ReviewDetail getReviewDetail(Long postId);
 }

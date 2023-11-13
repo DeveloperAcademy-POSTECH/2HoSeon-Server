@@ -4,6 +4,7 @@ import com.twohoseon.app.dto.request.post.PostRequestDTO;
 import com.twohoseon.app.dto.request.review.ReviewRequestDTO;
 import com.twohoseon.app.dto.response.PostInfoDTO;
 import com.twohoseon.app.dto.response.VoteCountsDTO;
+import com.twohoseon.app.dto.response.mypage.MypageFetch;
 import com.twohoseon.app.dto.response.post.PostSummary;
 import com.twohoseon.app.dto.response.post.ReviewDetail;
 import com.twohoseon.app.dto.response.post.ReviewFetch;
@@ -220,10 +221,23 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
+    public MypageFetch fetchMyReviews(VisibilityScope visibilityScope, Pageable pageable) {
+        Member reqMember = getMemberFromRequest();
+        List<PostSummary> reviews = postRepository.findReviewsById(pageable, reqMember, visibilityScope);
+
+        return MypageFetch.builder()
+                .total(postRepository.getTotalReviewCount(reqMember, visibilityScope))
+                .posts(reviews)
+                .build();
+    }
+
+    @Override
     public ReviewDetail getReviewDetail(Long postId) {
         Member member = getMemberFromRequest();
+        Post post = postRepository.findById(postId)
+                .orElseThrow(() -> new PostNotFoundException());
         PostSummary originalPost = postRepository.getPostSummaryInReviewDetail(postId);
-        PostInfoDTO reviewPost = postRepository.getReviewDetailByPostId(postId);
+        PostInfoDTO reviewPost = postRepository.getReviewDetailByPostId(post.getReview().getId());
         return ReviewDetail.builder()
                 .originalPost(originalPost)
                 .reviewPost(reviewPost)
