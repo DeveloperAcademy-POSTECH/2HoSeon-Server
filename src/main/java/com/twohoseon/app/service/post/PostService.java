@@ -4,10 +4,12 @@ import com.twohoseon.app.dto.request.post.PostRequestDTO;
 import com.twohoseon.app.dto.request.review.ReviewRequestDTO;
 import com.twohoseon.app.dto.response.PostInfoDTO;
 import com.twohoseon.app.dto.response.VoteCountsDTO;
+import com.twohoseon.app.dto.response.mypage.MypageFetch;
 import com.twohoseon.app.dto.response.post.ReviewDetail;
 import com.twohoseon.app.dto.response.post.ReviewFetch;
 import com.twohoseon.app.enums.ReviewType;
 import com.twohoseon.app.enums.VoteType;
+import com.twohoseon.app.enums.mypage.MyVoteCategoryType;
 import com.twohoseon.app.enums.post.VisibilityScope;
 import com.twohoseon.app.service.CommonService;
 import org.springframework.data.domain.Pageable;
@@ -53,4 +55,6 @@ public interface PostService extends CommonService {
     ReviewFetch fetchReviews(VisibilityScope visibilityScope, Pageable pageable, ReviewType reviewType);
 
     ReviewDetail getReviewDetail(Long postId);
+
+    MypageFetch fetchMypagePosts(Pageable pageable, MyVoteCategoryType myVoteCategoryType);
 }
