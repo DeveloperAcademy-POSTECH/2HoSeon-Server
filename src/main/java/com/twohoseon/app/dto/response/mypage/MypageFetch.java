@@ -24,7 +24,7 @@ import java.util.List;
 @Schema(name = "MypageFetch", description = "마이페이지 fetch 정보")
 public class MypageFetch {
     @Schema(name = "total", type = "Integer", description = "총 개수")
-    Integer total;
+    long total;
 
     @Schema(name = "posts", type = "List<PostSummary>", description = "게시글 리스트")
     List<PostSummary> posts;
