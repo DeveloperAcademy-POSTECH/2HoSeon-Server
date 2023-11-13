@@ -12,3 +12,5 @@ oauth:
     client-id: com.twohosun.service
 server:
   port: 443
+file:
+  dir: ${app.upload.dev-path}

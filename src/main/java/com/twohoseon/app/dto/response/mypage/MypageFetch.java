@@ -23,7 +23,7 @@ import java.util.List;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @Schema(name = "MypageFetch", description = "마이페이지 fetch 정보")
 public class MypageFetch {
-    @Schema(name = "total", type = "Integer", description = "총 개수")
+    @Schema(name = "total", type = "long", description = "총 개수")
     long total;
 
     @Schema(name = "posts", type = "List<PostSummary>", description = "게시글 리스트")

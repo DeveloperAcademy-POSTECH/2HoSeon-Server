@@ -14,6 +14,7 @@ import com.twohoseon.app.dto.response.post.PostSummary;
 import com.twohoseon.app.entity.member.Member;
 import com.twohoseon.app.enums.ConsumerType;
 import com.twohoseon.app.enums.ReviewType;
+import com.twohoseon.app.enums.mypage.MyVoteCategoryType;
 import com.twohoseon.app.enums.post.PostStatus;
 import com.twohoseon.app.enums.post.VisibilityScope;
 import lombok.RequiredArgsConstructor;
@@ -425,6 +426,56 @@ public class PostCustomRepositoryImpl implements PostCustomRepository {
                 .where(post.id.eq(postId))
                 .fetchOne();
         return result;
+    }
+
+    @Override
+    public Long countAllPostsByMyVoteCategoryType(Member reqMember, MyVoteCategoryType myVoteCategoryType) {
+        BooleanBuilder whereClause = new BooleanBuilder(post.author.eq(reqMember));
+
+        JPAQuery<Long> jpaQuery = jpaQueryFactory.select(post.count())
+                .from(post);
+        switch (myVoteCategoryType) {
+            case ACTIVE_VOTES -> whereClause.and(post.postStatus.eq(PostStatus.ACTIVE));
+            case FINISHED_VOTES -> whereClause.and(post.postStatus.eq(PostStatus.CLOSED));
+            case GLOBAL_VOTES -> whereClause.and(post.visibilityScope.eq(VisibilityScope.GLOBAL));
+            case SCHOOL_VOTES -> whereClause.and(post.author.school.eq(reqMember.getSchool()));
+        }
+        jpaQuery.where(whereClause);
+
+        return jpaQuery.fetchFirst();
+    }
+
+    @Override
+    public List<PostSummary> findAllPostsByMyVoteCategoryType(Pageable pageable, Member reqMember, MyVoteCategoryType myVoteCategoryType) {
+        BooleanBuilder whereClause = new BooleanBuilder();
+        switch (myVoteCategoryType) {
+            case ACTIVE_VOTES -> whereClause.and(post.postStatus.eq(PostStatus.ACTIVE));
+            case FINISHED_VOTES -> whereClause.and(post.postStatus.eq(PostStatus.CLOSED));
+            case GLOBAL_VOTES -> whereClause.and(post.visibilityScope.eq(VisibilityScope.GLOBAL));
+            case SCHOOL_VOTES -> whereClause.and(post.author.school.eq(reqMember.getSchool()));
+        }
+        List<PostSummary> result = jpaQueryFactory
+                .select(Projections.constructor(PostSummary.class,
+                        post.createDate,
+                        post.modifiedDate,
+                        post.id,
+                        post.postStatus,
+                        post.voteResult,
+                        post.title,
+                        post.image,
+                        post.contents.substring(0, 25),
+                        post.price,
+                        post.review.isNotNull()
+                ))
+                .from(post)
+                .leftJoin(post.author, member)
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize())
+                .where(whereClause)
+                .orderBy(post.createDate.desc())
+                .fetch();
+        return result;
+
     }
 
 

@@ -31,7 +31,7 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class ImageServiceImpl implements ImageService {
 
-    @Value("${app.upload.path}")
+    @Value("${file.dir}")
     private String fileDir;
 
     private final PostRepository postRepository;

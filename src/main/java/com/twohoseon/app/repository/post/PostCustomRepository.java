@@ -6,6 +6,7 @@ import com.twohoseon.app.dto.response.post.PostSummary;
 import com.twohoseon.app.entity.member.Member;
 import com.twohoseon.app.enums.ConsumerType;
 import com.twohoseon.app.enums.ReviewType;
+import com.twohoseon.app.enums.mypage.MyVoteCategoryType;
 import com.twohoseon.app.enums.post.VisibilityScope;
 import org.springframework.data.domain.Pageable;
 
@@ -44,6 +45,10 @@ public interface PostCustomRepository {
     PostSummary getPostSummaryInReviewDetail(Long postId);
 
     PostInfoDTO getReviewDetailByPostId(Long postId);
+
+    Long countAllPostsByMyVoteCategoryType(Member reqMember, MyVoteCategoryType myVoteCategoryType);
+
+    List<PostSummary> findAllPostsByMyVoteCategoryType(Pageable pageable, Member reqMember, MyVoteCategoryType myVoteCategoryType);
 
     long getTotalReviewCount(Member reqMember, VisibilityScope visibilityScope);
 }
