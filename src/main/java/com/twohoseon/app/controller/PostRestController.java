@@ -61,6 +61,18 @@ public class PostRestController {
         return ok(responseDTO);
     }
 
+    @Operation(summary = "투표 즉시 완료", description = "투표 즉시 완료")
+    @PostMapping(value = "/{postId}/complete")
+    public ResponseEntity<GeneralResponseDTO> completeVote(@PathVariable("postId") Long postId) {
+        postService.completeVote(postId);
+
+        GeneralResponseDTO responseDTO = GeneralResponseDTO.builder()
+                .status(StatusEnum.OK)
+                .message("success")
+                .build();
+        return ok(responseDTO);
+    }
+
     @Operation(summary = "게시글 수정", description = "게시글 수정")
     @PutMapping(value = "/{postId}", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
     public ResponseEntity<GeneralResponseDTO> updatePost(@PathVariable("postId") Long postId,
@@ -188,7 +200,7 @@ public class PostRestController {
         VoteResultResponseDTO responseDTO = VoteResultResponseDTO.builder()
                 .status(StatusEnum.OK)
                 .message("success")
-                .data(postService.createVote(postId, voteCreateRequestDTO.getVoteType()))
+                .data(postService.createVote(postId, voteCreateRequestDTO.isMyChoice()))
                 .build();
         return ok(responseDTO);
     }
