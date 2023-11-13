@@ -31,11 +31,11 @@ public class PostSummary {
     @Schema(name = "postStatus", type = "PostStatus", description = "게시글 상태")
     private PostStatus postStatus;
     @Schema(name = "viewCount", type = "int", description = "게시글 조회수")
-    private int viewCount;
+    private Integer viewCount;
     @Schema(name = "voteCount", type = "int", description = "총 투표 수")
-    private int voteCount;
+    private Integer voteCount;
     @Schema(name = "commentCount", type = "int", description = "총 댓글 개수")
-    private int commentCount;
+    private Integer commentCount;
     @Schema(name = "voteResult", type = "VoteResult", description = "게시글 투표 결과")
     private VoteResult voteResult;
     @Schema(name = "title", type = "String", description = "게시글 제목")
@@ -137,5 +137,15 @@ public class PostSummary {
         this.price = price;
     }
 
-
+    public PostSummary(LocalDateTime createDate, LocalDateTime modifiedDate, Long postId, PostStatus postStatus, String title, String image, String contents, int price, boolean isPurchased) {
+        this.createDate = createDate;
+        this.modifiedDate = modifiedDate;
+        this.postId = postId;
+        this.postStatus = postStatus;
+        this.title = title;
+        this.image = image;
+        this.contents = contents;
+        this.price = price;
+        this.isPurchased = isPurchased;
+    }
 }
