@@ -12,7 +12,6 @@ import com.twohoseon.app.entity.member.Member;
 import com.twohoseon.app.entity.post.Post;
 import com.twohoseon.app.enums.ConsumerType;
 import com.twohoseon.app.enums.ReviewType;
-import com.twohoseon.app.enums.VoteType;
 import com.twohoseon.app.enums.mypage.MyVoteCategoryType;
 import com.twohoseon.app.enums.post.VisibilityScope;
 import com.twohoseon.app.exception.PermissionDeniedException;
@@ -78,6 +77,25 @@ public class PostServiceImpl implements PostService {
         } catch (SchedulerException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    @Override
+    public void completeVote(Long postId) {
+        Member member = getMemberFromRequest();
+        Post post = postRepository.findById(postId)
+                .orElseThrow(PostNotFoundException::new);
+
+        if (!post.getAuthor().equals(member))
+            throw new PermissionDeniedException();
+
+        try {
+            jobSchedulingService.schedulePostDeleteJob(postId);
+            post.setPostToComplete();
+            postRepository.save(post);
+        } catch (SchedulerException e) {
+            throw new RuntimeException(e);
+        }
+
     }
 
     @Override
@@ -263,17 +281,15 @@ public class PostServiceImpl implements PostService {
 
     @Override
     @Transactional
-    public VoteCountsDTO createVote(Long postId, VoteType voteType) {
+    public VoteCountsDTO createVote(Long postId, boolean myChoice) {
         Member member = getMemberFromRequest();
         Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new PostNotFoundException());
         if (post.hasVoteFromMember(member)) {
             throw new VoteExistException();
         }
-        post.createVote(member, voteType);
+        post.createVote(member, myChoice);
         postRepository.save(post);
         return postRepository.getVoteInfo(postId);
     }
-
-
 }
