@@ -6,7 +6,6 @@ import com.twohoseon.app.dto.request.review.ReviewRequestDTO;
 import com.twohoseon.app.entity.member.Member;
 import com.twohoseon.app.entity.post.vote.Vote;
 import com.twohoseon.app.entity.post.vote.VoteId;
-import com.twohoseon.app.enums.VoteType;
 import com.twohoseon.app.enums.post.PostStatus;
 import com.twohoseon.app.enums.post.VisibilityScope;
 import jakarta.annotation.Nullable;
@@ -156,15 +155,15 @@ public class Post extends BaseTimeEntity {
             this.voteResult = VoteResult.DRAW;
     }
 
-    public void createVote(Member voter, VoteType voteType) {
+    public void createVote(Member voter, boolean myChoice) {
         Vote vote = Vote.builder()
                 .id(VoteId.builder()
                         .voter(voter)
                         .post(this)
                         .build())
-                .isAgree(voteType == VoteType.AGREE)
+                .isAgree(myChoice)
                 .build();
-        if (voteType == VoteType.AGREE)
+        if (myChoice)
             this.agreeCount += 1;
         else
             this.disagreeCount += 1;
