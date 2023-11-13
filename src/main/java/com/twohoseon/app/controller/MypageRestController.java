@@ -3,7 +3,7 @@ package com.twohoseon.app.controller;
 import com.twohoseon.app.dto.response.mypage.MypageFetch;
 import com.twohoseon.app.dto.response.mypage.MypageFetchResponse;
 import com.twohoseon.app.enums.StatusEnum;
-import com.twohoseon.app.enums.mypage.MyVoteCategoryType;
+import com.twohoseon.app.enums.post.VisibilityScope;
 import com.twohoseon.app.service.post.PostService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -34,18 +34,37 @@ public class MypageRestController {
     private final PostService postService;
 
 
-    @GetMapping("/posts")
-    @Operation(summary = "게시글 조회", description = "게시글 조회")
-    public ResponseEntity<MypageFetchResponse> fetchPosts(@RequestParam(defaultValue = "0", value = "page") int page,
-                                                          @RequestParam(defaultValue = "10", value = "size") int size,
-                                                          @RequestParam(defaultValue = "ALL_VOTES", value = "myVoteCategoryType") MyVoteCategoryType myVoteCategoryType) {
+//    @GetMapping("/posts")
+//    @Operation(summary = "게시글 조회", description = "게시글 조회")
+//    public ResponseEntity<MypageFetchResponse> fetchPosts(@RequestParam(defaultValue = "0", value = "page") int page,
+//                                                          @RequestParam(defaultValue = "10", value = "size") int size,
+//                                                          @RequestParam(defaultValue = "ALL_VOTES", value = "myVoteCategoryType") MyVoteCategoryType myVoteCategoryType) {
+//        Pageable pageable = PageRequest.of(page, size);
+//        MypageFetch mypageFetch = postService.fetchMypagePosts(pageable, myVoteCategoryType);
+//        MypageFetchResponse responseDTO = MypageFetchResponse.builder()
+//                .status(StatusEnum.OK)
+//                .message("success")
+//                .data(mypageFetch)
+//                .build();
+//        return ok(responseDTO);
+//    }
+
+    @GetMapping("/reviews")
+    @Operation(summary = "마이페이지 리뷰 조회", description = "마이페이지 리뷰 조회")
+    public ResponseEntity<MypageFetchResponse> fetchReviews(@RequestParam(defaultValue = "GLOBAL", value = "visibilityScope") VisibilityScope visibilityScope,
+                                                            @RequestParam(defaultValue = "0", value = "page") int page,
+                                                            @RequestParam(defaultValue = "10", value = "size") int size) {
+
         Pageable pageable = PageRequest.of(page, size);
-        MypageFetch mypageFetch = postService.fetchMypagePosts(pageable, myVoteCategoryType);
+
+        MypageFetch mypageFetch = postService.fetchMyReviews(visibilityScope, pageable);
         MypageFetchResponse responseDTO = MypageFetchResponse.builder()
                 .status(StatusEnum.OK)
                 .message("success")
                 .data(mypageFetch)
                 .build();
+
         return ok(responseDTO);
+
     }
 }
