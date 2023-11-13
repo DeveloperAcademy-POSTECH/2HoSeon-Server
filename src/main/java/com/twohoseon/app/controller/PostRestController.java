@@ -150,7 +150,7 @@ public class PostRestController {
     @Operation(summary = "게시글 조회", description = "게시글 조회")
     public ResponseEntity<PostListResponseDTO> fetchPosts(@RequestParam(defaultValue = "0", value = "page") int page,
                                                           @RequestParam(defaultValue = "10", value = "size") int size,
-                                                          @RequestParam(value = "visibilitiyScope") VisibilityScope visibilityScope) {
+                                                          @RequestParam(value = "visibilityScope") VisibilityScope visibilityScope) {
         Pageable pageable = PageRequest.of(page, size);
 
         PostListResponseDTO responseDTO = PostListResponseDTO.builder()

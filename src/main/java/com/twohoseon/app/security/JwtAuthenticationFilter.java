@@ -77,18 +77,23 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             } catch (SignatureException ex) {
                 log.info("Invalid JWT signature");
                 jwtExceptionHandler(response, ErrorResponse.of(ErrorCode.INVALID_SIGNATURE_ERROR));
+                return;
             } catch (MalformedJwtException ex) {
                 log.info("Invalid JWT token");
                 jwtExceptionHandler(response, ErrorResponse.of(ErrorCode.MALFORMED_TOKEN_ERROR));
+                return;
             } catch (ExpiredJwtException ex) {
                 log.info("Expired JWT token");
                 jwtExceptionHandler(response, ErrorResponse.of(ErrorCode.EXPIRED_TOKEN_ERROR));
+                return;
             } catch (UnsupportedJwtException ex) {
                 log.info("Unsupported JWT token");
                 jwtExceptionHandler(response, ErrorResponse.of(ErrorCode.UNSUPPORTED_TOKEN_ERROR));
+                return;
             } catch (IllegalArgumentException ex) {
                 log.info("JWT claims string is empty");
                 jwtExceptionHandler(response, ErrorResponse.of(ErrorCode.EMPTY_CLAIMS_ERROR));
+                return;
             }
         }
         filterChain.doFilter(request, response);

@@ -27,7 +27,7 @@ public class JobSchedulingServiceImpl implements JobSchedulingService {
         JobDataMap jobDataMap = new JobDataMap();
         jobDataMap.put("postId", postId);
 
-        Date startAtDate = DateBuilder.futureDate(5, DateBuilder.IntervalUnit.SECOND);  // 현재로부터 5초 후
+        Date startAtDate = DateBuilder.futureDate(5, DateBuilder.IntervalUnit.MINUTE);  // 현재로부터 5초 후
 //        Date startAtDate = DateBuilder.futureDate(24, DateBuilder.IntervalUnit.HOUR);  // 현재로부터 24시간 후
 
         JobDetail jobDetail = JobBuilder.newJob(PostExpireJob.class)

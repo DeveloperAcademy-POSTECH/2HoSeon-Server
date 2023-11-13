@@ -45,8 +45,8 @@ public class PostInfoDTO {
     Integer commentCount;
     @Schema(name = "price", type = "Integer", description = "가격")
     Integer price;
-    @Schema(name = "isVoted", type = "Boolean", description = "투표 여부")
-    Boolean isVoted;
+    @Schema(name = "myChoice", type = "Boolean", description = "투표 여부")
+    Boolean myChoice;
     @Schema(name = "voteCounts", type = "VoteInfoDTO", description = "투표 정보")
     VoteCountsDTO voteCounts;
     @Schema(name = "voteInfoList", type = "List<VoteInfoDTO>", description = "투표 정보")
@@ -102,8 +102,8 @@ public class PostInfoDTO {
         this.voteInfoList = voteInfoList;
     }
 
-    public void setIsVoted(boolean isVoted) {
-        this.isVoted = isVoted;
+    public void setMyChoice(Boolean myChoice) {
+        this.myChoice = myChoice;
     }
 
     public void setIsMine(boolean isMine) {

@@ -13,6 +13,7 @@ import com.twohoseon.app.entity.post.Post;
 import com.twohoseon.app.enums.ConsumerType;
 import com.twohoseon.app.enums.ReviewType;
 import com.twohoseon.app.enums.VoteType;
+import com.twohoseon.app.enums.mypage.MyVoteCategoryType;
 import com.twohoseon.app.enums.post.VisibilityScope;
 import com.twohoseon.app.exception.PermissionDeniedException;
 import com.twohoseon.app.exception.PostNotFoundException;
@@ -243,6 +244,21 @@ public class PostServiceImpl implements PostService {
                 .reviewPost(reviewPost)
                 .isMine(originalPost.getAuthor().getId().equals(member.getId()))
                 .build();
+    }
+
+    @Override
+    public MypageFetch fetchMypagePosts(Pageable pageable, MyVoteCategoryType myVoteCategoryType) {
+        Member reqMember = getMemberFromRequest();
+        long total = 0;
+        List<PostSummary> posts = null;
+        total = postRepository.countAllPostsByMyVoteCategoryType(reqMember, myVoteCategoryType);
+        posts = postRepository.findAllPostsByMyVoteCategoryType(pageable, reqMember, myVoteCategoryType);
+        MypageFetch mypageFetch = MypageFetch.builder()
+                .total(total)
+                .posts(posts)
+                .build();
+
+        return mypageFetch;
     }
 
     @Override

@@ -48,6 +48,8 @@ public class PostSummary {
     private int price;
     @Schema(name = "isPurchased", type = "boolean", description = "구매 여부")
     private boolean isPurchased;
+    @Schema(name = "hasReview", type = "boolean", description = "후기 작성 여부")
+    private Boolean hasReview;
 
 
     //진행중인 투표 검색
@@ -123,7 +125,6 @@ public class PostSummary {
     }
 
     //후기 상세 fetch시 상단에 나오는 원본 게시글
-
     public PostSummary(LocalDateTime createDate, LocalDateTime modifiedDate, Long postId, AuthorInfoDTO author, PostStatus postStatus, VoteResult voteResult, String title, String image, String contents, int price) {
         this.createDate = createDate;
         this.modifiedDate = modifiedDate;
@@ -137,6 +138,7 @@ public class PostSummary {
         this.price = price;
     }
 
+    //마이페이지 리뷰 fetch
     public PostSummary(LocalDateTime createDate, LocalDateTime modifiedDate, Long postId, PostStatus postStatus, String title, String image, String contents, int price, boolean isPurchased) {
         this.createDate = createDate;
         this.modifiedDate = modifiedDate;
@@ -147,5 +149,19 @@ public class PostSummary {
         this.contents = contents;
         this.price = price;
         this.isPurchased = isPurchased;
+    }
+
+    // 마이페이지 투표 fetch
+    public PostSummary(LocalDateTime createDate, LocalDateTime modifiedDate, Long postId, PostStatus postStatus, VoteResult voteResult, String title, String image, String contents, int price, Boolean hasReview) {
+        this.createDate = createDate;
+        this.modifiedDate = modifiedDate;
+        this.postId = postId;
+        this.postStatus = postStatus;
+        this.voteResult = voteResult;
+        this.title = title;
+        this.image = image;
+        this.contents = contents;
+        this.price = price;
+        this.hasReview = hasReview;
     }
 }
