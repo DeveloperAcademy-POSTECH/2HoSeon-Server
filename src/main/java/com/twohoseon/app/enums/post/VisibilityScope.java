@@ -9,5 +9,5 @@ package com.twohoseon.app.enums.post;
  * @modifyed : $
  **/
 public enum VisibilityScope {
-    SCHOOL, GLOBAL
+    ALL, SCHOOL, GLOBAL
 }
