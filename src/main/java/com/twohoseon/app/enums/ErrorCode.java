@@ -119,7 +119,10 @@ public enum ErrorCode {
     VOTE_DUPLICATE_ERROR(409, "E015", "Vote is already exist"),
 
     //유효하지 않은 리프레쉬 토큰
-    INVALID_REFRESH_TOKEN_ERROR(401, "E016", "Invalid Refresh Token");
+    INVALID_REFRESH_TOKEN_ERROR(401, "E016", "Invalid Refresh Token"),
+
+    //학교를 업데이트 한지 6개월이 넘지 않음
+    SCHOOL_UPDATE_RESTRICTION_ERROR(400, "E017", "It has not been 6 months since the school was updated.");
 
     /**
      * ******************************* Error Code Constructor ***************************************

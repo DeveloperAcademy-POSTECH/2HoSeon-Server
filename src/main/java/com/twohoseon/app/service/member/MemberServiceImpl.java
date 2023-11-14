@@ -63,6 +63,11 @@ public class MemberServiceImpl implements MemberService {
                 imageName = imageService.uploadImage(imageFile, "profiles");
             }
         }
+        if (profileRequestDTO.hasSchool()) {
+            if (!member.isSchoolRegisterable()) {
+                throw new SchoolUpdateRestrictionException();
+            }
+        }
 
         member.updateAdditionalUserInfo(
                 imageName,

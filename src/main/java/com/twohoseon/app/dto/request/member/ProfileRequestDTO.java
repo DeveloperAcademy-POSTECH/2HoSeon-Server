@@ -11,4 +11,8 @@ public class ProfileRequestDTO {
     private String nickname;
     @Schema(name = "school", description = "유저 학교")
     private School school;
+
+    public boolean hasSchool() {
+        return this.school != null;
+    }
 }

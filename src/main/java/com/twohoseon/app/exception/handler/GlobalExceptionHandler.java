@@ -286,7 +286,11 @@ public class GlobalExceptionHandler {
         return ErrorResponse.toResponseEntity(ErrorCode.INVALID_REFRESH_TOKEN_ERROR);
     }
 
-
+    @ExceptionHandler(SchoolUpdateRestrictionException.class)
+    protected ResponseEntity<ErrorResponse> handleSchoolUpdateRestrictionException(SchoolUpdateRestrictionException ex) {
+        log.error("handleSchoolUpdateRestrictionException: It has not been 6 months since the school was updated.", ex);
+        return ErrorResponse.toResponseEntity(ErrorCode.SCHOOL_UPDATE_RESTRICTION_ERROR);
+    }
     // ==================================================================================================================
 
     /**

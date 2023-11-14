@@ -12,6 +12,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.ToString;
 
+import java.time.LocalDate;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
@@ -34,6 +35,10 @@ public class Member extends BaseTimeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    //학교 등록 마지막 일
+    @Column
+    private LocalDate lastSchoolRegisterDate;
 
     @Enumerated(EnumType.STRING)
     @Column(length = 10, nullable = false)
@@ -72,6 +77,15 @@ public class Member extends BaseTimeEntity {
             this.nickname = nickname;
         if (school != null)
             this.school = school;
+        lastSchoolRegisterDate = LocalDate.now();
+    }
+
+    public boolean isSchoolRegisterable() {
+        return lastSchoolRegisterDate == null || lastSchoolRegisterDate.isBefore(LocalDate.now().minusMonths(6));
+    }
+
+    public void setConsumerType(ConsumerType consumerType) {
+        this.consumerType = consumerType;
     }
 
     protected Member() {
