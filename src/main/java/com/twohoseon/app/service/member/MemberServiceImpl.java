@@ -1,7 +1,9 @@
 package com.twohoseon.app.service.member;
 
 import com.twohoseon.app.dto.request.member.ProfileRequestDTO;
+import com.twohoseon.app.entity.member.DeviceToken;
 import com.twohoseon.app.entity.member.Member;
+import com.twohoseon.app.repository.device.token.DeviceTokenRepository;
 import com.twohoseon.app.repository.member.MemberRepository;
 import com.twohoseon.app.security.MemberDetails;
 import com.twohoseon.app.service.image.ImageService;
@@ -29,6 +31,7 @@ import java.util.Optional;
 public class MemberServiceImpl implements MemberService {
     private final MemberRepository memberRepository;
     private final ImageService imageService;
+    private final DeviceTokenRepository deviceTokenRepository;
 
     @Override
     public UserDetails loadUserByUsername(String providerId) throws UsernameNotFoundException {
@@ -75,6 +78,11 @@ public class MemberServiceImpl implements MemberService {
     @Override
     public void registerToken(String deviceToken) {
         Member member = getMemberFromRequest();
-        member.updateDeviceToken(deviceToken);
+        DeviceToken deviceTokenEntity = deviceTokenRepository.findByToken(deviceToken)
+                .orElse(DeviceToken.builder()
+                        .token(deviceToken)
+                        .build());
+        deviceTokenEntity.setMember(member);
+        deviceTokenRepository.save(deviceTokenEntity);
     }
 }

@@ -56,9 +56,6 @@ public class Member extends BaseTimeEntity {
     @Column(nullable = true)
     private School school;
 
-    @Column(nullable = true)
-    private String deviceToken;
-
     @Enumerated(EnumType.STRING)
     @Column(length = 15, nullable = false)
     private UserRole role;
@@ -75,11 +72,6 @@ public class Member extends BaseTimeEntity {
             this.nickname = nickname;
         if (school != null)
             this.school = school;
-    }
-
-
-    public void updateDeviceToken(String deviceToken) {
-        this.deviceToken = deviceToken;
     }
 
     protected Member() {

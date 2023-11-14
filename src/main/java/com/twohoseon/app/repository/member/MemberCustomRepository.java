@@ -1,7 +1,5 @@
 package com.twohoseon.app.repository.member;
 
-import java.util.List;
-
 /**
  * @author : hyunwoopark
  * @version : 1.0.0
@@ -11,5 +9,5 @@ import java.util.List;
  * @modifyed : $
  **/
 public interface MemberCustomRepository {
-    List<String> findMemberDeviceTokenByPostId(Long postId);
+
 }

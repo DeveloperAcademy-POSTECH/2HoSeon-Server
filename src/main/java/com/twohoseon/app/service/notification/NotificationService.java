@@ -1,5 +1,6 @@
 package com.twohoseon.app.service.notification;
 
+import com.twohoseon.app.entity.post.Comment;
 import com.twohoseon.app.entity.post.Post;
 
 import java.util.concurrent.ExecutionException;
@@ -16,7 +17,9 @@ import java.util.concurrent.ExecutionException;
 public interface NotificationService {
     void sendPostExpiredNotification(Post post) throws ExecutionException, InterruptedException;
 
-    void sendPostCommentNotification(Post post, String userNickname, boolean isSubComment) throws ExecutionException, InterruptedException;
+    void sendPostCommentNotification(Post post, String userNickname) throws ExecutionException, InterruptedException;
+    
+    void sendPostSubCommentNotification(Comment parentComment, String userNickname) throws ExecutionException, InterruptedException;
 
     void sendPostReviewNotification(Post post) throws ExecutionException, InterruptedException;
 
