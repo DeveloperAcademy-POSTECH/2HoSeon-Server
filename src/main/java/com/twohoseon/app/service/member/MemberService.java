@@ -1,5 +1,6 @@
 package com.twohoseon.app.service.member;
 
+import com.twohoseon.app.dto.ConsumerTypeRequest;
 import com.twohoseon.app.dto.request.member.ProfileRequestDTO;
 import com.twohoseon.app.entity.member.Member;
 import com.twohoseon.app.service.CommonService;
@@ -24,4 +25,6 @@ public interface MemberService extends UserDetailsService, CommonService {
     Optional<Member> findByProviderId(String providerId);
 
     void registerToken(String deviceToken);
+
+    void setConsumptionTendency(ConsumerTypeRequest consumptionTendencyRequestDTO);
 }

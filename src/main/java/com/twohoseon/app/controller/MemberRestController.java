@@ -1,5 +1,6 @@
 package com.twohoseon.app.controller;
 
+import com.twohoseon.app.dto.ConsumerTypeRequest;
 import com.twohoseon.app.dto.request.member.NicknameValidCheckRequest;
 import com.twohoseon.app.dto.request.member.ProfileRequestDTO;
 import com.twohoseon.app.dto.response.GeneralResponseDTO;
@@ -11,10 +12,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestPart;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.HashMap;
@@ -66,4 +64,17 @@ public class MemberRestController {
         }
         return ResponseEntity.ok(resultBuilder.build());
     }
+
+    @Operation(summary = "소비 성향 설정", description = "소비 성향 설정")
+    @PutMapping("/api/profiles/consumerType")
+    public ResponseEntity<GeneralResponseDTO> setConsumptionType(@RequestBody ConsumerTypeRequest consumptionTendencyRequestDTO) {
+        memberService.setConsumptionTendency(consumptionTendencyRequestDTO);
+        GeneralResponseDTO generalResponseDTO = GeneralResponseDTO.builder()
+                .status(StatusEnum.OK)
+                .message("success")
+                .build();
+        return ResponseEntity.ok(generalResponseDTO);
+    }
+
+
 }

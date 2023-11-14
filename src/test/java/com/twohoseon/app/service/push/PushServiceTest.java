@@ -28,6 +28,7 @@ class PushServiceTest {
     private ApnsClient apnsClient;
 
     @Test
+
     public void pushTest() throws ExecutionException, InterruptedException {
 
         final String deviceToken = "2db472571a37892fa24184642d4aaa15a9b48973346144d68aff5a2985cfc5bf"; // Replace with the actual device token

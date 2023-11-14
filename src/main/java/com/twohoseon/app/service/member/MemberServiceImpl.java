@@ -1,12 +1,15 @@
 package com.twohoseon.app.service.member;
 
+import com.twohoseon.app.dto.ConsumerTypeRequest;
 import com.twohoseon.app.dto.request.member.ProfileRequestDTO;
 import com.twohoseon.app.entity.member.DeviceToken;
 import com.twohoseon.app.entity.member.Member;
+import com.twohoseon.app.exception.SchoolUpdateRestrictionException;
 import com.twohoseon.app.repository.device.token.DeviceTokenRepository;
 import com.twohoseon.app.repository.member.MemberRepository;
 import com.twohoseon.app.security.MemberDetails;
 import com.twohoseon.app.service.image.ImageService;
+import com.twohoseon.app.service.notification.NotificationService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -16,6 +19,8 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
 
 /**
  * @author : hyunwoopark
@@ -32,6 +37,7 @@ public class MemberServiceImpl implements MemberService {
     private final MemberRepository memberRepository;
     private final ImageService imageService;
     private final DeviceTokenRepository deviceTokenRepository;
+    private final NotificationService notificationService;
 
     @Override
     public UserDetails loadUserByUsername(String providerId) throws UsernameNotFoundException {
@@ -84,5 +90,19 @@ public class MemberServiceImpl implements MemberService {
                         .build());
         deviceTokenEntity.setMember(member);
         deviceTokenRepository.save(deviceTokenEntity);
+    }
+
+    @Override
+    public void setConsumptionTendency(ConsumerTypeRequest consumptionTendencyRequestDTO) {
+        Member reqMember = getMemberFromRequest();
+        reqMember.setConsumerType(consumptionTendencyRequestDTO.getConsumerType());
+        memberRepository.save(reqMember);
+        CompletableFuture.runAsync(() -> {
+            try {
+                notificationService.sendConsumerTypeNotification(reqMember);
+            } catch (ExecutionException | InterruptedException e) {
+                log.debug("sendConsumerTypeNotification error: ", e);
+            }
+        });
     }
 }
