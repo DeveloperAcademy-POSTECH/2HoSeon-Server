@@ -90,11 +90,18 @@ public class PostServiceImpl implements PostService {
 
         try {
             jobSchedulingService.schedulePostDeleteJob(postId);
-            post.setPostToComplete();
-            postRepository.save(post);
         } catch (SchedulerException e) {
             throw new RuntimeException(e);
         }
+        post.setPostToComplete();
+        postRepository.save(post);
+        CompletableFuture.runAsync(() -> {
+            try {
+                notificationService.sendPostExpiredNotification(post);
+            } catch (ExecutionException | InterruptedException e) {
+                log.debug("sendPostReviewNotification error: ", e);
+            }
+        });
 
     }
 
