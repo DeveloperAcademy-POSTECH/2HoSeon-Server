@@ -1,6 +1,6 @@
 package com.twohoseon.app.repository.comment;
 
-import com.twohoseon.app.dto.response.CommentInfoDTO;
+import com.twohoseon.app.dto.response.CommentInfo;
 import com.twohoseon.app.entity.post.Comment;
 import com.twohoseon.app.entity.post.Post;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -22,7 +22,7 @@ public interface CommentRepository extends JpaRepository<Comment, Long>, Comment
 
     Optional<List<Comment>> findPostCommentsByPost(Post post);
 
-    List<CommentInfoDTO> findByPostAndId(Post post, Long id);
+    List<CommentInfo> findByPostAndId(Post post, Long id);
 
     List<Comment> findByPost_Id(Long id);
 

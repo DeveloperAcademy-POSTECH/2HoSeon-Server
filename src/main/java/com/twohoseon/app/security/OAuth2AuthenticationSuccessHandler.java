@@ -1,8 +1,8 @@
 package com.twohoseon.app.security;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.twohoseon.app.dto.response.GeneralResponseDTO;
-import com.twohoseon.app.dto.response.TokenDTO;
+import com.twohoseon.app.dto.response.GeneralResponse;
+import com.twohoseon.app.dto.response.JWTToken;
 import com.twohoseon.app.entity.member.Member;
 import com.twohoseon.app.enums.StatusEnum;
 import com.twohoseon.app.repository.member.MemberRepository;
@@ -49,31 +49,31 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
         Member member = memberRepository.findByProviderId(providerId).orElseThrow(() -> new IllegalArgumentException("존재하지 않는 회원입니다."));
         // 회원이 존재하는지 체크
         boolean memberIsExist = memberRepository.existsByProviderId(providerId);
-        GeneralResponseDTO generalResponseDTO;
-        TokenDTO token = jwtTokenProvider.createAllToken(providerId);
+        GeneralResponse generalResponse;
+        JWTToken JWTToken = jwtTokenProvider.createAllToken(providerId);
         // 회원이 존재할경우
         if (member.getSchool() == null) {
             log.debug("member.getSchool() = {}", member.getSchool());
             // 회원이 존재하면 jwt token 발행을 시작한다.
-            generalResponseDTO = GeneralResponseDTO.builder()
+            generalResponse = GeneralResponse.builder()
                     .status(StatusEnum.CONFLICT)
                     .message("UNREGISTERED_USER")
-                    .data(token)
+                    .data(JWTToken)
                     .build();
         } else {
-            generalResponseDTO = GeneralResponseDTO.builder()
+            generalResponse = GeneralResponse.builder()
                     .status(StatusEnum.OK)
                     .message("SUCCESS")
-                    .data(token)
+                    .data(JWTToken)
                     .build();
         }
 
-        log.info("jwtToken = {}", token.getAccessToken());
+        log.info("jwtToken = {}", JWTToken.getAccessToken());
 
         //token 발급
         response.setContentType("application/json;charset=UTF-8");
         response.setStatus(200);
-        response.getWriter().write(new ObjectMapper().writeValueAsString(generalResponseDTO));
+        response.getWriter().write(new ObjectMapper().writeValueAsString(generalResponse));
     }
 
 }

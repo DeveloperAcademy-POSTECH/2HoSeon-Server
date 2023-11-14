@@ -1,6 +1,6 @@
 package com.twohoseon.app.service.member;
 
-import com.twohoseon.app.dto.request.member.ProfileRequestDTO;
+import com.twohoseon.app.dto.request.member.ProfileRequest;
 import com.twohoseon.app.entity.member.DeviceToken;
 import com.twohoseon.app.entity.member.Member;
 import com.twohoseon.app.repository.device.token.DeviceTokenRepository;
@@ -42,10 +42,10 @@ public class MemberServiceImpl implements MemberService {
 
     @Override
     @Transactional
-    public void setUserProfile(ProfileRequestDTO profileRequestDTO, MultipartFile imageFile) {
+    public void setUserProfile(ProfileRequest profileRequest, MultipartFile imageFile) {
 
         Member member = getMemberFromRequest();
-        log.debug("profileRequestDTO = " + profileRequestDTO.toString());
+        log.debug("profileRequestDTO = " + profileRequest.toString());
 
         String imageName = null;
         if (imageFile != null && !imageFile.isEmpty()) {
@@ -60,8 +60,8 @@ public class MemberServiceImpl implements MemberService {
 
         member.updateAdditionalUserInfo(
                 imageName,
-                profileRequestDTO.getNickname(),
-                profileRequestDTO.getSchool()
+                profileRequest.getNickname(),
+                profileRequest.getSchool()
         );
         memberRepository.save(member);
     }

@@ -15,7 +15,7 @@ import lombok.Getter;
 @Builder
 @Getter
 @Schema(name = "TokenDTO", description = "토큰 응답 DTO")
-public class TokenDTO {
+public class JWTToken {
     @Schema(name = "accessToken", type = "String", description = "액세스 토큰")
     private String accessToken;
     @Schema(name = "accessExpirationTime", type = "long", description = "액세스 토큰 만료 시간")

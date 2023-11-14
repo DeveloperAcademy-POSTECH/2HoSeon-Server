@@ -2,7 +2,7 @@ package com.twohoseon.app.dto.response;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.twohoseon.app.common.ImageDTO;
-import com.twohoseon.app.dto.response.post.AuthorInfoDTO;
+import com.twohoseon.app.dto.response.post.AuthorInfo;
 import com.twohoseon.app.enums.post.PostStatus;
 import com.twohoseon.app.enums.post.VisibilityScope;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -17,8 +17,8 @@ import java.util.List;
 @Getter
 @AllArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_NULL)
-@Schema(name = "PostInfoDTO", description = "게시글 정보 DTO")
-public class PostInfoDTO extends ImageDTO {
+@Schema(name = "PostInfo", description = "게시글 정보 DTO")
+public class PostInfo extends ImageDTO {
 
     @Schema(name = "postId", type = "long", description = "게시글 ID")
     Long postId;
@@ -31,7 +31,7 @@ public class PostInfoDTO extends ImageDTO {
     @Schema(name = "postStatus", type = "PostStatus", description = "게시글 상태")
     PostStatus postStatus;
     @Schema(name = "author", type = "AuthorInfoDTO", description = "게시글 작성자 정보")
-    AuthorInfoDTO author;
+    AuthorInfo author;
     @Schema(name = "title", type = "String", description = "게시글 제목")
     String title;
     @Schema(name = "contents", type = "String", description = "게시글 내용")
@@ -49,9 +49,9 @@ public class PostInfoDTO extends ImageDTO {
     @Schema(name = "myChoice", type = "Boolean", description = "투표 여부")
     Boolean myChoice;
     @Schema(name = "voteCounts", type = "VoteInfoDTO", description = "투표 정보")
-    VoteCountsDTO voteCounts;
+    VoteCounts voteCounts;
     @Schema(name = "voteInfoList", type = "List<VoteInfoDTO>", description = "투표 정보")
-    List<VoteInfoDTO> voteInfoList;
+    List<VoteInfo> voteInfoList;
 
     @Schema(name = "isMine", type = "boolean", description = "내가 쓴 글인지 여부")
     Boolean isMine;
@@ -62,7 +62,7 @@ public class PostInfoDTO extends ImageDTO {
     @Schema(name = "isPurchased", type = "boolean", description = "구매 여부")
     Boolean isPurchased;
 
-    public PostInfoDTO(Long postId, LocalDateTime createDate, LocalDateTime modifiedDate, VisibilityScope visibilityScope, PostStatus postStatus, AuthorInfoDTO author, String title, String contents, String image, String externalURL, int commentCount, int voteCount, int price) {
+    public PostInfo(Long postId, LocalDateTime createDate, LocalDateTime modifiedDate, VisibilityScope visibilityScope, PostStatus postStatus, AuthorInfo author, String title, String contents, String image, String externalURL, int commentCount, int voteCount, int price) {
         this.postId = postId;
         this.createDate = createDate;
         this.modifiedDate = modifiedDate;
@@ -79,25 +79,25 @@ public class PostInfoDTO extends ImageDTO {
     }
 
     //후기 상세 본문
-    public PostInfoDTO(LocalDateTime createDate, LocalDateTime modifiedDate, Long postId, AuthorInfoDTO author, PostStatus postStatus, String title, String image, String contents, int price, Boolean isPurchased) {
+    public PostInfo(LocalDateTime createDate, LocalDateTime modifiedDate, Long postId, AuthorInfo author, PostStatus postStatus, String title, String image, String contents, int price, Boolean isPurchased) {
         this.createDate = createDate;
         this.modifiedDate = modifiedDate;
         this.postId = postId;
         this.author = author;
         this.postStatus = postStatus;
         this.title = title;
-        this.image = image != null ? generateReviewImageURL(image) : null;
+        this.image = generateReviewImageURL(image);
         this.contents = contents;
         this.price = price;
         this.isPurchased = isPurchased;
     }
 
 
-    public void setVoteCounts(VoteCountsDTO voteCounts) {
+    public void setVoteCounts(VoteCounts voteCounts) {
         this.voteCounts = voteCounts;
     }
 
-    public void setVoteInfoList(List<VoteInfoDTO> voteInfoList) {
+    public void setVoteInfoList(List<VoteInfo> voteInfoList) {
         this.voteInfoList = voteInfoList;
     }
 

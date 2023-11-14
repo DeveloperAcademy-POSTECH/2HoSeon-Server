@@ -13,7 +13,7 @@ import lombok.Getter;
  **/
 @Getter
 @Schema(name = "SubCommentCreateRequestDTO", description = "대댓글 등록 요청 DTO")
-public class SubCommentCreateRequestDTO {
+public class SubCommentCreateRequest {
     @Schema(name = "contents", type = "String", description = "댓글 내용")
     private String contents;
 }

@@ -13,7 +13,7 @@ import lombok.Getter;
  **/
 @Getter
 @Schema(name = "TokenRefreshDTO", description = "토큰 재발급 요청 DTO")
-public class TokenRefreshDTO {
+public class TokenRefresh {
     @Schema(name = "refreshToken", type = "String", description = "리프레시 토큰")
     String refreshToken;
     @Schema(name = "identifier", type = "String", description = "기기 식별자")

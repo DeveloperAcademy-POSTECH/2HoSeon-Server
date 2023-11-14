@@ -14,7 +14,7 @@ import lombok.Getter;
 
 @Getter
 @Schema(name = "PostCommentUpdateRequestDTO", description = "댓글 수정 요청 DTO")
-public class CommentUpdateRequestDTO {
+public class CommentUpdateRequest {
     @Schema(name = "content", description = "수정할 내용")
     private String content;
 }

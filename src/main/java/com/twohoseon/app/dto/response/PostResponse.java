@@ -8,29 +8,26 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;
 import lombok.Data;
 
-import java.util.List;
-
 /**
- * @author : yongjukim
+ * @author : hyunwoopark
  * @version : 1.0.0
  * @package : twohoseon
- * @name : PostCommentResponseDTO
- * @date : 2023/10/20
+ * @name : PostResponseDTO
+ * @date : 10/20/23 12:43 AM
  * @modifyed : $
  **/
-
 @Data
+@Schema(name = "PostResponseDTO", description = "게시글 응답 DTO")
 @Builder
 @JsonInclude(JsonInclude.Include.NON_NULL)
-@Schema(name = "PostCommentResponseDTO", description = "댓글 응답 DTO")
-public class CommentResponseDTO {
+public class PostResponse {
     @Schema(name = "status", type = "int", description = "응답 상태")
     @JsonSerialize(using = StatusEnumSerializer.class)
     private StatusEnum status;
 
-    @Schema(name = "message", type = "String", description = "응답 메시지")
+    @Schema(name = "message", type = "int", description = "응답 메시지")
     private String message;
 
-    @Schema(name = "data", type = "List<CommentInfoDTO>", description = "응답 데이터")
-    private List<CommentInfoDTO> data;
+    @Schema(name = "data", type = "PostInfoDTO", description = "응답 데이터")
+    private PostInfo data;
 }

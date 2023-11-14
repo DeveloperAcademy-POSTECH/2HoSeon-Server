@@ -1,8 +1,8 @@
 package com.twohoseon.app.service.comment;
 
-import com.twohoseon.app.dto.request.comment.CommentCreateRequestDTO;
-import com.twohoseon.app.dto.request.comment.SubCommentCreateRequestDTO;
-import com.twohoseon.app.dto.response.CommentInfoDTO;
+import com.twohoseon.app.dto.request.comment.CommentCreateRequest;
+import com.twohoseon.app.dto.request.comment.SubCommentCreateRequest;
+import com.twohoseon.app.dto.response.CommentInfo;
 import com.twohoseon.app.service.CommonService;
 
 import java.util.List;
@@ -18,15 +18,15 @@ import java.util.List;
 public interface CommentService extends CommonService {
 
 
-    void createComment(CommentCreateRequestDTO commentCreateRequestDTO);
+    void createComment(CommentCreateRequest commentCreateRequest);
 
-    void createSubComment(Long commentId, SubCommentCreateRequestDTO subCommentCreateRequestDTO);
+    void createSubComment(Long commentId, SubCommentCreateRequest subCommentCreateRequest);
 
     void deleteComment(Long postCommentId);
 
     void updateComment(Long postCommentId, String content);
 
-    List<CommentInfoDTO> getPostComments(Long postId);
+    List<CommentInfo> getPostComments(Long postId);
 
-    List<CommentInfoDTO> getSubComments(Long commentId);
+    List<CommentInfo> getSubComments(Long commentId);
 }

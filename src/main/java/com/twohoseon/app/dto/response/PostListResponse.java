@@ -22,7 +22,7 @@ import java.util.List;
 @Schema(name = "PostListResponseDTO", description = "게시글 응답 DTO")
 @Builder
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class PostListResponseDTO {
+public class PostListResponse {
     @Schema(name = "status", type = "int", description = "응답 상태")
     @JsonSerialize(using = StatusEnumSerializer.class)
     private StatusEnum status;
@@ -31,5 +31,5 @@ public class PostListResponseDTO {
     private String message;
 
     @Schema(name = "data", type = "List<PostInfoDTO>", description = "응답 데이터")
-    private List<PostInfoDTO> data;
+    private List<PostInfo> data;
 }

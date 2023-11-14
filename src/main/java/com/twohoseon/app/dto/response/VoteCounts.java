@@ -15,7 +15,7 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 @Schema(name = "VoteCountsDTO", description = "투표 수 DTO")
-public class VoteCountsDTO {
+public class VoteCounts {
     @Schema(name = "agreeCount", type = "int", description = "찬성 수")
     int agreeCount;
     @Schema(name = "disagreeCount", type = "int", description = "반대 수")

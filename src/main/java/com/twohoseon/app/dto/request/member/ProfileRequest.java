@@ -6,7 +6,7 @@ import lombok.Getter;
 
 @Getter
 @Schema(name = "ProfileRequestDTO", description = "프로필 수정 요청 DTO")
-public class ProfileRequestDTO {
+public class ProfileRequest {
     @Schema(name = "nickname", description = "유저 닉네임")
     private String nickname;
     @Schema(name = "school", description = "유저 학교")

@@ -1,9 +1,9 @@
 package com.twohoseon.app.service.post;
 
-import com.twohoseon.app.dto.request.post.PostRequestDTO;
-import com.twohoseon.app.dto.request.review.ReviewRequestDTO;
-import com.twohoseon.app.dto.response.PostInfoDTO;
-import com.twohoseon.app.dto.response.VoteCountsDTO;
+import com.twohoseon.app.dto.request.post.PostRequest;
+import com.twohoseon.app.dto.request.review.ReviewRequest;
+import com.twohoseon.app.dto.response.PostInfo;
+import com.twohoseon.app.dto.response.VoteCounts;
 import com.twohoseon.app.dto.response.mypage.MypageFetch;
 import com.twohoseon.app.dto.response.post.PostSummary;
 import com.twohoseon.app.dto.response.post.ReviewDetail;
@@ -54,7 +54,7 @@ public class PostServiceImpl implements PostService {
     private final ImageService imageService;
 
     @Override
-    public void createPost(PostRequestDTO postRequestDTO, MultipartFile file) {
+    public void createPost(PostRequest postRequest, MultipartFile file) {
         Member author = getMemberFromRequest();
 
         String image = null;
@@ -64,12 +64,12 @@ public class PostServiceImpl implements PostService {
 
         Post post = Post.builder()
                 .author(author)
-                .visibilityScope(postRequestDTO.getVisibilityScope())
-                .title(postRequestDTO.getTitle())
-                .contents(postRequestDTO.getContents())
+                .visibilityScope(postRequest.getVisibilityScope())
+                .title(postRequest.getTitle())
+                .contents(postRequest.getContents())
                 .image(image)
-                .price(postRequestDTO.getPrice())
-                .externalURL(postRequestDTO.getExternalURL())
+                .price(postRequest.getPrice())
+                .externalURL(postRequest.getExternalURL())
                 .build();
         postRepository.save(post);
         try {
@@ -100,22 +100,22 @@ public class PostServiceImpl implements PostService {
 
     @Override
     @Transactional
-    public List<PostInfoDTO> fetchPosts(Pageable pageable, VisibilityScope visibilityScope) {
+    public List<PostInfo> fetchPosts(Pageable pageable, VisibilityScope visibilityScope) {
         Member member = getMemberFromRequest();
         return postRepository.findAllPosts(pageable, member, visibilityScope);
     }
 
     @Override
-    public PostInfoDTO fetchPost(Long postId) {
+    public PostInfo fetchPost(Long postId) {
         Member member = getMemberFromRequest();
-        PostInfoDTO postInfoDTO = postRepository.findPostById(postId, member.getId());
-        return postInfoDTO;
+        PostInfo postInfo = postRepository.findPostById(postId, member.getId());
+        return postInfo;
     }
 
     //TODO 업로드 수정
     @Override
     @Transactional
-    public void updatePost(Long postId, PostRequestDTO postRequestDTO, MultipartFile file) {
+    public void updatePost(Long postId, PostRequest postRequest, MultipartFile file) {
         Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new PostNotFoundException());
         Member author = post.getAuthor();
@@ -133,7 +133,7 @@ public class PostServiceImpl implements PostService {
                 image = imageService.uploadImage(file, "posts");
             }
         }
-        post.updatePost(postRequestDTO, image);
+        post.updatePost(postRequest, image);
         postRepository.save(post);
     }
 
@@ -150,7 +150,7 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public void createReview(Long postId, ReviewRequestDTO reviewRequestDTO, MultipartFile file) {
+    public void createReview(Long postId, ReviewRequest reviewRequest, MultipartFile file) {
         Member member = getMemberFromRequest();
         Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new PostNotFoundException());
@@ -159,7 +159,7 @@ public class PostServiceImpl implements PostService {
         if (post.isReviewExist()) {
             throw new ReviewExistException();
         }
-        if (reviewRequestDTO.getIsPurchased() == true && file.isEmpty() && file == null) {
+        if (reviewRequest.getIsPurchased() == true && file.isEmpty() && file == null) {
             throw new RuntimeException();
         }
 
@@ -168,7 +168,7 @@ public class PostServiceImpl implements PostService {
             image = imageService.uploadImage(file, "reviews");
         }
 
-        post.createReview(reviewRequestDTO, image);
+        post.createReview(reviewRequest, image);
         postRepository.save(post);
         CompletableFuture.runAsync(() -> {
             try {
@@ -181,13 +181,13 @@ public class PostServiceImpl implements PostService {
 
     //TODO 업로드 수정
     @Override
-    public void updateReview(Long postId, ReviewRequestDTO reviewRequestDTO, MultipartFile file) {
+    public void updateReview(Long postId, ReviewRequest reviewRequest, MultipartFile file) {
         Member member = getMemberFromRequest();
         Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new PostNotFoundException());
         if (!post.isAuthor(member))
             throw new PermissionDeniedException();
-        if (reviewRequestDTO.getIsPurchased() == true && post.getReview().getImage() == null && file == null && file.isEmpty()) {
+        if (reviewRequest.getIsPurchased() == true && post.getReview().getImage() == null && file == null && file.isEmpty()) {
             throw new RuntimeException();
         }
 
@@ -201,7 +201,7 @@ public class PostServiceImpl implements PostService {
             }
         }
 
-        post.updateReview(reviewRequestDTO, image);
+        post.updateReview(reviewRequest, image);
         postRepository.save(post);
     }
 
@@ -256,7 +256,7 @@ public class PostServiceImpl implements PostService {
         Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new PostNotFoundException());
         PostSummary originalPost = postRepository.getPostSummaryInReviewDetail(postId);
-        PostInfoDTO reviewPost = postRepository.getReviewDetailByPostId(post.getReview().getId());
+        PostInfo reviewPost = postRepository.getReviewDetailByPostId(post.getReview().getId());
         return ReviewDetail.builder()
                 .originalPost(originalPost)
                 .reviewPost(reviewPost)
@@ -281,7 +281,7 @@ public class PostServiceImpl implements PostService {
 
     @Override
     @Transactional
-    public VoteCountsDTO createVote(Long postId, boolean myChoice) {
+    public VoteCounts createVote(Long postId, boolean myChoice) {
         Member member = getMemberFromRequest();
         Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new PostNotFoundException());

@@ -1,6 +1,6 @@
 package com.twohoseon.app.service.refreshToken;
 
-import com.twohoseon.app.dto.response.TokenDTO;
+import com.twohoseon.app.dto.response.JWTToken;
 import com.twohoseon.app.entity.member.RefreshToken;
 import com.twohoseon.app.exception.InvalidRefreshTokenException;
 import com.twohoseon.app.repository.member.RefreshTokenRepository;
@@ -33,7 +33,7 @@ public class RefreshTokenServiceImpl implements RefreshTokenService {
     }
 
     @Override
-    public TokenDTO renewToken(String refreshToken, String identifier) {
+    public JWTToken renewToken(String refreshToken, String identifier) {
         //TODO Errorcode로 핸들링이 되고있지 않음.
         RefreshToken refreshTokenEntity = refreshTokenRepository.findByRefreshToken(refreshToken)
                 .orElseThrow(() -> new InvalidRefreshTokenException("Refresh Token이 존재하지 않습니다."));

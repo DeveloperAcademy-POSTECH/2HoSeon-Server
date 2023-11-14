@@ -18,7 +18,7 @@ import lombok.Data;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @Schema(name = "VoteInfoDTO", description = "투표 정보 DTO")
 @AllArgsConstructor
-public class VoteInfoDTO {
+public class VoteInfo {
     @Schema(name = "isAgree", type = "boolean", description = "찬성 여부")
     private Boolean isAgree;
     @Schema(name = "consumerType", type = "ConsumerType", description = "소비자 타입")

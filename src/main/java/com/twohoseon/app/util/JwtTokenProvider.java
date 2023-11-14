@@ -1,6 +1,6 @@
 package com.twohoseon.app.util;
 
-import com.twohoseon.app.dto.response.TokenDTO;
+import com.twohoseon.app.dto.response.JWTToken;
 import com.twohoseon.app.entity.member.RefreshToken;
 import com.twohoseon.app.repository.member.RefreshTokenRepository;
 import io.jsonwebtoken.Claims;
@@ -38,7 +38,7 @@ public class JwtTokenProvider {
     @Value("${jwt.expiration.refresh-token}")
     private int jwtRefreshExpirationMs;
 
-    public TokenDTO createAllToken(String username) {
+    public JWTToken createAllToken(String username) {
         Date now = new Date();
         Date accessExpiration = new Date(now.getTime() + jwtExpirationMs);
         Date refreshExpiration = new Date(now.getTime() + jwtRefreshExpirationMs);
@@ -68,7 +68,7 @@ public class JwtTokenProvider {
                 .providerId(username)
                 .expirationTime(refreshExpiration.getTime())
                 .build());
-        return TokenDTO.builder()
+        return JWTToken.builder()
                 .accessToken(accessToken)
                 .accessExpirationTime(accessExpiration.getTime())
                 .refreshToken(refreshToken)
