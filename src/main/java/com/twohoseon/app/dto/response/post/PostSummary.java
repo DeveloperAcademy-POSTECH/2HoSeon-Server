@@ -1,6 +1,7 @@
 package com.twohoseon.app.dto.response.post;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.twohoseon.app.common.ImageDTO;
 import com.twohoseon.app.entity.post.VoteResult;
 import com.twohoseon.app.enums.post.PostStatus;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -19,7 +20,7 @@ import java.time.LocalDateTime;
 @Getter
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @Schema(name = "PostSummary", description = "검색 결과 게시글 정보")
-public class PostSummary {
+public class PostSummary extends ImageDTO {
     @Schema(name = "createDate", type = "LocalDateTime", description = "게시글 생성 시간")
     private LocalDateTime createDate;
     @Schema(name = "modifiedDate", type = "LocalDateTime", description = "게시글 수정 시간")
@@ -61,7 +62,7 @@ public class PostSummary {
         this.postStatus = postStatus;
         this.voteCount = voteCount;
         this.title = title;
-        this.image = image != null ? "https://test.hyunwoo.tech/images/reviews/" + image : null;
+        this.image = image != null ? generatePostImageURL(image) : null;
         this.contents = contents;
         this.price = price;
         this.commentCount = commentCount;
@@ -78,7 +79,7 @@ public class PostSummary {
         this.commentCount = commentCount;
         this.voteResult = voteResult;
         this.title = title;
-        this.image = image != null ? "https://test.hyunwoo.tech/images/reviews/" + image : null;
+        this.image = image != null ? generatePostImageURL(image) : null;
         this.contents = contents;
         this.price = price;
     }
@@ -93,7 +94,7 @@ public class PostSummary {
         this.viewCount = viewCount;
         this.commentCount = commentCount;
         this.title = title;
-        this.image = image != null ? "https://test.hyunwoo.tech/images/reviews/" + image : null;
+        this.image = image != null ? generateReviewImageURL(image) : null;
         this.contents = contents;
         this.price = price;
         this.isPurchased = isPurchased;
@@ -108,7 +109,7 @@ public class PostSummary {
         this.postStatus = postStatus;
         this.commentCount = commentCount;
         this.title = title;
-        this.image = image != null ? "https://test.hyunwoo.tech/images/reviews/" + image : null;
+        this.image = image != null ? generateReviewImageURL(image) : null;
         this.contents = contents;
         this.price = price;
         this.isPurchased = isPurchased;
@@ -133,7 +134,7 @@ public class PostSummary {
         this.postStatus = postStatus;
         this.voteResult = voteResult;
         this.title = title;
-        this.image = image;
+        this.image = image != null ? generatePostImageURL(image) : null;
         this.contents = contents;
         this.price = price;
     }
@@ -145,7 +146,7 @@ public class PostSummary {
         this.postId = postId;
         this.postStatus = postStatus;
         this.title = title;
-        this.image = image;
+        this.image = image != null ? generateReviewImageURL(image) : null;
         this.contents = contents;
         this.price = price;
         this.isPurchased = isPurchased;
@@ -159,7 +160,7 @@ public class PostSummary {
         this.postStatus = postStatus;
         this.voteResult = voteResult;
         this.title = title;
-        this.image = image;
+        this.image = image != null ? generatePostImageURL(image) : null;
         this.contents = contents;
         this.price = price;
         this.hasReview = hasReview;

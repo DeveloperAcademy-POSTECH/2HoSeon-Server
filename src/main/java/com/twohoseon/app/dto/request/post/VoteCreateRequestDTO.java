@@ -1,6 +1,5 @@
 package com.twohoseon.app.dto.request.post;
 
-import com.twohoseon.app.enums.VoteType;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
 
@@ -15,6 +14,6 @@ import lombok.Getter;
 @Getter
 @Schema(name = "VoteCreateRequestDTO", description = "투표 생성 요청 DTO")
 public class VoteCreateRequestDTO {
-    @Schema(name = "voteType", type = "VoteType", description = "게시글 ID")
-    private VoteType voteType;
+    @Schema(name = "myChoice", type = "boolean", description = "내가 선택한 값")
+    private boolean myChoice;
 }

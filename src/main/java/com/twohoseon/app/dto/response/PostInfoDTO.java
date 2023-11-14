@@ -1,6 +1,7 @@
 package com.twohoseon.app.dto.response;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.twohoseon.app.common.ImageDTO;
 import com.twohoseon.app.dto.response.post.AuthorInfoDTO;
 import com.twohoseon.app.enums.post.PostStatus;
 import com.twohoseon.app.enums.post.VisibilityScope;
@@ -17,7 +18,7 @@ import java.util.List;
 @AllArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @Schema(name = "PostInfoDTO", description = "게시글 정보 DTO")
-public class PostInfoDTO {
+public class PostInfoDTO extends ImageDTO {
 
     @Schema(name = "postId", type = "long", description = "게시글 ID")
     Long postId;
@@ -70,8 +71,7 @@ public class PostInfoDTO {
         this.author = author;
         this.title = title;
         this.contents = contents;
-        if (image != null)
-            this.image = "https://test.hyunwoo.tech/images/posts/" + image;
+        this.image = image != null ? generatePostImageURL(image) : null;
         this.externalURL = externalURL;
         this.commentCount = commentCount;
         this.voteCount = voteCount;
@@ -86,8 +86,7 @@ public class PostInfoDTO {
         this.author = author;
         this.postStatus = postStatus;
         this.title = title;
-        if (image != null)
-            this.image = "https://test.hyunwoo.tech/images/reviews/" + image;
+        this.image = image != null ? generateReviewImageURL(image) : null;
         this.contents = contents;
         this.price = price;
         this.isPurchased = isPurchased;

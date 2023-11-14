@@ -31,6 +31,7 @@ public class JobSchedulingServiceImpl implements JobSchedulingService {
 //        Date startAtDate = DateBuilder.futureDate(24, DateBuilder.IntervalUnit.HOUR);  // 현재로부터 24시간 후
 
         JobDetail jobDetail = JobBuilder.newJob(PostExpireJob.class)
+                .withIdentity(String.valueOf(postId))
                 .usingJobData(jobDataMap)
                 .build();
 
@@ -39,6 +40,10 @@ public class JobSchedulingServiceImpl implements JobSchedulingService {
                 .build();
 
         scheduler.scheduleJob(jobDetail, trigger);
+    }
+
+    public void schedulePostDeleteJob(Long postId) throws SchedulerException {
+        scheduler.deleteJob(JobKey.jobKey(String.valueOf(postId)));
     }
 
 }
