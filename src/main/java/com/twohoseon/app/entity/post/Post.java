@@ -121,6 +121,7 @@ public class Post extends BaseTimeEntity {
     private boolean isPurchased = false;
 
     @Column
+    @Enumerated(EnumType.STRING)
     @Comment("투표 결과")
     @Builder.Default
     private VoteResult voteResult = VoteResult.DRAW;

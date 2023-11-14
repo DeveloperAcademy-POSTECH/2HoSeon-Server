@@ -54,7 +54,7 @@ public class CommentServiceImpl implements CommentService {
         commentRepository.save(comment);
         CompletableFuture.runAsync(() -> {
             try {
-                notificationService.sendPostCommentNotification(post, member.getNickname(), false);
+                notificationService.sendPostCommentNotification(post, member.getNickname());
             } catch (ExecutionException | InterruptedException e) {
                 log.debug("sendPostCommentNotification error: ", e);
             }
@@ -68,7 +68,7 @@ public class CommentServiceImpl implements CommentService {
 
         Comment parentComment = commentRepository.findById(commentId)
                 .orElseThrow(() -> new CommentNotFoundException());
-
+        //TODO 대댓글 알림 처리 안됨....
         Comment subComment = Comment.builder()
                 .parentComment(parentComment)
                 .content(subCommentCreateRequestDTO.getContents())
@@ -76,6 +76,13 @@ public class CommentServiceImpl implements CommentService {
                 .post(parentComment.getPost())
                 .build();
         commentRepository.save(subComment);
+        CompletableFuture.runAsync(() -> {
+            try {
+                notificationService.sendPostSubCommentNotification(parentComment, member.getNickname());
+            } catch (ExecutionException | InterruptedException e) {
+                log.debug("sendPostCommentNotification error: ", e);
+            }
+        });
     }
 
 
