@@ -71,8 +71,9 @@ public class PostInfo extends ImageDTO {
         this.author = author;
         this.title = title;
         this.contents = contents;
-        this.image = image != null ? generatePostImageURL(image) : null;
-        this.externalURL = externalURL;
+        this.image = generatePostImageURL(image);
+        if (externalURL != null)
+            this.externalURL = externalURL;
         this.commentCount = commentCount;
         this.voteCount = voteCount;
         this.price = price;
