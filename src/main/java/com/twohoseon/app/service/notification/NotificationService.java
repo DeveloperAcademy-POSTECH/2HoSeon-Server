@@ -1,5 +1,6 @@
 package com.twohoseon.app.service.notification;
 
+import com.twohoseon.app.entity.member.Member;
 import com.twohoseon.app.entity.post.Comment;
 import com.twohoseon.app.entity.post.Post;
 
@@ -18,9 +19,10 @@ public interface NotificationService {
     void sendPostExpiredNotification(Post post) throws ExecutionException, InterruptedException;
 
     void sendPostCommentNotification(Post post, String userNickname) throws ExecutionException, InterruptedException;
-    
+
     void sendPostSubCommentNotification(Comment parentComment, String userNickname) throws ExecutionException, InterruptedException;
 
     void sendPostReviewNotification(Post post) throws ExecutionException, InterruptedException;
 
+    void sendConsumerTypeNotification(Member reqMember) throws ExecutionException, InterruptedException;
 }

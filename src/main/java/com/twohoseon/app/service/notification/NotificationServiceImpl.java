@@ -1,10 +1,13 @@
 package com.twohoseon.app.service.notification;
 
 import com.eatthepath.pushy.apns.ApnsClient;
+import com.eatthepath.pushy.apns.DeliveryPriority;
 import com.eatthepath.pushy.apns.PushNotificationResponse;
+import com.eatthepath.pushy.apns.PushType;
 import com.eatthepath.pushy.apns.util.SimpleApnsPushNotification;
 import com.eatthepath.pushy.apns.util.TokenUtil;
 import com.twohoseon.app.dto.apns.CustomApnsPayloadBuilder;
+import com.twohoseon.app.entity.member.Member;
 import com.twohoseon.app.entity.post.Comment;
 import com.twohoseon.app.entity.post.Post;
 import com.twohoseon.app.repository.device.token.DeviceTokenRepository;
@@ -15,6 +18,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import java.time.Instant;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
@@ -143,6 +147,30 @@ public class NotificationServiceImpl implements NotificationService {
         }
 
 
+    }
+
+    @Override
+    public void sendConsumerTypeNotification(Member reqMember) throws ExecutionException, InterruptedException {
+        List<String> deviceTokens = deviceTokenRepository.findAllByMemberId(reqMember.getId());
+        for (String deviceToken : deviceTokens) {
+            log.debug("deviceToken: " + deviceToken);
+            SimpleApnsPushNotification pushNotification = new SimpleApnsPushNotification(
+                    TokenUtil.sanitizeTokenString(deviceToken),
+                    appIdentifier,
+                    new CustomApnsPayloadBuilder()
+                            .setConsumerTypeExist(true)
+                            .setContentAvailable(true)
+                            .build(),
+                    Instant.now().plusSeconds(24 * 60 * 60), // 만료 시간 (예: 24시간 후)
+                    DeliveryPriority.IMMEDIATE, // 우선 순위
+                    PushType.BACKGROUND // 푸시 유형
+
+            );
+            log.debug("pushNotification: " + pushNotification);
+            PushNotificationResponse<SimpleApnsPushNotification> pushNotificationResponse =
+                    apnsClient.sendNotification(pushNotification).get();
+            log.debug("push notification is success?: " + pushNotificationResponse.isAccepted());
+        }
     }
 
 }

@@ -15,6 +15,7 @@ public class CustomApnsPayloadBuilder extends ApnsPayloadBuilder {
 
     private static final String DESTINATION_KEY = "destination";
     private static final String POST_ID_KEY = "post_id";
+    private static final String CONSUMER_TYPE_EXIST_KEY = "consumer_type_exist";
 
     @Override
     public String build() {
@@ -35,6 +36,11 @@ public class CustomApnsPayloadBuilder extends ApnsPayloadBuilder {
     public ApnsPayloadBuilder setPostDetails(final Long postId) {
         super.addCustomProperty(DESTINATION_KEY, "post_detail");
         super.addCustomProperty(POST_ID_KEY, postId);
+        return this;
+    }
+
+    public ApnsPayloadBuilder setConsumerTypeExist(final boolean consumerTypeExist) {
+        super.addCustomProperty(CONSUMER_TYPE_EXIST_KEY, consumerTypeExist);
         return this;
     }
 }
