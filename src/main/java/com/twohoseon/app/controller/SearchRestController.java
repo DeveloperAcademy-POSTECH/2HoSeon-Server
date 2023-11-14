@@ -53,11 +53,11 @@ public class SearchRestController {
             )
     )
     @GetMapping
-    public ResponseEntity<SearchResponse> searchKeyword(@RequestParam(defaultValue = "ACTIVE") PostStatus postStatus,
-                                                        @RequestParam(defaultValue = "GLOBAL") VisibilityScope visibilityScope,
-                                                        @RequestParam(defaultValue = "0") int page,
-                                                        @RequestParam(defaultValue = "10") int size,
-                                                        @RequestParam(defaultValue = "") String keyword) {
+    public ResponseEntity<SearchResponse> searchKeyword(@RequestParam(defaultValue = "ACTIVE", value = "postStatus") PostStatus postStatus,
+                                                        @RequestParam(defaultValue = "GLOBAL", value = "visibilityScope") VisibilityScope visibilityScope,
+                                                        @RequestParam(defaultValue = "0", value = "page") int page,
+                                                        @RequestParam(defaultValue = "10", value = "size") int size,
+                                                        @RequestParam(defaultValue = "", value = "keyword") String keyword) {
         Pageable pageable = PageRequest.of(page, size);
         List<PostSummary> postInfoList = searchService.getSearchByKeyword(postStatus, visibilityScope, pageable, keyword);
         SearchResponse response = SearchResponse.builder()
