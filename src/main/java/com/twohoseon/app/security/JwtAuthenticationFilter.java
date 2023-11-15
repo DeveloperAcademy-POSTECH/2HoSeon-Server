@@ -5,7 +5,6 @@ import com.twohoseon.app.dto.ErrorResponse;
 import com.twohoseon.app.entity.member.Member;
 import com.twohoseon.app.enums.ErrorCode;
 import com.twohoseon.app.enums.UserRole;
-import com.twohoseon.app.exception.MemberNotFoundException;
 import com.twohoseon.app.repository.member.MemberRepository;
 import com.twohoseon.app.repository.member.RefreshTokenRepository;
 import com.twohoseon.app.service.member.MemberService;
@@ -30,6 +29,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
+import java.util.Optional;
 
 /**
  * @author : hyunwoopark
@@ -69,8 +69,12 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 jwtTokenProvider.tokenValidation(accessToken, true);
                 String providerId = jwtTokenProvider.getProviderIdFromToken(accessToken);
 
-                Member member = memberRepository.findByProviderId(providerId)
-                        .orElseThrow(() -> new MemberNotFoundException("Member Not Found"));
+                Optional<Member> memberOptional = memberRepository.findByProviderId(providerId);
+                if (memberOptional.isEmpty()) {
+                    jwtExceptionHandler(response, ErrorResponse.of(ErrorCode.MEMBER_NOT_FOUND_ERROR));
+                    return;
+                }
+                Member member = memberOptional.get();
                 log.info("ProviderId : ", providerId);
 
                 setAuthentication(jwtTokenProvider.getProviderIdFromToken(accessToken));
