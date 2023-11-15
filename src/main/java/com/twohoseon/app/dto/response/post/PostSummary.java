@@ -2,7 +2,7 @@ package com.twohoseon.app.dto.response.post;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.twohoseon.app.common.ImageDTO;
-import com.twohoseon.app.entity.post.VoteResult;
+import com.twohoseon.app.enums.VoteResult;
 import com.twohoseon.app.enums.post.PostStatus;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;

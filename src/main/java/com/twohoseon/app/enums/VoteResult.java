@@ -1,4 +1,4 @@
-package com.twohoseon.app.entity.post;
+package com.twohoseon.app.enums;
 
 /**
  * @author : hyunwoopark

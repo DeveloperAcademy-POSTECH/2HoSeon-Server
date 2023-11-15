@@ -6,6 +6,7 @@ import com.twohoseon.app.dto.request.review.ReviewRequest;
 import com.twohoseon.app.entity.member.Member;
 import com.twohoseon.app.entity.post.vote.Vote;
 import com.twohoseon.app.entity.post.vote.VoteId;
+import com.twohoseon.app.enums.VoteResult;
 import com.twohoseon.app.enums.post.PostStatus;
 import com.twohoseon.app.enums.post.VisibilityScope;
 import jakarta.annotation.Nullable;
