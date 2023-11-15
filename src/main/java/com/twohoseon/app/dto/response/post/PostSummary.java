@@ -28,7 +28,7 @@ public class PostSummary extends ImageDTO {
     @Schema(name = "postId", type = "long", description = "게시글 ID")
     private Long postId;
     @Schema(name = "authorInfo", type = "AuthorInfoDTO", description = "게시글 작성자 정보")
-    private AuthorInfoDTO author;
+    private AuthorInfo author;
     @Schema(name = "postStatus", type = "PostStatus", description = "게시글 상태")
     private PostStatus postStatus;
     @Schema(name = "viewCount", type = "int", description = "게시글 조회수")
@@ -46,15 +46,15 @@ public class PostSummary extends ImageDTO {
     @Schema(name = "contents", type = "String", description = "게시글 내용")
     private String contents;
     @Schema(name = "price", type = "int", description = "상품 가격")
-    private int price;
+    private Integer price;
     @Schema(name = "isPurchased", type = "boolean", description = "구매 여부")
-    private boolean isPurchased;
+    private Boolean isPurchased;
     @Schema(name = "hasReview", type = "boolean", description = "후기 작성 여부")
     private Boolean hasReview;
 
 
     //진행중인 투표 검색
-    public PostSummary(LocalDateTime createDate, LocalDateTime modifiedDate, Long postId, AuthorInfoDTO author, PostStatus postStatus, int voteCount, String title, String image, String contents, int price, int commentCount) {
+    public PostSummary(LocalDateTime createDate, LocalDateTime modifiedDate, Long postId, AuthorInfo author, PostStatus postStatus, int voteCount, String title, String image, String contents, int price, int commentCount) {
         this.createDate = createDate;
         this.modifiedDate = modifiedDate;
         this.postId = postId;
@@ -62,14 +62,14 @@ public class PostSummary extends ImageDTO {
         this.postStatus = postStatus;
         this.voteCount = voteCount;
         this.title = title;
-        this.image = image != null ? generatePostImageURL(image) : null;
+        this.image = generatePostImageURL(image);
         this.contents = contents;
         this.price = price;
         this.commentCount = commentCount;
     }
 
     //종료된 투표 검색
-    public PostSummary(LocalDateTime createDate, LocalDateTime modifiedDate, Long postId, AuthorInfoDTO author, PostStatus postStatus, int voteCount, int commentCount, VoteResult voteResult, String title, String image, String contents, int price) {
+    public PostSummary(LocalDateTime createDate, LocalDateTime modifiedDate, Long postId, AuthorInfo author, PostStatus postStatus, int voteCount, int commentCount, VoteResult voteResult, String title, String image, String contents, int price) {
         this.createDate = createDate;
         this.modifiedDate = modifiedDate;
         this.postId = postId;
@@ -79,13 +79,13 @@ public class PostSummary extends ImageDTO {
         this.commentCount = commentCount;
         this.voteResult = voteResult;
         this.title = title;
-        this.image = image != null ? generatePostImageURL(image) : null;
+        this.image = generatePostImageURL(image);
         this.contents = contents;
         this.price = price;
     }
 
     //후기 검색 결과
-    public PostSummary(LocalDateTime createDate, LocalDateTime modifiedDate, Long postId, AuthorInfoDTO author, PostStatus postStatus, int viewCount, int commentCount, String title, String image, String contents, int price, boolean isPurchased) {
+    public PostSummary(LocalDateTime createDate, LocalDateTime modifiedDate, Long postId, AuthorInfo author, PostStatus postStatus, int viewCount, int commentCount, String title, String image, String contents, int price, boolean isPurchased) {
         this.createDate = createDate;
         this.modifiedDate = modifiedDate;
         this.postId = postId;
@@ -94,14 +94,14 @@ public class PostSummary extends ImageDTO {
         this.viewCount = viewCount;
         this.commentCount = commentCount;
         this.title = title;
-        this.image = image != null ? generateReviewImageURL(image) : null;
+        this.image = generateReviewImageURL(image);
         this.contents = contents;
         this.price = price;
         this.isPurchased = isPurchased;
     }
 
     //소비 후기 탭 fetch
-    public PostSummary(LocalDateTime createDate, LocalDateTime modifiedDate, Long postId, AuthorInfoDTO author, PostStatus postStatus, int commentCount, String title, String image, String contents, int price, boolean isPurchased) {
+    public PostSummary(LocalDateTime createDate, LocalDateTime modifiedDate, Long postId, AuthorInfo author, PostStatus postStatus, int commentCount, String title, String image, String contents, int price, boolean isPurchased) {
         this.createDate = createDate;
         this.modifiedDate = modifiedDate;
         this.postId = postId;
@@ -109,7 +109,7 @@ public class PostSummary extends ImageDTO {
         this.postStatus = postStatus;
         this.commentCount = commentCount;
         this.title = title;
-        this.image = image != null ? generateReviewImageURL(image) : null;
+        this.image = generateReviewImageURL(image);
         this.contents = contents;
         this.price = price;
         this.isPurchased = isPurchased;
@@ -126,7 +126,7 @@ public class PostSummary extends ImageDTO {
     }
 
     //후기 상세 fetch시 상단에 나오는 원본 게시글
-    public PostSummary(LocalDateTime createDate, LocalDateTime modifiedDate, Long postId, AuthorInfoDTO author, PostStatus postStatus, VoteResult voteResult, String title, String image, String contents, int price) {
+    public PostSummary(LocalDateTime createDate, LocalDateTime modifiedDate, Long postId, AuthorInfo author, PostStatus postStatus, VoteResult voteResult, String title, String image, String contents, int price) {
         this.createDate = createDate;
         this.modifiedDate = modifiedDate;
         this.postId = postId;
@@ -134,7 +134,7 @@ public class PostSummary extends ImageDTO {
         this.postStatus = postStatus;
         this.voteResult = voteResult;
         this.title = title;
-        this.image = image != null ? generatePostImageURL(image) : null;
+        this.image = generatePostImageURL(image);
         this.contents = contents;
         this.price = price;
     }
@@ -146,7 +146,7 @@ public class PostSummary extends ImageDTO {
         this.postId = postId;
         this.postStatus = postStatus;
         this.title = title;
-        this.image = image != null ? generateReviewImageURL(image) : null;
+        this.image = generateReviewImageURL(image);
         this.contents = contents;
         this.price = price;
         this.isPurchased = isPurchased;
@@ -160,7 +160,7 @@ public class PostSummary extends ImageDTO {
         this.postStatus = postStatus;
         this.voteResult = voteResult;
         this.title = title;
-        this.image = image != null ? generatePostImageURL(image) : null;
+        this.image = generatePostImageURL(image);
         this.contents = contents;
         this.price = price;
         this.hasReview = hasReview;

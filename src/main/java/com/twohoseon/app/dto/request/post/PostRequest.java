@@ -14,7 +14,7 @@ import lombok.Getter;
  **/
 @Getter
 @Schema(name = "PostRequestDTO", description = "게시글 생성 요청 DTO")
-public class PostRequestDTO {
+public class PostRequest {
     @Schema(name = "visibilityScope", type = "VisibilityScope", description = "게시글 공개 범위")
     private VisibilityScope visibilityScope;
     @Schema(name = "title", type = "String", description = "게시글 제목")

@@ -3,8 +3,8 @@ package com.twohoseon.app.controller;
 import com.twohoseon.app.dto.response.mypage.MypageFetch;
 import com.twohoseon.app.dto.response.mypage.MypageFetchResponse;
 import com.twohoseon.app.enums.StatusEnum;
-import com.twohoseon.app.enums.post.VisibilityScope;
 import com.twohoseon.app.enums.mypage.MyVoteCategoryType;
+import com.twohoseon.app.enums.post.VisibilityScope;
 import com.twohoseon.app.service.post.PostService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -42,13 +42,14 @@ public class MypageRestController {
                                                           @RequestParam(defaultValue = "ALL_VOTES", value = "myVoteCategoryType") MyVoteCategoryType myVoteCategoryType) {
         Pageable pageable = PageRequest.of(page, size);
         MypageFetch mypageFetch = postService.fetchMypagePosts(pageable, myVoteCategoryType);
-        MypageFetchResponse responseDTO = MypageFetchResponse.builder()
+        MypageFetchResponse response = MypageFetchResponse.builder()
                 .status(StatusEnum.OK)
                 .message("success")
                 .data(mypageFetch)
                 .build();
-        return ok(responseDTO);
+        return ok(response);
     }
+
     @GetMapping("/reviews")
     @Operation(summary = "마이페이지 리뷰 조회", description = "마이페이지 리뷰 조회")
     public ResponseEntity<MypageFetchResponse> fetchReviews(@RequestParam(defaultValue = "GLOBAL", value = "visibilityScope") VisibilityScope visibilityScope,
@@ -58,11 +59,11 @@ public class MypageRestController {
         Pageable pageable = PageRequest.of(page, size);
 
         MypageFetch mypageFetch = postService.fetchMyReviews(visibilityScope, pageable);
-        MypageFetchResponse responseDTO = MypageFetchResponse.builder()
+        MypageFetchResponse response = MypageFetchResponse.builder()
                 .status(StatusEnum.OK)
                 .message("success")
                 .data(mypageFetch)
                 .build();
-        return ok(responseDTO);
+        return ok(response);
     }
 }

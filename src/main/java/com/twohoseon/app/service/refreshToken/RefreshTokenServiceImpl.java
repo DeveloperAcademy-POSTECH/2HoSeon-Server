@@ -1,6 +1,6 @@
 package com.twohoseon.app.service.refreshToken;
 
-import com.twohoseon.app.dto.response.TokenDTO;
+import com.twohoseon.app.dto.response.JWTToken;
 import com.twohoseon.app.entity.member.RefreshToken;
 import com.twohoseon.app.exception.InvalidRefreshTokenException;
 import com.twohoseon.app.repository.member.RefreshTokenRepository;
@@ -37,19 +37,19 @@ public class RefreshTokenServiceImpl implements RefreshTokenService {
     }
 
     @Override
-    public TokenDTO renewToken(String refreshToken) {
+    public JWTToken renewToken(String refreshToken) {
         RefreshToken refreshTokenEntity = refreshTokenRepository.findByRefreshToken(refreshToken)
                 .orElseThrow(() -> new InvalidRefreshTokenException("Refresh Token does not exist."));
 
         refreshTokenEntity.banRefreshToken();
         refreshTokenRepository.save(refreshTokenEntity);
-        TokenDTO newToken = jwtTokenProvider.createAllToken(refreshTokenEntity.getProviderId());
+        JWTToken newToken = jwtTokenProvider.createAllToken(refreshTokenEntity.getProviderId());
         saveRefreshTokenFromTokenDTO(newToken, refreshTokenEntity.getProviderId());
         return newToken;
     }
 
     @Override
-    public void saveRefreshTokenFromTokenDTO(TokenDTO tokenDTO, String providerId) {
+    public void saveRefreshTokenFromTokenDTO(JWTToken tokenDTO, String providerId) {
         refreshTokenRepository.save(RefreshToken.builder()
                 .accessToken(tokenDTO.getAccessToken())
                 .accessTokenExpirationTime(convertUnixTimestampToLocalDateTime(tokenDTO.getAccessExpirationTime()))

@@ -6,23 +6,24 @@ import com.twohoseon.app.common.StatusEnumSerializer;
 import com.twohoseon.app.enums.StatusEnum;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Data;
+
+import java.util.List;
 
 /**
- * @author : hyunwoopark
+ * @author : yongjukim
  * @version : 1.0.0
  * @package : twohoseon
- * @name : ResultDTO
- * @date : 2023/10/07 6:17 PM
+ * @name : PostCommentResponseDTO
+ * @date : 2023/10/20
  * @modifyed : $
  **/
-@Setter
-@Getter
-@Schema(name = "GeneralResponseDTO", description = "공통 응답 DTO")
+
+@Data
 @Builder
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class GeneralResponseDTO<T> {
+@Schema(name = "PostCommentResponseDTO", description = "댓글 응답 DTO")
+public class CommentResponse {
     @Schema(name = "status", type = "int", description = "응답 상태")
     @JsonSerialize(using = StatusEnumSerializer.class)
     private StatusEnum status;
@@ -30,6 +31,6 @@ public class GeneralResponseDTO<T> {
     @Schema(name = "message", type = "String", description = "응답 메시지")
     private String message;
 
-    @Schema(name = "data", description = "응답 데이터")
-    private T data;
+    @Schema(name = "data", type = "List<CommentInfoDTO>", description = "응답 데이터")
+    private List<CommentInfo> data;
 }

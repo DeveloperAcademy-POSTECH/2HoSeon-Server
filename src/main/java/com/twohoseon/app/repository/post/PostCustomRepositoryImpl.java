@@ -6,10 +6,10 @@ import com.querydsl.core.types.dsl.CaseBuilder;
 import com.querydsl.core.types.dsl.Wildcard;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
-import com.twohoseon.app.dto.response.PostInfoDTO;
-import com.twohoseon.app.dto.response.VoteCountsDTO;
-import com.twohoseon.app.dto.response.VoteInfoDTO;
-import com.twohoseon.app.dto.response.post.AuthorInfoDTO;
+import com.twohoseon.app.dto.response.PostInfo;
+import com.twohoseon.app.dto.response.VoteCounts;
+import com.twohoseon.app.dto.response.VoteInfo;
+import com.twohoseon.app.dto.response.post.AuthorInfo;
 import com.twohoseon.app.dto.response.post.PostSummary;
 import com.twohoseon.app.entity.member.Member;
 import com.twohoseon.app.enums.ConsumerType;
@@ -45,7 +45,7 @@ public class PostCustomRepositoryImpl implements PostCustomRepository {
     private final JPAQueryFactory jpaQueryFactory;
 
     @Override
-    public List<PostInfoDTO> findAllPosts(Pageable pageable, Member reqMember, VisibilityScope visibilityScope) {
+    public List<PostInfo> findAllPosts(Pageable pageable, Member reqMember, VisibilityScope visibilityScope) {
         BooleanBuilder whereClause = new BooleanBuilder(post.postStatus.ne(PostStatus.REVIEW)
                 .and(post.visibilityScope.eq(visibilityScope))
         );
@@ -53,14 +53,14 @@ public class PostCustomRepositoryImpl implements PostCustomRepository {
             whereClause.and(post.author.school.eq(reqMember.getSchool()));
         }
 
-        JPAQuery<PostInfoDTO> jpaQuery = jpaQueryFactory
-                .select(Projections.constructor(PostInfoDTO.class,
+        JPAQuery<PostInfo> jpaQuery = jpaQueryFactory
+                .select(Projections.constructor(PostInfo.class,
                         post.id.as("post_id"),
                         post.createDate,
                         post.modifiedDate,
                         post.visibilityScope,
                         post.postStatus,
-                        Projections.constructor(AuthorInfoDTO.class,
+                        Projections.constructor(AuthorInfo.class,
                                 member.id,
                                 member.nickname,
                                 member.profileImage,
@@ -81,25 +81,25 @@ public class PostCustomRepositoryImpl implements PostCustomRepository {
                 .orderBy(post.createDate.desc())
                 .distinct();
 
-        List<PostInfoDTO> postInfoList = jpaQuery.fetch();
-        for (PostInfoDTO postInfoDTO : postInfoList) {
-            postInfoDTO.setVoteCounts(getVoteInfo(postInfoDTO.getPostId()));
-            postInfoDTO.setMyChoice(getIsVotedPost(postInfoDTO.getPostId(), reqMember.getId()));
+        List<PostInfo> postInfoList = jpaQuery.fetch();
+        for (PostInfo postInfo : postInfoList) {
+            postInfo.setVoteCounts(getVoteInfo(postInfo.getPostId()));
+            postInfo.setMyChoice(getIsVotedPost(postInfo.getPostId(), reqMember.getId()));
         }
 
         return postInfoList;
     }
 
     @Override
-    public PostInfoDTO findPostById(Long postId, long memberId) {
-        PostInfoDTO postInfo = jpaQueryFactory
-                .select(Projections.constructor(PostInfoDTO.class,
+    public PostInfo findPostById(Long postId, long memberId) {
+        PostInfo postInfo = jpaQueryFactory
+                .select(Projections.constructor(PostInfo.class,
                         post.id.as("post_id"),
                         post.createDate,
                         post.modifiedDate,
                         post.visibilityScope,
                         post.postStatus,
-                        Projections.constructor(AuthorInfoDTO.class,
+                        Projections.constructor(AuthorInfo.class,
                                 member.id,
                                 member.nickname,
                                 member.profileImage,
@@ -131,10 +131,10 @@ public class PostCustomRepositoryImpl implements PostCustomRepository {
     }
 
     @Override
-    public VoteCountsDTO getVoteInfo(long postId) {
-        VoteCountsDTO result = jpaQueryFactory
+    public VoteCounts getVoteInfo(long postId) {
+        VoteCounts result = jpaQueryFactory
                 .select(
-                        Projections.constructor(VoteCountsDTO.class,
+                        Projections.constructor(VoteCounts.class,
                                 new CaseBuilder()
                                         .when(vote.isAgree.eq(true))
                                         .then(1)
@@ -151,7 +151,7 @@ public class PostCustomRepositoryImpl implements PostCustomRepository {
                 .groupBy(vote.id.post.id)
                 .where(vote.id.post.id.eq(postId))
                 .fetchOne();
-        return result == null ? new VoteCountsDTO(0, 0) : result;
+        return result == null ? new VoteCounts(0, 0) : result;
     }
 
 
@@ -169,7 +169,7 @@ public class PostCustomRepositoryImpl implements PostCustomRepository {
                         post.createDate,
                         post.modifiedDate,
                         post.id,
-                        Projections.constructor(AuthorInfoDTO.class,
+                        Projections.constructor(AuthorInfo.class,
                                 member.id,
                                 member.nickname,
                                 member.profileImage,
@@ -207,7 +207,7 @@ public class PostCustomRepositoryImpl implements PostCustomRepository {
                         post.createDate,
                         post.modifiedDate,
                         post.id,
-                        Projections.constructor(AuthorInfoDTO.class,
+                        Projections.constructor(AuthorInfo.class,
                                 member.id,
                                 member.nickname,
                                 member.profileImage,
@@ -246,7 +246,7 @@ public class PostCustomRepositoryImpl implements PostCustomRepository {
                         post.createDate,
                         post.modifiedDate,
                         post.id,
-                        Projections.constructor(AuthorInfoDTO.class,
+                        Projections.constructor(AuthorInfo.class,
                                 member.id,
                                 member.nickname,
                                 member.profileImage,
@@ -323,7 +323,7 @@ public class PostCustomRepositoryImpl implements PostCustomRepository {
                         post.createDate,
                         post.modifiedDate,
                         post.id,
-                        Projections.constructor(AuthorInfoDTO.class,
+                        Projections.constructor(AuthorInfo.class,
                                 member.id,
                                 member.nickname,
                                 member.profileImage,
@@ -383,7 +383,7 @@ public class PostCustomRepositoryImpl implements PostCustomRepository {
                         post.createDate,
                         post.modifiedDate,
                         post.id,
-                        Projections.constructor(AuthorInfoDTO.class,
+                        Projections.constructor(AuthorInfo.class,
                                 member.id,
                                 member.nickname,
                                 member.profileImage,
@@ -404,12 +404,12 @@ public class PostCustomRepositoryImpl implements PostCustomRepository {
     }
 
     @Override
-    public PostInfoDTO getReviewDetailByPostId(Long postId) {
-        PostInfoDTO result = jpaQueryFactory.select(Projections.constructor(PostInfoDTO.class,
+    public PostInfo getReviewDetailByPostId(Long postId) {
+        PostInfo result = jpaQueryFactory.select(Projections.constructor(PostInfo.class,
                         post.createDate,
                         post.modifiedDate,
                         post.id,
-                        Projections.constructor(AuthorInfoDTO.class,
+                        Projections.constructor(AuthorInfo.class,
                                 member.id,
                                 member.nickname,
                                 member.profileImage,
@@ -495,10 +495,10 @@ public class PostCustomRepositoryImpl implements PostCustomRepository {
                 .fetchOne() != null;
     }
 
-    private List<VoteInfoDTO> getVoteInfoList(long postId) {
+    private List<VoteInfo> getVoteInfoList(long postId) {
         return jpaQueryFactory
                 .select(
-                        Projections.constructor(VoteInfoDTO.class,
+                        Projections.constructor(VoteInfo.class,
                                 vote.isAgree,
                                 vote.consumerType
                         ))

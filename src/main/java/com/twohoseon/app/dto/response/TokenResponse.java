@@ -29,5 +29,5 @@ public class TokenResponse {
     private String message;
 
     @Schema(name = "data", type = "TokenDTO", description = "응답 데이터")
-    private TokenDTO data;
+    private JWTToken data;
 }

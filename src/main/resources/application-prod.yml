@@ -9,9 +9,12 @@ oauth:
     client-id: com.twohosun.TwoHoSun
 server:
   ssl:
-    key-store: ${ssl.prod.key-store}
-    key-store-password: ${ssl.prod.key-store-password}
-    key-store-type: ${ssl.prod.key-store-type}
+    key-store: ${ssl.dev.key-store}
+    key-store-password: ${ssl.dev.key-store-password}
+    key-store-type: ${ssl.dev.key-store-type}
+  #    key-store: ${ssl.prod.key-store}
+  #    key-store-password: ${ssl.prod.key-store-password}
+  #    key-store-type: ${ssl.prod.key-store-type}
   port: 8443
 file:
   dir: ${app.upload.prod-path}

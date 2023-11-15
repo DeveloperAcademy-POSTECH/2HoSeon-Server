@@ -1,8 +1,8 @@
 package com.twohoseon.app.service.comment;
 
-import com.twohoseon.app.dto.request.comment.CommentCreateRequestDTO;
-import com.twohoseon.app.dto.request.comment.SubCommentCreateRequestDTO;
-import com.twohoseon.app.dto.response.CommentInfoDTO;
+import com.twohoseon.app.dto.request.comment.CommentCreateRequest;
+import com.twohoseon.app.dto.request.comment.SubCommentCreateRequest;
+import com.twohoseon.app.dto.response.CommentInfo;
 import com.twohoseon.app.entity.member.Member;
 import com.twohoseon.app.entity.post.Comment;
 import com.twohoseon.app.entity.post.Post;
@@ -41,15 +41,15 @@ public class CommentServiceImpl implements CommentService {
 
     @Override
     @Transactional
-    public void createComment(CommentCreateRequestDTO commentCreateRequestDTO) {
+    public void createComment(CommentCreateRequest commentCreateRequest) {
         Member member = getMemberFromRequest();
-        Post post = postRepository.findById(commentCreateRequestDTO.getPostId())
+        Post post = postRepository.findById(commentCreateRequest.getPostId())
                 .orElseThrow(() -> new PostNotFoundException());
         Comment comment = Comment
                 .builder()
                 .author(member)
                 .post(post)
-                .content(commentCreateRequestDTO.getContents())
+                .content(commentCreateRequest.getContents())
                 .build();
         commentRepository.save(comment);
         CompletableFuture.runAsync(() -> {
@@ -63,7 +63,7 @@ public class CommentServiceImpl implements CommentService {
 
     @Override
     @Transactional
-    public void createSubComment(Long commentId, SubCommentCreateRequestDTO subCommentCreateRequestDTO) {
+    public void createSubComment(Long commentId, SubCommentCreateRequest subCommentCreateRequest) {
         Member member = getMemberFromRequest();
 
         Comment parentComment = commentRepository.findById(commentId)
@@ -71,7 +71,7 @@ public class CommentServiceImpl implements CommentService {
         //TODO 대댓글 알림 처리 안됨....
         Comment subComment = Comment.builder()
                 .parentComment(parentComment)
-                .content(subCommentCreateRequestDTO.getContents())
+                .content(subCommentCreateRequest.getContents())
                 .author(member)
                 .post(parentComment.getPost())
                 .build();
@@ -113,12 +113,12 @@ public class CommentServiceImpl implements CommentService {
     }
 
     @Override
-    public List<CommentInfoDTO> getPostComments(Long postId) {
+    public List<CommentInfo> getPostComments(Long postId) {
         return commentRepository.getAllCommentsFromPost(postId);
     }
 
     @Override
-    public List<CommentInfoDTO> getSubComments(Long commentId) {
+    public List<CommentInfo> getSubComments(Long commentId) {
         return commentRepository.getSubComments(commentId);
     }
 }

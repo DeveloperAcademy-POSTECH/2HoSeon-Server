@@ -1,9 +1,9 @@
 package com.twohoseon.app.service.post;
 
-import com.twohoseon.app.dto.request.post.PostRequestDTO;
-import com.twohoseon.app.dto.request.review.ReviewRequestDTO;
-import com.twohoseon.app.dto.response.PostInfoDTO;
-import com.twohoseon.app.dto.response.VoteCountsDTO;
+import com.twohoseon.app.dto.request.post.PostRequest;
+import com.twohoseon.app.dto.request.review.ReviewRequest;
+import com.twohoseon.app.dto.response.PostInfo;
+import com.twohoseon.app.dto.response.VoteCounts;
 import com.twohoseon.app.dto.response.mypage.MypageFetch;
 import com.twohoseon.app.dto.response.post.ReviewDetail;
 import com.twohoseon.app.dto.response.post.ReviewFetch;
@@ -28,26 +28,26 @@ import java.util.List;
 
 public interface PostService extends CommonService {
 
-    void createPost(PostRequestDTO postRequestDTO, MultipartFile file);
+    void createPost(PostRequest postRequest, MultipartFile file);
 
     void completeVote(Long postId);
 
-    public List<PostInfoDTO> fetchPosts(Pageable pageable, VisibilityScope visibilityScope);
+    public List<PostInfo> fetchPosts(Pageable pageable, VisibilityScope visibilityScope);
 
 
-    VoteCountsDTO createVote(Long postId, boolean myChoice);
+    VoteCounts createVote(Long postId, boolean myChoice);
 
 //    VoteCountsDTO getVoteCounts(Long postId);
 
-    PostInfoDTO fetchPost(Long postId);
+    PostInfo fetchPost(Long postId);
 
-    void updatePost(Long postId, PostRequestDTO postRequestDTO, MultipartFile file);
+    void updatePost(Long postId, PostRequest postRequest, MultipartFile file);
 
     void deletePost(Long postId);
 
-    void createReview(Long postId, ReviewRequestDTO reviewRequestDTO, MultipartFile file);
+    void createReview(Long postId, ReviewRequest reviewRequest, MultipartFile file);
 
-    void updateReview(Long postId, ReviewRequestDTO reviewRequestDTO, MultipartFile file);
+    void updateReview(Long postId, ReviewRequest reviewRequest, MultipartFile file);
 
     void deleteReview(Long postId);
 

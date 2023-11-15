@@ -20,7 +20,7 @@ import lombok.Data;
 @Schema(name = "VoteResultResponseDTO", description = "투표 응답 DTO")
 @Builder
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class VoteResultResponseDTO {
+public class VoteResultResponse {
     @Schema(name = "status", type = "int", description = "응답 상태")
     @JsonSerialize(using = StatusEnumSerializer.class)
     private StatusEnum status;
@@ -29,5 +29,5 @@ public class VoteResultResponseDTO {
     private String message;
 
     @Schema(name = "data", type = "VoteCountsDTO", description = "응답 데이터")
-    private VoteCountsDTO data;
+    private VoteCounts data;
 }

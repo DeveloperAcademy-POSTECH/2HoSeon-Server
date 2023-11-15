@@ -1,7 +1,7 @@
 package com.twohoseon.app.repository.post;
 
-import com.twohoseon.app.dto.response.PostInfoDTO;
-import com.twohoseon.app.dto.response.VoteCountsDTO;
+import com.twohoseon.app.dto.response.PostInfo;
+import com.twohoseon.app.dto.response.VoteCounts;
 import com.twohoseon.app.dto.response.post.PostSummary;
 import com.twohoseon.app.entity.member.Member;
 import com.twohoseon.app.enums.ConsumerType;
@@ -21,13 +21,13 @@ import java.util.List;
  * @modifyed : $
  **/
 public interface PostCustomRepository {
-    List<PostInfoDTO> findAllPosts(Pageable pageable, Member memberId, VisibilityScope visibilityScope);
+    List<PostInfo> findAllPosts(Pageable pageable, Member memberId, VisibilityScope visibilityScope);
 
 //    PostInfoDTO findPostById(long postId);
 
-    PostInfoDTO findPostById(Long postId, long memberId);
+    PostInfo findPostById(Long postId, long memberId);
 
-    VoteCountsDTO getVoteInfo(long postId);
+    VoteCounts getVoteInfo(long postId);
 
     List<PostSummary> findActivePostsByKeyword(VisibilityScope visibilityScope, Member reqMember, Pageable pageable, String keyword);
 
@@ -44,7 +44,7 @@ public interface PostCustomRepository {
 
     PostSummary getPostSummaryInReviewDetail(Long postId);
 
-    PostInfoDTO getReviewDetailByPostId(Long postId);
+    PostInfo getReviewDetailByPostId(Long postId);
 
     Long countAllPostsByMyVoteCategoryType(Member reqMember, MyVoteCategoryType myVoteCategoryType);
 

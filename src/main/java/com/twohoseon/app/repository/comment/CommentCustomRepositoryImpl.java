@@ -2,8 +2,8 @@ package com.twohoseon.app.repository.comment;
 
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
-import com.twohoseon.app.dto.response.CommentInfoDTO;
-import com.twohoseon.app.dto.response.post.AuthorInfoDTO;
+import com.twohoseon.app.dto.response.CommentInfo;
+import com.twohoseon.app.dto.response.post.AuthorInfo;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
@@ -27,15 +27,15 @@ public class CommentCustomRepositoryImpl implements CommentCustomRepository {
     private final JPAQueryFactory jpaQueryFactory;
 
     @Override
-    public List<CommentInfoDTO> getAllCommentsFromPost(Long postId) {
-        List<CommentInfoDTO> commentInfoList = jpaQueryFactory.select(Projections.constructor(
-                        CommentInfoDTO.class,
+    public List<CommentInfo> getAllCommentsFromPost(Long postId) {
+        List<CommentInfo> commentInfoList = jpaQueryFactory.select(Projections.constructor(
+                        CommentInfo.class,
                         comment.id,
                         comment.createDate,
                         comment.modifiedDate,
                         comment.content,
                         Projections.constructor(
-                                AuthorInfoDTO.class,
+                                AuthorInfo.class,
                                 member.id,
                                 member.nickname,
                                 member.profileImage,
@@ -52,8 +52,8 @@ public class CommentCustomRepositoryImpl implements CommentCustomRepository {
                 .distinct()
                 .fetch();
 
-        for (CommentInfoDTO comments : commentInfoList) {
-            List<CommentInfoDTO> subComments = getSubComments(comments.getCommentId());
+        for (CommentInfo comments : commentInfoList) {
+            List<CommentInfo> subComments = getSubComments(comments.getCommentId());
             comments.setSubComments(subComments.isEmpty() ? null : subComments);
         }
 
@@ -61,15 +61,15 @@ public class CommentCustomRepositoryImpl implements CommentCustomRepository {
     }
 
     @Override
-    public List<CommentInfoDTO> getSubComments(Long parentId) {
+    public List<CommentInfo> getSubComments(Long parentId) {
         return jpaQueryFactory.select(Projections.constructor(
-                        CommentInfoDTO.class,
+                        CommentInfo.class,
                         comment.id,
                         comment.createDate,
                         comment.modifiedDate,
                         comment.content,
                         Projections.constructor(
-                                AuthorInfoDTO.class,
+                                AuthorInfo.class,
                                 member.id,
                                 member.nickname,
                                 member.profileImage,

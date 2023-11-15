@@ -1,8 +1,8 @@
 package com.twohoseon.app.entity.post;
 
 import com.twohoseon.app.common.BaseTimeEntity;
-import com.twohoseon.app.dto.request.post.PostRequestDTO;
-import com.twohoseon.app.dto.request.review.ReviewRequestDTO;
+import com.twohoseon.app.dto.request.post.PostRequest;
+import com.twohoseon.app.dto.request.review.ReviewRequest;
 import com.twohoseon.app.entity.member.Member;
 import com.twohoseon.app.entity.post.vote.Vote;
 import com.twohoseon.app.entity.post.vote.VoteId;
@@ -184,48 +184,48 @@ public class Post extends BaseTimeEntity {
     }
 
     //For Post Update
-    public void updatePost(PostRequestDTO postRequestDTO, String image) {
-        if (postRequestDTO.getTitle() != null)
-            this.title = postRequestDTO.getTitle();
-        if (postRequestDTO.getContents() != null)
-            this.contents = postRequestDTO.getContents();
-        if (postRequestDTO.getExternalURL() != null)
-            this.externalURL = postRequestDTO.getExternalURL();
+    public void updatePost(PostRequest postRequest, String image) {
+        if (postRequest.getTitle() != null)
+            this.title = postRequest.getTitle();
+        if (postRequest.getContents() != null)
+            this.contents = postRequest.getContents();
+        if (postRequest.getExternalURL() != null)
+            this.externalURL = postRequest.getExternalURL();
         if (image != null)
             this.image = image;
-        if (postRequestDTO.getVisibilityScope() != null)
-            this.visibilityScope = postRequestDTO.getVisibilityScope();
+        if (postRequest.getVisibilityScope() != null)
+            this.visibilityScope = postRequest.getVisibilityScope();
     }
 
-    private void updatePost(ReviewRequestDTO reviewRequestDTO, String image) {
-        if (reviewRequestDTO.getTitle() != null)
-            this.title = reviewRequestDTO.getTitle();
-        if (reviewRequestDTO.getContents() != null)
-            this.contents = reviewRequestDTO.getContents();
-        if (reviewRequestDTO.getPrice() != null)
-            this.price = reviewRequestDTO.getPrice();
-        if (reviewRequestDTO.getIsPurchased() != null)
-            this.isPurchased = reviewRequestDTO.getIsPurchased();
+    private void updatePost(ReviewRequest reviewRequest, String image) {
+        if (reviewRequest.getTitle() != null)
+            this.title = reviewRequest.getTitle();
+        if (reviewRequest.getContents() != null)
+            this.contents = reviewRequest.getContents();
+        if (reviewRequest.getPrice() != null)
+            this.price = reviewRequest.getPrice();
+        if (reviewRequest.getIsPurchased() != null)
+            this.isPurchased = reviewRequest.getIsPurchased();
         if (image != null)
             this.image = image;
     }
 
-    public void createReview(ReviewRequestDTO reviewRequestDTO, String image) {
+    public void createReview(ReviewRequest reviewRequest, String image) {
         Post review = Post.builder()
                 .postStatus(PostStatus.REVIEW)
                 .author(this.author)
                 .visibilityScope(this.visibilityScope)
-                .title(reviewRequestDTO.getTitle())
+                .title(reviewRequest.getTitle())
                 .image(image)
-                .contents(reviewRequestDTO.getContents())
-                .price(reviewRequestDTO.getPrice())
-                .isPurchased(reviewRequestDTO.getIsPurchased())
+                .contents(reviewRequest.getContents())
+                .price(reviewRequest.getPrice())
+                .isPurchased(reviewRequest.getIsPurchased())
                 .build();
         this.review = review;
     }
 
-    public void updateReview(ReviewRequestDTO reviewRequestDTO, String image) {
-        this.review.updatePost(reviewRequestDTO, image);
+    public void updateReview(ReviewRequest reviewRequest, String image) {
+        this.review.updatePost(reviewRequest, image);
     }
 
     public Post deleteReview() {

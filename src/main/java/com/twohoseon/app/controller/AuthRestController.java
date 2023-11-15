@@ -1,7 +1,7 @@
 package com.twohoseon.app.controller;
 
-import com.twohoseon.app.dto.request.member.TokenRefreshDTO;
-import com.twohoseon.app.dto.response.TokenDTO;
+import com.twohoseon.app.dto.request.member.TokenRefresh;
+import com.twohoseon.app.dto.response.JWTToken;
 import com.twohoseon.app.dto.response.TokenResponse;
 import com.twohoseon.app.enums.StatusEnum;
 import com.twohoseon.app.service.refreshToken.RefreshTokenService;
@@ -34,15 +34,15 @@ public class AuthRestController {
     @PostMapping("refresh")
     @Operation(summary = "토큰 재발급", description = "토큰 재발급")
 
-    public ResponseEntity<TokenResponse> tokenRefresh(@RequestBody TokenRefreshDTO tokenRefreshDTO) {
+    public ResponseEntity<TokenResponse> tokenRefresh(@RequestBody TokenRefresh tokenRefresh) {
         log.debug("token refresh request.");
-        log.debug("refresh token : {}", tokenRefreshDTO.getRefreshToken());
-        TokenDTO renewToken = refreshTokenService.renewToken(tokenRefreshDTO.getRefreshToken());
-        TokenResponse generalResponseDTO = TokenResponse.builder()
+        log.debug("refresh token : {}", tokenRefresh.getRefreshToken());
+        JWTToken renewJWTToken = refreshTokenService.renewToken(tokenRefresh.getRefreshToken());
+        TokenResponse generalResponse = TokenResponse.builder()
                 .status(StatusEnum.OK)
                 .message("token renew success.")
-                .data(renewToken)
+                .data(renewJWTToken)
                 .build();
-        return ResponseEntity.ok(generalResponseDTO);
+        return ResponseEntity.ok(generalResponse);
     }
 }

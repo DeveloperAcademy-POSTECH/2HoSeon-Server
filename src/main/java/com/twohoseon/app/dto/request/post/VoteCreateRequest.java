@@ -13,7 +13,7 @@ import lombok.Getter;
  **/
 @Getter
 @Schema(name = "VoteCreateRequestDTO", description = "투표 생성 요청 DTO")
-public class VoteCreateRequestDTO {
+public class VoteCreateRequest {
     @Schema(name = "myChoice", type = "boolean", description = "내가 선택한 값")
     private boolean myChoice;
 }

@@ -1,7 +1,7 @@
 package com.twohoseon.app.dto.response.post;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.twohoseon.app.dto.response.PostInfoDTO;
+import com.twohoseon.app.dto.response.PostInfo;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -24,7 +24,7 @@ public class ReviewDetail {
     @Schema(name = "originalPost", type = "PostSummary", description = "원본 게시글 정보")
     PostSummary originalPost;
     @Schema(name = "reviewPost", type = "PostInfoDTO", description = "리뷰 게시글 정보")
-    PostInfoDTO reviewPost;
+    PostInfo reviewPost;
     @Schema(name = "isMine", type = "boolean", description = "내가 쓴 글인지 여부")
     Boolean isMine;
 }

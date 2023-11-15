@@ -1,8 +1,8 @@
 package com.twohoseon.app.security;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.twohoseon.app.dto.response.GeneralResponseDTO;
-import com.twohoseon.app.dto.response.TokenDTO;
+import com.twohoseon.app.dto.response.GeneralResponse;
+import com.twohoseon.app.dto.response.JWTToken;
 import com.twohoseon.app.entity.member.Member;
 import com.twohoseon.app.enums.StatusEnum;
 import com.twohoseon.app.exception.MemberNotFoundException;
@@ -57,19 +57,19 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
         member.setAppleRefreshToken(appleRefreshToken);
         memberRepository.save(member);
 
-        GeneralResponseDTO generalResponseDTO;
-        TokenDTO token = jwtTokenProvider.createAllToken(providerId);
+        GeneralResponse generalResponseDTO;
+        JWTToken token = jwtTokenProvider.createAllToken(providerId);
         refreshTokenService.saveRefreshTokenFromTokenDTO(token, providerId);
 
         if (member.getSchool() == null) {
             log.debug("member.getSchool() = {}", member.getSchool());
-            generalResponseDTO = GeneralResponseDTO.builder()
+            generalResponseDTO = GeneralResponse.builder()
                     .status(StatusEnum.CONFLICT)
                     .message("UNREGISTERED_USER")
                     .data(token)
                     .build();
         } else {
-            generalResponseDTO = GeneralResponseDTO.builder()
+            generalResponseDTO = GeneralResponse.builder()
                     .status(StatusEnum.OK)
                     .message("SUCCESS")
                     .data(token)

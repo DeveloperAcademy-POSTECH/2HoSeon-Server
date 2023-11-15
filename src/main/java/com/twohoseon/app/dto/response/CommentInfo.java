@@ -1,7 +1,7 @@
 package com.twohoseon.app.dto.response;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.twohoseon.app.dto.response.post.AuthorInfoDTO;
+import com.twohoseon.app.dto.response.post.AuthorInfo;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -26,7 +26,7 @@ import java.util.List;
 @AllArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @Schema(name = "PostCommentInfoDTO", description = "댓글 정보 DTO")
-public class CommentInfoDTO {
+public class CommentInfo {
     @Schema(name = "commentId", type = "long", description = "댓글 ID")
     Long commentId;
 
@@ -40,16 +40,16 @@ public class CommentInfoDTO {
     String content;
 
     @Schema(name = "author", type = "AuthorInfoDTO", description = "댓글 작성자 정보")
-    AuthorInfoDTO author;
+    AuthorInfo author;
 
     @Schema(name = "subComments", type = "List<PostCommentInfoDTO>", description = "대댓글 정보 DTO 리스트")
-    List<CommentInfoDTO> subComments;
+    List<CommentInfo> subComments;
 
-    public void setSubComments(List<CommentInfoDTO> subComments) {
+    public void setSubComments(List<CommentInfo> subComments) {
         this.subComments = subComments;
     }
 
-    public CommentInfoDTO(Long commentId, LocalDateTime createDate, LocalDateTime modifiedDate, String content, AuthorInfoDTO author) {
+    public CommentInfo(Long commentId, LocalDateTime createDate, LocalDateTime modifiedDate, String content, AuthorInfo author) {
         this.commentId = commentId;
         this.createDate = createDate;
         this.modifiedDate = modifiedDate;

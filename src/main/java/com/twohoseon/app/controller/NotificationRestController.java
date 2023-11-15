@@ -1,7 +1,7 @@
 package com.twohoseon.app.controller;
 
-import com.twohoseon.app.dto.request.member.RegisterDeviceTokenRequestDTO;
-import com.twohoseon.app.dto.response.GeneralResponseDTO;
+import com.twohoseon.app.dto.request.member.RegisterDeviceTokenRequest;
+import com.twohoseon.app.dto.response.GeneralResponse;
 import com.twohoseon.app.enums.StatusEnum;
 import com.twohoseon.app.service.member.MemberService;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -28,12 +28,12 @@ public class NotificationRestController {
     private final MemberService memberService;
 
     @PostMapping("/tokens")
-    public ResponseEntity<GeneralResponseDTO> registerToken(@RequestBody RegisterDeviceTokenRequestDTO request) {
+    public ResponseEntity<GeneralResponse> registerToken(@RequestBody RegisterDeviceTokenRequest request) {
         memberService.registerToken(request.getDeviceToken());
-        GeneralResponseDTO responseDTO = GeneralResponseDTO.builder()
+        GeneralResponse response = GeneralResponse.builder()
                 .status(StatusEnum.OK)
                 .message("device token registered")
                 .build();
-        return ResponseEntity.ok(responseDTO);
+        return ResponseEntity.ok(response);
     }
 }

@@ -2,8 +2,8 @@ package com.twohoseon.app.controller;
 
 import com.twohoseon.app.dto.ConsumerTypeRequest;
 import com.twohoseon.app.dto.request.member.NicknameValidCheckRequest;
-import com.twohoseon.app.dto.request.member.ProfileRequestDTO;
-import com.twohoseon.app.dto.response.GeneralResponseDTO;
+import com.twohoseon.app.dto.request.member.ProfileRequest;
+import com.twohoseon.app.dto.response.GeneralResponse;
 import com.twohoseon.app.enums.StatusEnum;
 import com.twohoseon.app.service.member.MemberService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -29,23 +29,23 @@ public class MemberRestController {
 
     @Operation(summary = "회원 정보 수정", description = "회원 정보 수정")
     @PostMapping(value = "/api/profiles", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
-    public ResponseEntity<GeneralResponseDTO> setMemberInfo(@RequestPart(value = "profileRequest") ProfileRequestDTO profileRequestDTO,
-                                                            @RequestPart(value = "imageFile", required = false) MultipartFile imageFile) {
-        memberService.setUserProfile(profileRequestDTO, imageFile);
+    public ResponseEntity<GeneralResponse> setMemberInfo(@RequestPart(value = "profileRequest") ProfileRequest profileRequest,
+                                                         @RequestPart(value = "imageFile", required = false) MultipartFile imageFile) {
+        memberService.setUserProfile(profileRequest, imageFile);
 
-        GeneralResponseDTO generalResponseDTO = GeneralResponseDTO.builder()
+        GeneralResponse generalResponse = GeneralResponse.builder()
                 .status(StatusEnum.OK)
                 .message("success")
                 .build();
 
-        return ResponseEntity.ok(generalResponseDTO);
+        return ResponseEntity.ok(generalResponse);
     }
 
     @Operation(summary = "닉네임 중복 확인", description = "닉네임 중복 확인")
     @PostMapping("/api/profiles/isValidNickname")
-    public ResponseEntity<GeneralResponseDTO> checkNicknameDuplicate(@RequestBody NicknameValidCheckRequest request) {
+    public ResponseEntity<GeneralResponse> checkNicknameDuplicate(@RequestBody NicknameValidCheckRequest request) {
         String userNickname = request.getNickname();
-        GeneralResponseDTO.GeneralResponseDTOBuilder resultBuilder = GeneralResponseDTO.builder();
+        GeneralResponse.GeneralResponseBuilder resultBuilder = GeneralResponse.builder();
         boolean isExist = memberService.validateDuplicateUserNickname(userNickname);
         log.debug("userNickname : {}", userNickname);
         Map<String, Boolean> result = new HashMap<>();
@@ -67,13 +67,13 @@ public class MemberRestController {
 
     @Operation(summary = "소비 성향 설정", description = "소비 성향 설정")
     @PutMapping("/api/profiles/consumerType")
-    public ResponseEntity<GeneralResponseDTO> setConsumptionType(@RequestBody ConsumerTypeRequest consumptionTendencyRequestDTO) {
-        memberService.setConsumptionTendency(consumptionTendencyRequestDTO);
-        GeneralResponseDTO generalResponseDTO = GeneralResponseDTO.builder()
+    public ResponseEntity<GeneralResponse> setConsumptionType(@RequestBody ConsumerTypeRequest consumerTypeRequest) {
+        memberService.setConsumptionTendency(consumerTypeRequest);
+        GeneralResponse generalResponse = GeneralResponse.builder()
                 .status(StatusEnum.OK)
                 .message("success")
                 .build();
-        return ResponseEntity.ok(generalResponseDTO);
+        return ResponseEntity.ok(generalResponse);
     }
 
 

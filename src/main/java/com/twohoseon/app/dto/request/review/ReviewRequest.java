@@ -13,7 +13,7 @@ import lombok.Getter;
  **/
 @Schema(name = "ReviewRequestDTO", description = "후기 생성 요청 DTO")
 @Getter
-public class ReviewRequestDTO {
+public class ReviewRequest {
     @Schema(name = "title", type = "String", description = "후기 제목")
     private String title;
     @Schema(name = "contents", type = "String", description = "후기 내용")

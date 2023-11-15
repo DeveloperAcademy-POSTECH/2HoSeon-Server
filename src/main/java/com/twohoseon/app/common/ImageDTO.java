@@ -15,14 +15,23 @@ public abstract class ImageDTO {
     private final String reviewBaseUri = baseUri + "reviews/";
 
     public String generateProfileImageURL(String imageName) {
-        return profileBaseUri + imageName;
+        String resultURL = null;
+        if (imageName != null)
+            resultURL = profileBaseUri + imageName;
+        return resultURL;
     }
 
     public String generatePostImageURL(String imageName) {
-        return postBaseUri + imageName;
+        String resultURL = null;
+        if (imageName != null)
+            resultURL = postBaseUri + imageName;
+        return resultURL;
     }
 
     public String generateReviewImageURL(String imageName) {
-        return reviewBaseUri + imageName;
+        String resultURL = null;
+        if (imageName != null)
+            resultURL = reviewBaseUri + imageName;
+        return resultURL;
     }
 }

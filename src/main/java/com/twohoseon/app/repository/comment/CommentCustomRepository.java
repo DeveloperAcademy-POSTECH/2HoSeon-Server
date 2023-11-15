@@ -1,6 +1,6 @@
 package com.twohoseon.app.repository.comment;
 
-import com.twohoseon.app.dto.response.CommentInfoDTO;
+import com.twohoseon.app.dto.response.CommentInfo;
 
 import java.util.List;
 
@@ -13,7 +13,7 @@ import java.util.List;
  * @modifyed : $
  **/
 public interface CommentCustomRepository {
-    List<CommentInfoDTO> getAllCommentsFromPost(Long postId);
+    List<CommentInfo> getAllCommentsFromPost(Long postId);
 
-    List<CommentInfoDTO> getSubComments(Long parentId);
+    List<CommentInfo> getSubComments(Long parentId);
 }
