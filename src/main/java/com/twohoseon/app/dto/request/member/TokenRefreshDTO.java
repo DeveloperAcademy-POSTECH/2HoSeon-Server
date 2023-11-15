@@ -16,6 +16,4 @@ import lombok.Getter;
 public class TokenRefreshDTO {
     @Schema(name = "refreshToken", type = "String", description = "리프레시 토큰")
     String refreshToken;
-    @Schema(name = "identifier", type = "String", description = "기기 식별자")
-    String identifier;
 }

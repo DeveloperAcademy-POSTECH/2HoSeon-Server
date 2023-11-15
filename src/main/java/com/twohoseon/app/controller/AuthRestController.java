@@ -37,8 +37,7 @@ public class AuthRestController {
     public ResponseEntity<TokenResponse> tokenRefresh(@RequestBody TokenRefreshDTO tokenRefreshDTO) {
         log.debug("token refresh request.");
         log.debug("refresh token : {}", tokenRefreshDTO.getRefreshToken());
-        log.debug("identifier : {}", tokenRefreshDTO.getIdentifier());
-        TokenDTO renewToken = refreshTokenService.renewToken(tokenRefreshDTO.getRefreshToken(), tokenRefreshDTO.getIdentifier());
+        TokenDTO renewToken = refreshTokenService.renewToken(tokenRefreshDTO.getRefreshToken());
         TokenResponse generalResponseDTO = TokenResponse.builder()
                 .status(StatusEnum.OK)
                 .message("token renew success.")

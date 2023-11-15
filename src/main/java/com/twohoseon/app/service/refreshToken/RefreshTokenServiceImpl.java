@@ -8,6 +8,10 @@ import com.twohoseon.app.util.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+
 /**
  * @author : hyunwoopark
  * @version : 1.0.0
@@ -25,23 +29,40 @@ public class RefreshTokenServiceImpl implements RefreshTokenService {
     @Override
     public void saveRefreshToken(String refreshToken, String identifier, long expirationTime) {
         RefreshToken refreshTokenEntity = RefreshToken.builder()
-                .providerId(identifier)
+
                 .refreshToken(refreshToken)
-                .expirationTime(expirationTime)
+//                .expirationTime(expirationTime)
                 .build();
         refreshTokenRepository.save(refreshTokenEntity);
     }
 
     @Override
-    public TokenDTO renewToken(String refreshToken, String identifier) {
-        //TODO Errorcode로 핸들링이 되고있지 않음.
+    public TokenDTO renewToken(String refreshToken) {
         RefreshToken refreshTokenEntity = refreshTokenRepository.findByRefreshToken(refreshToken)
-                .orElseThrow(() -> new InvalidRefreshTokenException("Refresh Token이 존재하지 않습니다."));
-        if (!refreshTokenEntity.getProviderId().equals(identifier)) {
-            throw new InvalidRefreshTokenException("Refresh Token의 소유자가 아닙니다.");
-        }
-        refreshTokenRepository.delete(refreshTokenEntity);
-        return jwtTokenProvider.createAllToken(identifier);
+                .orElseThrow(() -> new InvalidRefreshTokenException("Refresh Token does not exist."));
+
+        refreshTokenEntity.banRefreshToken();
+        refreshTokenRepository.save(refreshTokenEntity);
+        TokenDTO newToken = jwtTokenProvider.createAllToken(refreshTokenEntity.getProviderId());
+        saveRefreshTokenFromTokenDTO(newToken, refreshTokenEntity.getProviderId());
+        return newToken;
+    }
+
+    @Override
+    public void saveRefreshTokenFromTokenDTO(TokenDTO tokenDTO, String providerId) {
+        refreshTokenRepository.save(RefreshToken.builder()
+                .accessToken(tokenDTO.getAccessToken())
+                .accessTokenExpirationTime(convertUnixTimestampToLocalDateTime(tokenDTO.getAccessExpirationTime()))
+                .refreshToken(tokenDTO.getRefreshToken())
+                .refreshTokenExpirationTime(convertUnixTimestampToLocalDateTime(tokenDTO.getRefreshExpirationTime()))
+                .providerId(providerId)
+                .build());
+    }
+
+
+    private static LocalDateTime convertUnixTimestampToLocalDateTime(long unixTimestamp) {
+        Instant instant = Instant.ofEpochMilli(unixTimestamp);
+        return LocalDateTime.ofInstant(instant, ZoneId.systemDefault());
     }
 
 }

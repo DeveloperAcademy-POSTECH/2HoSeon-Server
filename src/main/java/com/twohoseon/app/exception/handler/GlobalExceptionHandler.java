@@ -283,7 +283,8 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(InvalidRefreshTokenException.class)
     protected ResponseEntity<ErrorResponse> handleInvalidRefreshTokenException(InvalidRefreshTokenException ex) {
         log.error("handleInvalidRefreshTokenException: Invalid Refresh Token", ex);
-        return ErrorResponse.toResponseEntity(ErrorCode.INVALID_REFRESH_TOKEN_ERROR);
+        final ErrorResponse response = ErrorResponse.of(ErrorCode.INVALID_REFRESH_TOKEN_ERROR, ex.getMessage());
+        return new ResponseEntity<>(response, HTTP_STATUS_OK);
     }
 
     @ExceptionHandler(SchoolUpdateRestrictionException.class)

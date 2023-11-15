@@ -5,7 +5,9 @@ import com.twohoseon.app.dto.ErrorResponse;
 import com.twohoseon.app.entity.member.Member;
 import com.twohoseon.app.enums.ErrorCode;
 import com.twohoseon.app.enums.UserRole;
+import com.twohoseon.app.exception.MemberNotFoundException;
 import com.twohoseon.app.repository.member.MemberRepository;
+import com.twohoseon.app.repository.member.RefreshTokenRepository;
 import com.twohoseon.app.service.member.MemberService;
 import com.twohoseon.app.util.JwtTokenProvider;
 import io.jsonwebtoken.ExpiredJwtException;
@@ -45,10 +47,18 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private final JwtTokenProvider jwtTokenProvider;
     private final MemberRepository memberRepository;
     private final MemberService memberService;
+    private final RefreshTokenRepository refreshTokenRepository;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         String accessToken = jwtTokenProvider.getHeaderToken(request, "Access");
+        //밴 리스트 확인
+        boolean isValidToken = refreshTokenRepository.existsByAccessTokenAndIsBannedTrue(accessToken);
+        if (isValidToken) {
+            jwtExceptionHandler(response, ErrorResponse.of(ErrorCode.EXPIRED_TOKEN_ERROR));
+            return;
+        }
+
         //특정 url 요청시
         RequestMatcher skipPath = new AntPathRequestMatcher("/api/profiles/**");
 
@@ -60,7 +70,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 String providerId = jwtTokenProvider.getProviderIdFromToken(accessToken);
 
                 Member member = memberRepository.findByProviderId(providerId)
-                        .orElseThrow(() -> new IllegalArgumentException("Member Not Found"));
+                        .orElseThrow(() -> new MemberNotFoundException("Member Not Found"));
                 log.info("ProviderId : ", providerId);
 
                 setAuthentication(jwtTokenProvider.getProviderIdFromToken(accessToken));

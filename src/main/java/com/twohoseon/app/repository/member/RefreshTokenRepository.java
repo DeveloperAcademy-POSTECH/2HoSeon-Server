@@ -15,14 +15,10 @@ import java.util.Optional;
  * @modifyed : $
  **/
 @Repository
-public interface RefreshTokenRepository extends JpaRepository<RefreshToken, Long> {
-    Optional<RefreshToken> findByProviderId(String providerId);
+public interface RefreshTokenRepository extends JpaRepository<RefreshToken, Long>, RefreshTokenCustomRepository {
 
     Optional<RefreshToken> findByRefreshToken(String refreshToken);
 
-    Optional<RefreshToken> findByProviderIdAndRefreshToken(String OAuthId, String refreshToken);
-//    Optional<RefreshToken> findByOAuthId(String oAuthId);
-
-//    Optional<RefreshToken> findByOAuthIdAndRefreshToken(String oAuthId, String refreshToken);
+    boolean existsByAccessTokenAndIsBannedTrue(String accessToken);
 
 }

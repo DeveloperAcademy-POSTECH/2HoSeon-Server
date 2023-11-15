@@ -5,8 +5,10 @@ import com.twohoseon.app.dto.response.GeneralResponseDTO;
 import com.twohoseon.app.dto.response.TokenDTO;
 import com.twohoseon.app.entity.member.Member;
 import com.twohoseon.app.enums.StatusEnum;
+import com.twohoseon.app.exception.MemberNotFoundException;
 import com.twohoseon.app.repository.member.MemberRepository;
 import com.twohoseon.app.security.oauth2.user.CustomOAuth2User;
+import com.twohoseon.app.service.refreshToken.RefreshTokenService;
 import com.twohoseon.app.util.JwtTokenProvider;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -34,6 +36,7 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
 
     private final JwtTokenProvider jwtTokenProvider;
     private final MemberRepository memberRepository;
+    private final RefreshTokenService refreshTokenService;
 
 
     @Override
@@ -46,15 +49,14 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
         log.info("oAuth2UserAttribute = {}", oAuth2User.getAttributes());
         String providerId = oAuth2User.getName();
 
-        Member member = memberRepository.findByProviderId(providerId).orElseThrow(() -> new IllegalArgumentException("존재하지 않는 회원입니다."));
-        // 회원이 존재하는지 체크
-        boolean memberIsExist = memberRepository.existsByProviderId(providerId);
+        Member member = memberRepository.findByProviderId(providerId).orElseThrow(MemberNotFoundException::new);
+
         GeneralResponseDTO generalResponseDTO;
         TokenDTO token = jwtTokenProvider.createAllToken(providerId);
-        // 회원이 존재할경우
+        refreshTokenService.saveRefreshTokenFromTokenDTO(token, providerId);
+
         if (member.getSchool() == null) {
             log.debug("member.getSchool() = {}", member.getSchool());
-            // 회원이 존재하면 jwt token 발행을 시작한다.
             generalResponseDTO = GeneralResponseDTO.builder()
                     .status(StatusEnum.CONFLICT)
                     .message("UNREGISTERED_USER")

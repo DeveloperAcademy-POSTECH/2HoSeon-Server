@@ -14,6 +14,7 @@ public interface RefreshTokenService {
 
     void saveRefreshToken(String refreshToken, String identifier, long expirationTime);
 
-    TokenDTO renewToken(String refreshToken, String identifier);
+    TokenDTO renewToken(String refreshToken);
 
+    void saveRefreshTokenFromTokenDTO(TokenDTO tokenDTO, String providerId);
 }

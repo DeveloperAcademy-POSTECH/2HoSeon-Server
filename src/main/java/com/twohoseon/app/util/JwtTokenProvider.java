@@ -1,7 +1,6 @@
 package com.twohoseon.app.util;
 
 import com.twohoseon.app.dto.response.TokenDTO;
-import com.twohoseon.app.entity.member.RefreshToken;
 import com.twohoseon.app.repository.member.RefreshTokenRepository;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwsHeader;
@@ -62,18 +61,14 @@ public class JwtTokenProvider {
                 .setExpiration(refreshExpiration)
                 .signWith(SignatureAlgorithm.HS256, jwtSecret)
                 .compact();
-
-        refreshTokenRepository.save(RefreshToken.builder()
-                .refreshToken(refreshToken)
-                .providerId(username)
-                .expirationTime(refreshExpiration.getTime())
-                .build());
-        return TokenDTO.builder()
+        TokenDTO tokenDTO = TokenDTO.builder()
                 .accessToken(accessToken)
                 .accessExpirationTime(accessExpiration.getTime())
                 .refreshToken(refreshToken)
                 .refreshExpirationTime(refreshExpiration.getTime())
                 .build();
+
+        return tokenDTO;
 
     }
 
@@ -112,5 +107,7 @@ public class JwtTokenProvider {
     public void setHeaderRefreshToken(HttpServletResponse response, String refreshToken) {
         response.setHeader("Refresh_Token", refreshToken);
     }
+
+
 }
 
