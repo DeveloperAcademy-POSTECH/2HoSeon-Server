@@ -123,7 +123,7 @@ public class Post extends BaseTimeEntity {
     @Enumerated(EnumType.STRING)
     @Comment("투표 결과")
     @Builder.Default
-    private VoteResult voteResult = VoteResult.DRAW;
+    private VoteResult voteResult = null;
 
     @ManyToMany
     @JoinTable(name = "Review_subscribed_members",
