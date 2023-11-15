@@ -62,7 +62,7 @@ public class PostInfo extends ImageDTO {
     @Schema(name = "isPurchased", type = "boolean", description = "구매 여부")
     Boolean isPurchased;
 
-    public PostInfo(Long postId, LocalDateTime createDate, LocalDateTime modifiedDate, VisibilityScope visibilityScope, PostStatus postStatus, AuthorInfo author, String title, String contents, String image, String externalURL, int commentCount, int voteCount, int price) {
+    public PostInfo(Long postId, LocalDateTime createDate, LocalDateTime modifiedDate, VisibilityScope visibilityScope, PostStatus postStatus, AuthorInfo author, String title, String contents, String image, String externalURL, Integer commentCount, Integer voteCount, Integer price) {
         this.postId = postId;
         this.createDate = createDate;
         this.modifiedDate = modifiedDate;
@@ -80,7 +80,7 @@ public class PostInfo extends ImageDTO {
     }
 
     //후기 상세 본문
-    public PostInfo(LocalDateTime createDate, LocalDateTime modifiedDate, Long postId, AuthorInfo author, PostStatus postStatus, String title, String image, String contents, int price, Boolean isPurchased) {
+    public PostInfo(LocalDateTime createDate, LocalDateTime modifiedDate, Long postId, AuthorInfo author, PostStatus postStatus, String title, String image, String contents, Integer price, Boolean isPurchased) {
         this.createDate = createDate;
         this.modifiedDate = modifiedDate;
         this.postId = postId;
