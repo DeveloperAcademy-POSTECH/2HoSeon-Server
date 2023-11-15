@@ -15,6 +15,8 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.oauth2.client.OAuth2AuthorizedClient;
+import org.springframework.security.oauth2.client.OAuth2AuthorizedClientService;
 import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
@@ -37,7 +39,7 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
     private final JwtTokenProvider jwtTokenProvider;
     private final MemberRepository memberRepository;
     private final RefreshTokenService refreshTokenService;
-
+    private final OAuth2AuthorizedClientService oAuth2AuthorizedClientService;
 
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException {
@@ -48,8 +50,12 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
         log.debug("oAuth2UserName = {}", oAuth2User.getName());
         log.debug("oAuth2UserAttribute = {}", oAuth2User.getAttributes());
         String providerId = oAuth2User.getName();
-
+        String registrationId = oAuth2AuthenticationToken.getAuthorizedClientRegistrationId();
+        OAuth2AuthorizedClient oAuth2AuthorizedClient = oAuth2AuthorizedClientService.loadAuthorizedClient(registrationId, providerId);
+        String appleRefreshToken = oAuth2AuthorizedClient.getRefreshToken().getTokenValue();
         Member member = memberRepository.findByProviderId(providerId).orElseThrow(MemberNotFoundException::new);
+        member.setAppleRefreshToken(appleRefreshToken);
+        memberRepository.save(member);
 
         GeneralResponseDTO generalResponseDTO;
         TokenDTO token = jwtTokenProvider.createAllToken(providerId);
