@@ -45,8 +45,8 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
         OAuth2AuthenticationToken oAuth2AuthenticationToken = (OAuth2AuthenticationToken) authentication;
         CustomOAuth2User oAuth2User = (CustomOAuth2User) oAuth2AuthenticationToken.getPrincipal();
 
-        log.info("oAuth2UserName = {}", oAuth2User.getName());
-        log.info("oAuth2UserAttribute = {}", oAuth2User.getAttributes());
+        log.debug("oAuth2UserName = {}", oAuth2User.getName());
+        log.debug("oAuth2UserAttribute = {}", oAuth2User.getAttributes());
         String providerId = oAuth2User.getName();
 
         Member member = memberRepository.findByProviderId(providerId).orElseThrow(MemberNotFoundException::new);
