@@ -1,7 +1,7 @@
 package com.twohoseon.app.repository.post;
 
-import com.twohoseon.app.dto.response.PostInfo;
 import com.twohoseon.app.dto.response.VoteCounts;
+import com.twohoseon.app.dto.response.post.PostInfo;
 import com.twohoseon.app.dto.response.post.PostSummary;
 import com.twohoseon.app.entity.member.Member;
 import com.twohoseon.app.enums.ConsumerType;

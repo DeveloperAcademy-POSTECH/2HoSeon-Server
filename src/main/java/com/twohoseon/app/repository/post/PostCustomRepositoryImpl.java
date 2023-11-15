@@ -6,10 +6,10 @@ import com.querydsl.core.types.dsl.CaseBuilder;
 import com.querydsl.core.types.dsl.Wildcard;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
-import com.twohoseon.app.dto.response.PostInfo;
 import com.twohoseon.app.dto.response.VoteCounts;
 import com.twohoseon.app.dto.response.VoteInfo;
 import com.twohoseon.app.dto.response.post.AuthorInfo;
+import com.twohoseon.app.dto.response.post.PostInfo;
 import com.twohoseon.app.dto.response.post.PostSummary;
 import com.twohoseon.app.entity.member.Member;
 import com.twohoseon.app.enums.ConsumerType;
@@ -110,7 +110,8 @@ public class PostCustomRepositoryImpl implements PostCustomRepository {
                         post.externalURL,
                         post.commentCount,
                         post.agreeCount.add(post.disagreeCount),
-                        post.price
+                        post.price,
+                        post.review.isNotNull()
                 ))
                 .from(post)
                 .where(post.id.eq(postId))

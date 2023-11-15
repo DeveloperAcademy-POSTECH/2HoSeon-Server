@@ -2,9 +2,9 @@ package com.twohoseon.app.service.post;
 
 import com.twohoseon.app.dto.request.post.PostRequest;
 import com.twohoseon.app.dto.request.review.ReviewRequest;
-import com.twohoseon.app.dto.response.PostInfo;
 import com.twohoseon.app.dto.response.VoteCounts;
 import com.twohoseon.app.dto.response.mypage.MypageFetch;
+import com.twohoseon.app.dto.response.post.PostInfo;
 import com.twohoseon.app.dto.response.post.PostSummary;
 import com.twohoseon.app.dto.response.post.ReviewDetail;
 import com.twohoseon.app.dto.response.post.ReviewFetch;

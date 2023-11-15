@@ -1,8 +1,9 @@
-package com.twohoseon.app.dto.response;
+package com.twohoseon.app.dto.response.post;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.twohoseon.app.common.ImageDTO;
-import com.twohoseon.app.dto.response.post.AuthorInfo;
+import com.twohoseon.app.dto.response.VoteCounts;
+import com.twohoseon.app.dto.response.VoteInfo;
 import com.twohoseon.app.enums.post.PostStatus;
 import com.twohoseon.app.enums.post.VisibilityScope;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -62,6 +63,9 @@ public class PostInfo extends ImageDTO {
     @Schema(name = "isPurchased", type = "boolean", description = "구매 여부")
     Boolean isPurchased;
 
+    @Schema(name = "hasReview", type = "boolean", description = "후기 여부")
+    Boolean hasReview;
+
     public PostInfo(Long postId, LocalDateTime createDate, LocalDateTime modifiedDate, VisibilityScope visibilityScope, PostStatus postStatus, AuthorInfo author, String title, String contents, String image, String externalURL, Integer commentCount, Integer voteCount, Integer price) {
         this.postId = postId;
         this.createDate = createDate;
@@ -77,6 +81,27 @@ public class PostInfo extends ImageDTO {
         this.commentCount = commentCount;
         this.voteCount = voteCount;
         this.price = price;
+    }
+
+
+    //투표 상세 보기
+    public PostInfo(Long postId, LocalDateTime createDate, LocalDateTime modifiedDate, VisibilityScope visibilityScope, PostStatus postStatus, AuthorInfo author, String title, String contents, String image, String externalURL, Integer commentCount, Integer voteCount, Integer price, Boolean hasReview) {
+        this.postId = postId;
+        this.createDate = createDate;
+        this.modifiedDate = modifiedDate;
+        this.visibilityScope = visibilityScope;
+        this.postStatus = postStatus;
+        this.author = author;
+        this.title = title;
+        this.contents = contents;
+        this.image = generatePostImageURL(image);
+        if (externalURL != null)
+            this.externalURL = externalURL;
+        this.commentCount = commentCount;
+        this.voteCount = voteCount;
+        this.price = price;
+        if (postStatus == PostStatus.CLOSED)
+            this.hasReview = hasReview;
     }
 
     //후기 상세 본문
@@ -112,6 +137,10 @@ public class PostInfo extends ImageDTO {
 
     public void setPostStatus(PostStatus postStatus) {
         this.postStatus = postStatus;
+    }
+
+    public void setHasReview(boolean hasReview) {
+        this.hasReview = hasReview;
     }
 
     public void setIsNotified(boolean isNotified) {

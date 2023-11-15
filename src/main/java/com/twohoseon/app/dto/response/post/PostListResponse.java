@@ -1,4 +1,4 @@
-package com.twohoseon.app.dto.response;
+package com.twohoseon.app.dto.response.post;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
