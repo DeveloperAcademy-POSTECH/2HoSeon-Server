@@ -18,4 +18,17 @@ public enum ConsumerType {
     IMPULSE_BUYER,     // 지름신강림러: 충동소비하는 사람들
     ADVENTURER,        // 프로도전러: 다양한 것을 추구하는 사람들
     RISK_AVERSE        // 실패줄임러: 신뢰도가 있는 제품만 사는 안전러
+    ;
+
+    /**
+     * @author : hyunwoopark
+     * @version : 1.0.0
+     * @package : twohoseon
+     * @name : VoteResult
+     * @date : 11/7/23 1:37 AM
+     * @modifyed : $
+     **/
+    public enum VoteResult {
+        BUY, NOT_BUY, DRAW
+    }
 }
