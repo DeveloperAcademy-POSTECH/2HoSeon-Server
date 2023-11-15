@@ -69,6 +69,9 @@ public class Member extends BaseTimeEntity {
     @OneToMany(mappedBy = "author", orphanRemoval = true)
     private Set<Post> posts = new LinkedHashSet<>();
 
+    @Column
+    private String appleRefreshToken;
+
 
     public void updateAdditionalUserInfo(String profileImage, String nickname, School school) {
         if (profileImage != null)
@@ -89,6 +92,10 @@ public class Member extends BaseTimeEntity {
     }
 
     protected Member() {
+    }
+
+    public void setAppleRefreshToken(String appleRefreshToken) {
+        this.appleRefreshToken = appleRefreshToken;
     }
 
     @Override
