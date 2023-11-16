@@ -4,6 +4,7 @@ import com.twohoseon.app.dto.ConsumerTypeRequest;
 import com.twohoseon.app.dto.request.member.NicknameValidCheckRequest;
 import com.twohoseon.app.dto.request.member.ProfileRequest;
 import com.twohoseon.app.dto.response.GeneralResponse;
+import com.twohoseon.app.dto.response.profile.ProfileResponse;
 import com.twohoseon.app.enums.StatusEnum;
 import com.twohoseon.app.service.member.MemberService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -80,6 +81,16 @@ public class MemberRestController {
     @DeleteMapping("/api/members")
     public ResponseEntity<GeneralResponse> deleteMember() {
         memberService.deleteMember();
+    @Operation(summary = "프로필 보기", description = "프로필 보기")
+    @GetMapping("/api/profiles")
+    public ResponseEntity<ProfileResponse> getProfile() {
+        ProfileResponse response = ProfileResponse.builder()
+                .status(StatusEnum.OK)
+                .message("success")
+                .data(memberService.getProfile())
+                .build();
+        return ResponseEntity.ok(response);
+    }
 
         GeneralResponse generalResponse = GeneralResponse.builder()
                 .status(StatusEnum.OK)
@@ -87,6 +98,7 @@ public class MemberRestController {
                 .build();
         return ResponseEntity.ok(generalResponse);
     }
+
 
 
 }
