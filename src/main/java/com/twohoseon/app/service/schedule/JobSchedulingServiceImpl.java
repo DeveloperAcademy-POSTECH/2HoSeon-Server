@@ -42,7 +42,7 @@ public class JobSchedulingServiceImpl implements JobSchedulingService {
         scheduler.scheduleJob(jobDetail, trigger);
     }
 
-    public void schedulePostDeleteJob(Long postId) throws SchedulerException {
+    public void deleteScheduledPostExpireJob(Long postId) throws SchedulerException {
         scheduler.deleteJob(JobKey.jobKey(String.valueOf(postId)));
     }
 

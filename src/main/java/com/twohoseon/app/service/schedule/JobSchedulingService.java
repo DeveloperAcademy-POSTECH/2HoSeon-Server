@@ -14,4 +14,6 @@ public interface JobSchedulingService {
     void schedulePostExpireJob(Long postId) throws SchedulerException;
 
     void schedulePostDeleteJob(Long postId) throws SchedulerException;
+    void deleteScheduledPostExpireJob(Long postId) throws SchedulerException;
+
 }
