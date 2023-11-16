@@ -51,8 +51,7 @@ public class NotificationServiceImpl implements NotificationService {
             SimpleApnsPushNotification pushNotification = new SimpleApnsPushNotification(
                     TokenUtil.sanitizeTokenString(deviceToken),
                     appIdentifier,
-                    new CustomApnsPayloadBuilder()
-                            .setPostDetails(post.getId())
+                    new CustomApnsPayloadBuilder().setPostDetails(post)
                             .setAlertBody(alertBody)
                             .setSound("default")
                             .build()
@@ -91,7 +90,7 @@ public class NotificationServiceImpl implements NotificationService {
                     TokenUtil.sanitizeTokenString(deviceToken),
                     appIdentifier,
                     new CustomApnsPayloadBuilder()
-                            .setPostDetails(post.getId())
+                            .setPostDetails(post)
                             .setAlertSubtitle(post.getTitle())
                             .setAlertBody(alertBody)
                             .setSound("default")
@@ -114,7 +113,7 @@ public class NotificationServiceImpl implements NotificationService {
                     TokenUtil.sanitizeTokenString(deviceToken),
                     appIdentifier,
                     new CustomApnsPayloadBuilder()
-                            .setPostDetails(parentComment.getPost().getId())
+                            .setPostDetails(parentComment.getPost())
                             .setAlertSubtitle(parentComment.getPost().getTitle())
                             .setAlertBody(alertBody)
                             .setSound("default")
@@ -135,7 +134,7 @@ public class NotificationServiceImpl implements NotificationService {
                     TokenUtil.sanitizeTokenString(deviceToken),
                     appIdentifier,
                     new CustomApnsPayloadBuilder()
-                            .setPostDetails(post.getId())
+                            .setPostDetails(post)
                             .setAlertSubtitle(post.getTitle())
                             .setAlertBody("회원님의 투표에 후기가 작성되었어요.")
                             .setSound("default")
@@ -145,8 +144,6 @@ public class NotificationServiceImpl implements NotificationService {
                     apnsClient.sendNotification(pushNotification).get();
             log.debug("push notification is success?: ", pushNotificationResponse.isAccepted());
         }
-
-
     }
 
     @Override
@@ -164,7 +161,6 @@ public class NotificationServiceImpl implements NotificationService {
                     Instant.now().plusSeconds(24 * 60 * 60), // 만료 시간 (예: 24시간 후)
                     DeliveryPriority.IMMEDIATE, // 우선 순위
                     PushType.BACKGROUND // 푸시 유형
-
             );
             log.debug("pushNotification: " + pushNotification);
             PushNotificationResponse<SimpleApnsPushNotification> pushNotificationResponse =

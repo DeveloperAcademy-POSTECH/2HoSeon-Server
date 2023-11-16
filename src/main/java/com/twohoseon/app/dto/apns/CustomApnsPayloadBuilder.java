@@ -2,6 +2,7 @@ package com.twohoseon.app.dto.apns;
 
 import com.eatthepath.json.JsonSerializer;
 import com.eatthepath.pushy.apns.util.ApnsPayloadBuilder;
+import com.twohoseon.app.entity.post.Post;
 
 /**
  * @author : hyunwoopark
@@ -15,6 +16,7 @@ public class CustomApnsPayloadBuilder extends ApnsPayloadBuilder {
 
     private static final String DESTINATION_KEY = "destination";
     private static final String POST_ID_KEY = "post_id";
+    private static final String POST_TYPE = "post_type";
     private static final String CONSUMER_TYPE_EXIST_KEY = "consumer_type_exist";
 
     @Override
@@ -33,9 +35,10 @@ public class CustomApnsPayloadBuilder extends ApnsPayloadBuilder {
         return this;
     }
 
-    public ApnsPayloadBuilder setPostDetails(final Long postId) {
+    public ApnsPayloadBuilder setPostDetails(final Post post) {
         super.addCustomProperty(DESTINATION_KEY, "post_detail");
-        super.addCustomProperty(POST_ID_KEY, postId);
+        super.addCustomProperty(POST_ID_KEY, post.getId());
+        super.addCustomProperty(POST_TYPE, post.getPostStatus().name());
         return this;
     }
 
