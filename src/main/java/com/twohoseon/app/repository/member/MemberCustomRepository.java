@@ -1,5 +1,7 @@
 package com.twohoseon.app.repository.member;
 
+import com.twohoseon.app.dto.response.profile.ProfileInfo;
+
 /**
  * @author : hyunwoopark
  * @version : 1.0.0
@@ -10,4 +12,5 @@ package com.twohoseon.app.repository.member;
  **/
 public interface MemberCustomRepository {
 
+    ProfileInfo getProfile(long memberId);
 }
