@@ -2,6 +2,7 @@ package com.twohoseon.app.service.member;
 
 import com.twohoseon.app.dto.ConsumerTypeRequest;
 import com.twohoseon.app.dto.request.member.ProfileRequest;
+import com.twohoseon.app.dto.response.profile.ProfileInfo;
 import com.twohoseon.app.entity.member.DeviceToken;
 import com.twohoseon.app.entity.member.Member;
 import com.twohoseon.app.exception.SchoolUpdateRestrictionException;
@@ -150,5 +151,11 @@ public class MemberServiceImpl implements MemberService {
 
         String url = "https://appleid.apple.com/auth/revoke";
         restTemplate.postForLocation(url, request);
+    }
+
+    @Override
+    public ProfileInfo getProfile() {
+        Member member = getMemberFromRequest();
+        return memberRepository.getProfile(member.getId());
     }
 }

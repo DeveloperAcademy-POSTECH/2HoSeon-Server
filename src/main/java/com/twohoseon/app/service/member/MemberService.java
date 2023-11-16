@@ -2,6 +2,7 @@ package com.twohoseon.app.service.member;
 
 import com.twohoseon.app.dto.ConsumerTypeRequest;
 import com.twohoseon.app.dto.request.member.ProfileRequest;
+import com.twohoseon.app.dto.response.profile.ProfileInfo;
 import com.twohoseon.app.entity.member.Member;
 import com.twohoseon.app.service.CommonService;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -32,4 +33,6 @@ public interface MemberService extends UserDetailsService, CommonService {
 
 //    void deleteSubscriptions(Member reqMember);
 
+
+    ProfileInfo getProfile();
 }

@@ -1,11 +1,13 @@
 package com.twohoseon.app.repository.member;
 
+import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.twohoseon.app.entity.member.Member;
 import com.twohoseon.app.entity.post.Comment;
 import com.twohoseon.app.entity.post.Post;
 import com.twohoseon.app.repository.comment.CommentRepository;
 import com.twohoseon.app.repository.post.PostRepository;
+import com.twohoseon.app.dto.response.profile.ProfileInfo;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
@@ -15,6 +17,8 @@ import java.util.List;
 import static com.twohoseon.app.entity.post.QComment.comment;
 import static com.twohoseon.app.entity.post.QPost.post;
 import static com.twohoseon.app.entity.post.vote.QVote.vote;
+
+import static com.twohoseon.app.entity.member.QMember.member;
 
 /**
  * @author : hyunwoopark
@@ -85,5 +89,21 @@ public class MemberCustomRepositoryImpl implements MemberCustomRepository {
                 .execute();
     }
 
+
+    @Override
+    public ProfileInfo getProfile(long memberId) {
+        ProfileInfo profileInfo = jpaQueryFactory
+                .select(Projections.constructor(ProfileInfo.class,
+                        member.id,
+                        member.nickname,
+                        member.profileImage,
+                        member.consumerType,
+                        member.school.schoolName))
+                .from(member)
+                .where(member.id.eq(memberId))
+                .fetchOne();
+
+        return profileInfo;
+    }
 
 }

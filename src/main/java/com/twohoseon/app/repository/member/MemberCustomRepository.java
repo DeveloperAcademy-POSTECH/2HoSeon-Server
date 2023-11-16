@@ -2,6 +2,8 @@ package com.twohoseon.app.repository.member;
 
 import com.twohoseon.app.entity.member.Member;
 
+import com.twohoseon.app.dto.response.profile.ProfileInfo;
+
 /**
  * @author : hyunwoopark
  * @version : 1.0.0
@@ -22,4 +24,5 @@ public interface MemberCustomRepository {
     void deletePostById(Long postId);
 //    void deleteSubscriptions(Member reqMember);
 
+    ProfileInfo getProfile(long memberId);
 }
