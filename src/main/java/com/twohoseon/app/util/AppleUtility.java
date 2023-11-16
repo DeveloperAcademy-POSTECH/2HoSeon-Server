@@ -1,8 +1,10 @@
 package com.twohoseon.app.util;
 
+import com.twohoseon.app.service.schedule.JobSchedulingService;
 import io.jsonwebtoken.JwsHeader;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
+import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
@@ -10,15 +12,14 @@ import org.apache.tomcat.util.http.fileupload.IOUtils;
 import org.bouncycastle.asn1.pkcs.PrivateKeyInfo;
 import org.bouncycastle.openssl.PEMParser;
 import org.bouncycastle.openssl.jcajce.JcaPEMKeyConverter;
+import org.quartz.SchedulerException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Component;
 
-import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.security.PrivateKey;
+import java.util.Calendar;
 import java.util.Date;
 
 /**
@@ -33,6 +34,7 @@ import java.util.Date;
 @Slf4j
 @Component
 public class AppleUtility {
+    private final JobSchedulingService jobSchedulingService;
     @Value("${oauth.apple.key-path}")
     String keyFilePath;
     @Value("${oauth.apple.key-id}")
@@ -42,8 +44,22 @@ public class AppleUtility {
     @Value("${oauth.apple.team-id}")
     String appleTeamId;
 
+    private String appleClientSecret;
+
+    @PostConstruct
+    public void loadAppleClientSecret() {
+        try (BufferedReader reader = new BufferedReader(new FileReader("client_secret.txt"))) {
+            appleClientSecret = reader.readLine();
+        } catch (IOException e) {
+            log.error("Error_loadAppleClientSecret : {}-{}", e.getMessage(), e.getCause());
+            appleClientSecret = createAppleClientSecret();
+        }
+    }
+
     public String createAppleClientSecret() {
         String clientSecret = "";
+        Calendar calendar = Calendar.getInstance();
+        calendar.add(Calendar.MONTH, 6);
         //application-oauth.yml에 설정해놓은 apple secret Key를 /를 기준으로 split
 
         try {
@@ -67,17 +83,32 @@ public class AppleUtility {
                     .setIssuer(appleTeamId)
                     .setAudience("https://appleid.apple.com")
                     .setSubject(appleClientId)
-                    .setExpiration(new Date(System.currentTimeMillis() + (1000 * 60 * 5)))
+                    .setExpiration(calendar.getTime())
                     .setIssuedAt(new Date(System.currentTimeMillis()))
                     .signWith(privateKey, SignatureAlgorithm.ES256)
                     .compact();
 
+            // Save the client secret to a file
+            try (BufferedWriter writer = new BufferedWriter(new FileWriter("client_secret.txt"))) {
+                writer.write(clientSecret);
+            } catch (IOException e) {
+                log.error("Error_saveAppleClientSecret : {}-{}", e.getMessage(), e.getCause());
+            }
+            jobSchedulingService.refreshAppleSecretJob();
         } catch (IOException e) {
-
             log.error("Error_createAppleClientSecret : {}-{}", e.getMessage(), e.getCause());
+        } catch (SchedulerException e) {
+            throw new RuntimeException(e);
         }
         log.info("createAppleClientSecret : {}", clientSecret);
         return clientSecret;
+    }
+
+    public String getAppleClientSecret() {
+        if (appleClientSecret == null) {
+            appleClientSecret = createAppleClientSecret();
+        }
+        return appleClientSecret;
     }
 
     public String getAppleClientId() {

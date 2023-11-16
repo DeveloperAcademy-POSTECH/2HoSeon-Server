@@ -1,6 +1,7 @@
 package com.twohoseon.app.service.schedule;
 
 import com.twohoseon.app.jobs.PostExpireJob;
+import com.twohoseon.app.jobs.RefreshAppleSecretJob;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.quartz.*;
@@ -44,6 +45,20 @@ public class JobSchedulingServiceImpl implements JobSchedulingService {
 
     public void deleteScheduledPostExpireJob(Long postId) throws SchedulerException {
         scheduler.deleteJob(JobKey.jobKey(String.valueOf(postId)));
+    }
+
+    @Override
+    public void refreshAppleSecretJob() throws SchedulerException {
+        log.debug("refreshAppleSecretJob scheduler");
+        scheduler.deleteJob(JobKey.jobKey("refreshAppleSecretJob"));
+        Date startAtDate = DateBuilder.futureDate(5, DateBuilder.IntervalUnit.MONTH);  // 현재로부터 5개월 후
+        JobDetail jobDetail = JobBuilder.newJob(RefreshAppleSecretJob.class)
+                .withIdentity("refreshAppleSecretJob")
+                .build();
+        Trigger trigger = TriggerBuilder.newTrigger()
+                .startAt(startAtDate)
+                .build();
+        scheduler.scheduleJob(jobDetail, trigger);
     }
 
 }

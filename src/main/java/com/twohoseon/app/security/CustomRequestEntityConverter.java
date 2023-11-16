@@ -45,7 +45,7 @@ public class CustomRequestEntityConverter implements Converter<OAuth2Authorizati
         MultiValueMap<String, String> params = (MultiValueMap<String, String>) entity.getBody();
         //Apple일 경우 secret key를 동적으로 세팅
         if (registrationId.contains("apple")) {
-            params.set("client_secret", appleUtility.createAppleClientSecret());
+            params.set("client_secret", appleUtility.getAppleClientSecret());
         }
         return new RequestEntity<>(params, entity.getHeaders(),
                 entity.getMethod(), entity.getUrl());

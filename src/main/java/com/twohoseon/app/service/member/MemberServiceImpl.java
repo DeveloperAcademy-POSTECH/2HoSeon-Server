@@ -143,7 +143,7 @@ public class MemberServiceImpl implements MemberService {
 
         MultiValueMap<String, String> map = new LinkedMultiValueMap<>();
         map.add("client_id", appleUtility.getAppleClientId());
-        map.add("client_secret", appleUtility.createAppleClientSecret());
+        map.add("client_secret", appleUtility.getAppleClientSecret());
         map.add("token", refreshToken);
         map.add("token_type_hint", "refresh_token");
 
