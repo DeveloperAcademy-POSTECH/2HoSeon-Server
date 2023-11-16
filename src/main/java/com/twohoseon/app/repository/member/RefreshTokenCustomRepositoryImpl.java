@@ -1,7 +1,10 @@
 package com.twohoseon.app.repository.member;
 
+import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
+
+import static com.twohoseon.app.entity.member.QRefreshToken.refreshToken1;
 
 /**
  * @author : hyunwoopark
@@ -15,4 +18,13 @@ import org.springframework.stereotype.Repository;
 @RequiredArgsConstructor
 public class RefreshTokenCustomRepositoryImpl implements RefreshTokenCustomRepository {
 
+    private final JPAQueryFactory jpaQueryFactory;
+
+    @Override
+    public boolean existsByAccessTokenAndIsBannedTrue(String accessToken) {
+        return jpaQueryFactory.selectOne()
+                .from(refreshToken1)
+                .where(refreshToken1.isBanned.isTrue())
+                .fetchFirst() != null;
+    }
 }

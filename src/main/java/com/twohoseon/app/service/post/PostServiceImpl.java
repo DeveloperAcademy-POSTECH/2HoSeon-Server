@@ -234,6 +234,14 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
+    public void unsubscribePost(Long postId) {
+        Member reqMember = getMemberFromRequest();
+        Post post = postRepository.findById(postId)
+                .orElseThrow(() -> new PostNotFoundException());
+        post.unsubscribe(reqMember);
+    }
+
+    @Override
     public ReviewFetch fetchReviews(VisibilityScope visibilityScope, Pageable pageable, ReviewType reviewType) {
         Member reqMember = getMemberFromRequest();
         ConsumerType consumerType = reqMember.getConsumerType();

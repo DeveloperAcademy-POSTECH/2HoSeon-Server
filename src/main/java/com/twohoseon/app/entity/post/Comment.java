@@ -32,15 +32,15 @@ public class Comment extends BaseTimeEntity {
     @Column(name = "id", nullable = false)
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(optional = true, fetch = FetchType.LAZY)
     @JoinColumn(name = "post_id")
     private Post post;
 
     @Column
     private String content;
 
-    @ManyToOne(optional = false, fetch = FetchType.LAZY)
-    @JoinColumn(name = "member_id", nullable = false)
+    @ManyToOne(optional = true, fetch = FetchType.LAZY, cascade = CascadeType.DETACH)
+    @JoinColumn(name = "member_id")
     private Member author;
 
     @ManyToOne(fetch = FetchType.LAZY)

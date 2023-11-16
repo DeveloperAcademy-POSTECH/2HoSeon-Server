@@ -20,6 +20,7 @@ import java.util.List;
  * @date : 10/19/23 10:37 PM
  * @modifyed : $
  **/
+
 public interface PostCustomRepository {
     List<PostInfo> findAllPosts(Pageable pageable, Member memberId, VisibilityScope visibilityScope);
 
@@ -51,4 +52,7 @@ public interface PostCustomRepository {
     List<PostSummary> findAllPostsByMyVoteCategoryType(Pageable pageable, Member reqMember, MyVoteCategoryType myVoteCategoryType);
 
     long getTotalReviewCount(Member reqMember, VisibilityScope visibilityScope);
+
+    void deleteSubscriptionsFromMember(Member reqMember);
+
 }

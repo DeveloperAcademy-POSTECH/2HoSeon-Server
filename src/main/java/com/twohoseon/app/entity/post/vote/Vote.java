@@ -1,6 +1,7 @@
 package com.twohoseon.app.entity.post.vote;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.twohoseon.app.entity.member.Member;
+import com.twohoseon.app.entity.post.Post;
 import com.twohoseon.app.enums.ConsumerType;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -13,10 +14,18 @@ import lombok.Getter;
 @Builder
 @AllArgsConstructor
 public class Vote {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id", nullable = false)
+    private Long id;
 
-    @JsonIgnoreProperties
-    @EmbeddedId
-    VoteId id;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "post_id")
+    private Post post;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "voter_id")
+    private Member voter;
 
     @Column
     Boolean isAgree;
@@ -24,6 +33,7 @@ public class Vote {
     @Column
     @Enumerated(EnumType.STRING)
     ConsumerType consumerType;
+
 
     protected Vote() {
     }

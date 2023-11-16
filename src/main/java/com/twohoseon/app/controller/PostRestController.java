@@ -109,6 +109,18 @@ public class PostRestController {
         return ok(response);
     }
 
+    @Operation(summary = "후기 구독 취소", description = "후기 구독")
+    @DeleteMapping("/{postId}/subscribe")
+    public ResponseEntity<GeneralResponse> unSubscribePost(@PathVariable("postId") Long postId) {
+        //TODO 중복 구독 핸들링
+        postService.unsubscribePost(postId);
+        GeneralResponse response = GeneralResponse.builder()
+                .status(StatusEnum.OK)
+                .message("success")
+                .build();
+        return ok(response);
+    }
+
     @Operation(summary = "리뷰 작성", description = "리뷰 작성")
     @PostMapping(value = "/{postId}/reviews", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
     public ResponseEntity<GeneralResponse> createReview(@PathVariable("postId") Long postId,

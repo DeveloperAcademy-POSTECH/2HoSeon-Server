@@ -12,6 +12,7 @@ import com.twohoseon.app.dto.response.post.AuthorInfo;
 import com.twohoseon.app.dto.response.post.PostInfo;
 import com.twohoseon.app.dto.response.post.PostSummary;
 import com.twohoseon.app.entity.member.Member;
+import com.twohoseon.app.entity.post.Post;
 import com.twohoseon.app.enums.ConsumerType;
 import com.twohoseon.app.enums.ReviewType;
 import com.twohoseon.app.enums.mypage.MyVoteCategoryType;
@@ -41,6 +42,8 @@ import static com.twohoseon.app.entity.post.vote.QVote.vote;
 @RequiredArgsConstructor
 @Repository
 public class PostCustomRepositoryImpl implements PostCustomRepository {
+//    private final PostRepository postRepository;
+
 
     private final JPAQueryFactory jpaQueryFactory;
 
@@ -149,8 +152,8 @@ public class PostCustomRepositoryImpl implements PostCustomRepository {
                         )
                 )
                 .from(vote)
-                .groupBy(vote.id.post.id)
-                .where(vote.id.post.id.eq(postId))
+                .groupBy(vote.post.id)
+                .where(vote.post.id.eq(postId))
                 .fetchOne();
         return result == null ? new VoteCounts(0, 0) : result;
     }
@@ -484,8 +487,8 @@ public class PostCustomRepositoryImpl implements PostCustomRepository {
         return jpaQueryFactory
                 .select(vote.isAgree)
                 .from(vote)
-                .where(vote.id.post.id.eq(postId)
-                        .and(vote.id.voter.id.eq(memberId)))
+                .where(vote.post.id.eq(postId)
+                        .and(vote.voter.id.eq(memberId)))
                 .fetchOne();
     }
 
@@ -504,7 +507,7 @@ public class PostCustomRepositoryImpl implements PostCustomRepository {
                                 vote.consumerType
                         ))
                 .from(vote)
-                .where(vote.id.post.id.eq(postId))
+                .where(vote.post.id.eq(postId))
                 .fetch();
     }
 
@@ -523,6 +526,17 @@ public class PostCustomRepositoryImpl implements PostCustomRepository {
                 .from(post)
                 .where(whereClause)
                 .fetchOne();
+    }
+
+    @Override
+    public void deleteSubscriptionsFromMember(Member reqMember) {
+        List<Post> posts = jpaQueryFactory.selectFrom(post)
+                .where(post.subscribers.any().id.eq(reqMember.getId()))
+                .fetch();
+        for (Post post : posts) {
+            post.getSubscribers().remove(reqMember);
+        }
+//        postRepository.saveAll(posts);
     }
 
 

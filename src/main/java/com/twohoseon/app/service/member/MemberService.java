@@ -27,4 +27,9 @@ public interface MemberService extends UserDetailsService, CommonService {
     void registerToken(String deviceToken);
 
     void setConsumptionTendency(ConsumerTypeRequest consumptionTendencyRequestDTO);
+
+    void deleteMember();
+
+//    void deleteSubscriptions(Member reqMember);
+
 }

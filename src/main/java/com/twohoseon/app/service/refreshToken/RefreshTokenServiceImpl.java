@@ -5,7 +5,9 @@ import com.twohoseon.app.entity.member.RefreshToken;
 import com.twohoseon.app.exception.InvalidRefreshTokenException;
 import com.twohoseon.app.repository.member.RefreshTokenRepository;
 import com.twohoseon.app.util.JwtTokenProvider;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
@@ -22,6 +24,7 @@ import java.time.ZoneId;
  **/
 @RequiredArgsConstructor
 @Service
+@Slf4j
 public class RefreshTokenServiceImpl implements RefreshTokenService {
     private final RefreshTokenRepository refreshTokenRepository;
     private final JwtTokenProvider jwtTokenProvider;
@@ -46,6 +49,16 @@ public class RefreshTokenServiceImpl implements RefreshTokenService {
         JWTToken newToken = jwtTokenProvider.createAllToken(refreshTokenEntity.getProviderId());
         saveRefreshTokenFromTokenDTO(newToken, refreshTokenEntity.getProviderId());
         return newToken;
+    }
+
+    @Override
+    public void logout(HttpServletRequest request) {
+        String accessToken = request.getHeader("Authorization").substring(7);
+        RefreshToken refreshToken = refreshTokenRepository.findByAccessToken(accessToken)
+                .orElseThrow(() -> new InvalidRefreshTokenException("Refresh Token does not exist."));
+        refreshToken.banRefreshToken();
+        refreshTokenRepository.save(refreshToken);
+        log.debug("logout request. access token : {}", accessToken);
     }
 
     @Override

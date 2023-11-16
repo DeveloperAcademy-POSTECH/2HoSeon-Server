@@ -1,21 +1,29 @@
 package com.twohoseon.app.service.member;
 
-import com.twohoseon.app.dto.request.member.ProfileRequest;
 import com.twohoseon.app.dto.ConsumerTypeRequest;
+import com.twohoseon.app.dto.request.member.ProfileRequest;
 import com.twohoseon.app.entity.member.DeviceToken;
 import com.twohoseon.app.entity.member.Member;
 import com.twohoseon.app.exception.SchoolUpdateRestrictionException;
 import com.twohoseon.app.repository.device.token.DeviceTokenRepository;
 import com.twohoseon.app.repository.member.MemberRepository;
+import com.twohoseon.app.repository.post.PostRepository;
 import com.twohoseon.app.security.MemberDetails;
+import com.twohoseon.app.service.comment.CommentService;
 import com.twohoseon.app.service.image.ImageService;
 import com.twohoseon.app.service.notification.NotificationService;
+import com.twohoseon.app.util.AppleUtility;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
+import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.Optional;
@@ -34,10 +42,15 @@ import java.util.concurrent.ExecutionException;
 @Service
 @RequiredArgsConstructor
 public class MemberServiceImpl implements MemberService {
+    private final PostRepository postRepository;
     private final MemberRepository memberRepository;
     private final ImageService imageService;
     private final DeviceTokenRepository deviceTokenRepository;
     private final NotificationService notificationService;
+    private final RestTemplate restTemplate;
+    private final AppleUtility appleUtility;
+
+    private final CommentService commentService;
 
     @Override
     public UserDetails loadUserByUsername(String providerId) throws UsernameNotFoundException {
@@ -109,5 +122,33 @@ public class MemberServiceImpl implements MemberService {
                 log.debug("sendConsumerTypeNotification error: ", e);
             }
         });
+    }
+
+    @Override
+    @Transactional
+    public void deleteMember() {
+        Member reqMember = getMemberFromRequest();
+        memberRepository.detachCommentsFromMember(reqMember.getId());
+        memberRepository.detachVoteFromMember(reqMember.getId());
+        memberRepository.deleteSubscriptionsFromMember(reqMember.getId());
+        memberRepository.deletePostsFromMember(reqMember);
+        memberRepository.delete(reqMember);
+        revokeAppleToken(reqMember.getAppleRefreshToken());
+    }
+
+    private void revokeAppleToken(String refreshToken) {
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Content-Type", "application/x-www-form-urlencoded");
+
+        MultiValueMap<String, String> map = new LinkedMultiValueMap<>();
+        map.add("client_id", appleUtility.getAppleClientId());
+        map.add("client_secret", appleUtility.createAppleClientSecret());
+        map.add("token", refreshToken);
+        map.add("token_type_hint", "refresh_token");
+
+        HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(map, headers);
+
+        String url = "https://appleid.apple.com/auth/revoke";
+        restTemplate.postForLocation(url, request);
     }
 }

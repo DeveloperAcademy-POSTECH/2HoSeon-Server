@@ -14,11 +14,13 @@ import java.util.Optional;
  * @date : 2023/10/07 3:51 PM
  * @modifyed : $
  **/
+
 @Repository
 public interface RefreshTokenRepository extends JpaRepository<RefreshToken, Long>, RefreshTokenCustomRepository {
 
     Optional<RefreshToken> findByRefreshToken(String refreshToken);
 
-    boolean existsByAccessTokenAndIsBannedTrue(String accessToken);
+
+    Optional<RefreshToken> findByAccessToken(String accessToken);
 
 }

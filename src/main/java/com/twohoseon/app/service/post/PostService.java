@@ -53,6 +53,8 @@ public interface PostService extends CommonService {
 
     void subscribePost(Long postId);
 
+    void unsubscribePost(Long postId);
+
     ReviewFetch fetchReviews(VisibilityScope visibilityScope, Pageable pageable, ReviewType reviewType);
 
     MypageFetch fetchMyReviews(VisibilityScope visibilityScope, Pageable pageable);
@@ -60,4 +62,5 @@ public interface PostService extends CommonService {
     ReviewDetail getReviewDetail(Long postId);
 
     MypageFetch fetchMypagePosts(Pageable pageable, MyVoteCategoryType myVoteCategoryType);
+
 }

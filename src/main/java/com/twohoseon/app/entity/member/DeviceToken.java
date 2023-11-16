@@ -25,7 +25,7 @@ public class DeviceToken {
     @Column(name = "id", nullable = false)
     private Long id;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.REMOVE)
     @JoinColumn(name = "member_id", nullable = false)
     private Member member;
 
