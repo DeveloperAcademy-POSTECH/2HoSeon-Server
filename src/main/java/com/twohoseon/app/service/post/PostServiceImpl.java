@@ -89,7 +89,7 @@ public class PostServiceImpl implements PostService {
             throw new PermissionDeniedException();
 
         try {
-            jobSchedulingService.schedulePostDeleteJob(postId);
+            jobSchedulingService.deleteScheduledPostExpireJob(postId);
         } catch (SchedulerException e) {
             throw new RuntimeException(e);
         }

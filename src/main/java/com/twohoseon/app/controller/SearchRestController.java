@@ -7,9 +7,6 @@ import com.twohoseon.app.enums.post.PostStatus;
 import com.twohoseon.app.enums.post.VisibilityScope;
 import com.twohoseon.app.service.search.SearchService;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.media.Schema;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -44,14 +41,6 @@ public class SearchRestController {
     private final SearchService searchService;
 
     @Operation(summary = "검색")
-    @ApiResponse(
-            responseCode = "200",
-            description = "검색 성공",
-            content = @Content(
-                    mediaType = "application/json",
-                    schema = @Schema(implementation = SearchResponse.class)
-            )
-    )
     @GetMapping
     public ResponseEntity<SearchResponse> searchKeyword(@RequestParam(defaultValue = "ACTIVE", value = "postStatus") PostStatus postStatus,
                                                         @RequestParam(defaultValue = "GLOBAL", value = "visibilityScope") VisibilityScope visibilityScope,

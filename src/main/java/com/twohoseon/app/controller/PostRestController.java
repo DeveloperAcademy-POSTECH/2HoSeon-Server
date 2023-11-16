@@ -14,9 +14,6 @@ import com.twohoseon.app.repository.post.PostRepository;
 import com.twohoseon.app.service.comment.CommentService;
 import com.twohoseon.app.service.post.PostService;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.media.Schema;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -198,14 +195,6 @@ public class PostRestController {
 
 
     @Operation(summary = "게시글 투표 하기", description = "게시글 투표하기")
-    @ApiResponse(
-            responseCode = "200",
-            description = "투표 성공",
-            content = @Content(
-                    mediaType = "application/json",
-                    schema = @Schema(implementation = VoteResultResponse.class)
-            )
-    )
     @PostMapping("/{postId}/votes")
     public ResponseEntity<VoteResultResponse> vote(@PathVariable("postId") Long postId, @RequestBody VoteCreateRequest voteCreateRequest) {
 
