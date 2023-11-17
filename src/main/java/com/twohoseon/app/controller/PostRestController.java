@@ -4,10 +4,9 @@ import com.twohoseon.app.dto.request.post.PostRequest;
 import com.twohoseon.app.dto.request.post.VoteCreateRequest;
 import com.twohoseon.app.dto.request.review.ReviewRequest;
 import com.twohoseon.app.dto.response.GeneralResponse;
+import com.twohoseon.app.dto.response.VoteCounts;
 import com.twohoseon.app.dto.response.VoteResultResponse;
-import com.twohoseon.app.dto.response.post.PostListResponse;
-import com.twohoseon.app.dto.response.post.PostResponse;
-import com.twohoseon.app.dto.response.post.ReviewDetailResponse;
+import com.twohoseon.app.dto.response.post.*;
 import com.twohoseon.app.enums.StatusEnum;
 import com.twohoseon.app.enums.post.VisibilityScope;
 import com.twohoseon.app.repository.post.PostRepository;
@@ -23,6 +22,8 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.util.List;
 
 import static org.springframework.http.ResponseEntity.ok;
 
@@ -134,10 +135,11 @@ public class PostRestController {
     @Operation(summary = "리뷰 상세 조회", description = "리뷰 상세 조회")
     @GetMapping("/{postId}/reviews")
     public ResponseEntity<ReviewDetailResponse> fetchReview(@PathVariable("postId") Long postId) {
+        ReviewDetail reviewDetail = postService.fetchReviewDetail(postId);
         ReviewDetailResponse response = ReviewDetailResponse.builder()
                 .status(StatusEnum.OK)
                 .message("success")
-                .data(postService.getReviewDetail(postId))
+                .data(reviewDetail)
                 .build();
         return ok(response);
     }
@@ -173,22 +175,23 @@ public class PostRestController {
                                                        @RequestParam(defaultValue = "10", value = "size") int size,
                                                        @RequestParam(value = "visibilityScope") VisibilityScope visibilityScope) {
         Pageable pageable = PageRequest.of(page, size);
-
+        List<PostInfo> postInfoList = postService.fetchPosts(pageable, visibilityScope);
         PostListResponse response = PostListResponse.builder()
                 .status(StatusEnum.OK)
                 .message("success")
-                .data(postService.fetchPosts(pageable, visibilityScope))
+                .data(postInfoList)
                 .build();
         return ok(response);
     }
 
     @GetMapping("/{postId}")
     @Operation(summary = "게시글 상세 조회", description = "게시글 상세 조회")
-    public ResponseEntity<PostResponse> fetchPost(@PathVariable("postId") Long postId) {
-        PostResponse response = PostResponse.builder()
+    public ResponseEntity<PostDetailResponse> fetchPostDetail(@PathVariable("postId") Long postId) {
+        PostDetail postInfo = postService.fetchPostDetail(postId);
+        PostDetailResponse response = PostDetailResponse.builder()
                 .status(StatusEnum.OK)
                 .message("success")
-                .data(postService.fetchPost(postId))
+                .data(postInfo)
                 .build();
         return ok(response);
     }
@@ -197,11 +200,11 @@ public class PostRestController {
     @Operation(summary = "게시글 투표 하기", description = "게시글 투표하기")
     @PostMapping("/{postId}/votes")
     public ResponseEntity<VoteResultResponse> vote(@PathVariable("postId") Long postId, @RequestBody VoteCreateRequest voteCreateRequest) {
-
+        VoteCounts voteCounts = postService.createVote(postId, voteCreateRequest.isMyChoice());
         VoteResultResponse response = VoteResultResponse.builder()
                 .status(StatusEnum.OK)
                 .message("success")
-                .data(postService.createVote(postId, voteCreateRequest.isMyChoice()))
+                .data(voteCounts)
                 .build();
         return ok(response);
     }

@@ -1,6 +1,7 @@
 package com.twohoseon.app.repository.post;
 
 import com.twohoseon.app.dto.response.VoteCounts;
+import com.twohoseon.app.dto.response.post.PostDetail;
 import com.twohoseon.app.dto.response.post.PostInfo;
 import com.twohoseon.app.dto.response.post.PostSummary;
 import com.twohoseon.app.entity.member.Member;
@@ -55,4 +56,9 @@ public interface PostCustomRepository {
 
     void deleteSubscriptionsFromMember(Member reqMember);
 
+    PostDetail findPostDetailById(Long postId, Long id);
+
+    Integer calculateCommentCountByPostId(Long postId);
+
+    String getCommentPreviewByPostId(Long postId);
 }

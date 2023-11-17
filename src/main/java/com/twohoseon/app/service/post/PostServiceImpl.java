@@ -4,10 +4,7 @@ import com.twohoseon.app.dto.request.post.PostRequest;
 import com.twohoseon.app.dto.request.review.ReviewRequest;
 import com.twohoseon.app.dto.response.VoteCounts;
 import com.twohoseon.app.dto.response.mypage.MypageFetch;
-import com.twohoseon.app.dto.response.post.PostInfo;
-import com.twohoseon.app.dto.response.post.PostSummary;
-import com.twohoseon.app.dto.response.post.ReviewDetail;
-import com.twohoseon.app.dto.response.post.ReviewFetch;
+import com.twohoseon.app.dto.response.post.*;
 import com.twohoseon.app.entity.member.Member;
 import com.twohoseon.app.entity.post.Post;
 import com.twohoseon.app.enums.ConsumerType;
@@ -113,10 +110,10 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public PostInfo fetchPost(Long postId) {
+    public PostDetail fetchPostDetail(Long postId) {
         Member member = getMemberFromRequest();
-        PostInfo postInfo = postRepository.findPostById(postId, member.getId());
-        return postInfo;
+        PostDetail postDetail = postRepository.findPostDetailById(postId, member.getId());
+        return postDetail;
     }
 
     //TODO 업로드 수정
@@ -266,17 +263,28 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public ReviewDetail getReviewDetail(Long postId) {
+    public ReviewDetail fetchReviewDetail(Long postId) {
         Member member = getMemberFromRequest();
         Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new PostNotFoundException());
-        PostSummary originalPost = postRepository.getPostSummaryInReviewDetail(postId);
-        PostInfo reviewPost = postRepository.getReviewDetailByPostId(post.getReview().getId());
-        return ReviewDetail.builder()
+        PostSummary originalPost = null;
+        PostInfo reviewPost = null;
+        String commentPreview = null;
+        Integer commentCount = null;
+        originalPost = postRepository.getPostSummaryInReviewDetail(postId);
+        reviewPost = postRepository.getReviewDetailByPostId(post.getReview().getId());
+        commentCount = postRepository.calculateCommentCountByPostId(reviewPost.getPostId());
+        if (commentCount != null) {
+            commentPreview = postRepository.getCommentPreviewByPostId(reviewPost.getPostId());
+        }
+        ReviewDetail reviewDetail = ReviewDetail.builder()
                 .originalPost(originalPost)
                 .reviewPost(reviewPost)
                 .isMine(originalPost.getAuthor().getId().equals(member.getId()))
+                .commentCount(commentCount)
+                .commentPreview(commentPreview)
                 .build();
+        return reviewDetail;
     }
 
     @Override

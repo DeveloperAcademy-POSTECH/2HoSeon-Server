@@ -9,6 +9,7 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.twohoseon.app.dto.response.VoteCounts;
 import com.twohoseon.app.dto.response.VoteInfo;
 import com.twohoseon.app.dto.response.post.AuthorInfo;
+import com.twohoseon.app.dto.response.post.PostDetail;
 import com.twohoseon.app.dto.response.post.PostInfo;
 import com.twohoseon.app.dto.response.post.PostSummary;
 import com.twohoseon.app.entity.member.Member;
@@ -18,6 +19,7 @@ import com.twohoseon.app.enums.ReviewType;
 import com.twohoseon.app.enums.mypage.MyVoteCategoryType;
 import com.twohoseon.app.enums.post.PostStatus;
 import com.twohoseon.app.enums.post.VisibilityScope;
+import com.twohoseon.app.exception.PostNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
@@ -26,6 +28,7 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 import static com.twohoseon.app.entity.member.QMember.member;
+import static com.twohoseon.app.entity.post.QComment.comment;
 import static com.twohoseon.app.entity.post.QPost.post;
 import static com.twohoseon.app.entity.post.vote.QVote.vote;
 
@@ -537,6 +540,79 @@ public class PostCustomRepositoryImpl implements PostCustomRepository {
             post.getSubscribers().remove(reqMember);
         }
 //        postRepository.saveAll(posts);
+    }
+
+    @Override
+    public PostDetail findPostDetailById(Long postId, Long memberId) {
+        PostDetail postDetail;
+        PostInfo postInfo;
+        Integer commentCount;
+        String commentPreview;
+        postInfo = jpaQueryFactory
+                .select(Projections.constructor(PostInfo.class,
+                        post.id.as("post_id"),
+                        post.createDate,
+                        post.modifiedDate,
+                        post.visibilityScope,
+                        post.postStatus,
+                        Projections.constructor(AuthorInfo.class,
+                                member.id,
+                                member.nickname,
+                                member.profileImage,
+                                member.consumerType),
+                        post.title,
+                        post.contents,
+                        post.image,
+                        post.externalURL,
+                        post.commentCount,
+                        post.agreeCount.add(post.disagreeCount),
+                        post.price,
+                        post.review.isNotNull()
+                ))
+                .from(post)
+                .where(post.id.eq(postId))
+                .leftJoin(post.author, member)
+                .orderBy(post.createDate.desc())
+                .fetchOne();
+
+        if (postInfo == null) {
+            throw new PostNotFoundException();
+        } else {
+            Boolean isVoted = getIsVotedPost(postInfo.getPostId(), memberId);
+            postInfo.setVoteCounts(getVoteInfo(postInfo.getPostId()));
+            postInfo.setMyChoice(isVoted);
+            if (postInfo.getAuthor().getId() == memberId)
+                postInfo.setVoteInfoList(getVoteInfoList(postId));
+            postInfo.setIsNotified(getIsNotified(postId, memberId));
+            postInfo.setIsMine(postInfo.getAuthor().getId() == memberId);
+            postInfo.setVoteInfoList(getVoteInfoList(postId));
+            commentCount = calculateCommentCountByPostId(postId);
+            if (commentCount != null) {
+                commentPreview = getCommentPreviewByPostId(postId);
+                postDetail = new PostDetail(postInfo, commentCount, commentPreview);
+                return postDetail;
+            }
+        }
+        return null;
+    }
+
+    @Override
+    public Integer calculateCommentCountByPostId(Long postId) {
+        return jpaQueryFactory
+                .select(post.commentCount)
+                .from(post)
+                .where(post.id.eq(postId))
+                .fetchOne();
+    }
+
+    @Override
+    public String getCommentPreviewByPostId(Long postId) {
+        return jpaQueryFactory
+                .select(comment.content)
+                .from(comment)
+                .where(post.id.eq(postId))
+                .orderBy(comment.createDate.desc())
+                .fetchFirst();
     }
 
 
