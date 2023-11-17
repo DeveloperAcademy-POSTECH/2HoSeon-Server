@@ -161,6 +161,7 @@ public class Post extends BaseTimeEntity {
                 .voter(voter)
                 .post(this)
                 .isAgree(myChoice)
+                .consumerType(voter.getConsumerType())
                 .build();
         if (myChoice)
             this.agreeCount += 1;
