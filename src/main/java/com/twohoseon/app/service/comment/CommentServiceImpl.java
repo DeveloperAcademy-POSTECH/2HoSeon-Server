@@ -92,7 +92,7 @@ public class CommentServiceImpl implements CommentService {
         Member member = getMemberFromRequest();
         Comment comment = commentRepository.findById(postCommentId)
                 .orElseThrow(() -> new CommentNotFoundException());
-        if (comment.getAuthor() != member) {
+        if (comment.getAuthor().getId() != member.getId()) {
             throw new PermissionDeniedException();
         }
         comment.getPost().decrementCommentCount();
