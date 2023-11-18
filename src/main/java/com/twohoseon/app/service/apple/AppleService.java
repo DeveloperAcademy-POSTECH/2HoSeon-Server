@@ -9,7 +9,6 @@ package com.twohoseon.app.service.apple;
  * @modifyed : $
  **/
 public interface AppleService {
-    void revokeAppleToken(String appleRefreshToken);
 
     void listenDeleteMemberEvent(String payload);
 
