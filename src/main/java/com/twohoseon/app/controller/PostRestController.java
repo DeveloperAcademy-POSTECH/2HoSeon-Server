@@ -4,19 +4,15 @@ import com.twohoseon.app.dto.request.post.PostRequest;
 import com.twohoseon.app.dto.request.post.VoteCreateRequest;
 import com.twohoseon.app.dto.request.review.ReviewRequest;
 import com.twohoseon.app.dto.response.GeneralResponse;
+import com.twohoseon.app.dto.response.VoteCounts;
 import com.twohoseon.app.dto.response.VoteResultResponse;
-import com.twohoseon.app.dto.response.post.PostListResponse;
-import com.twohoseon.app.dto.response.post.PostResponse;
-import com.twohoseon.app.dto.response.post.ReviewDetailResponse;
+import com.twohoseon.app.dto.response.post.*;
 import com.twohoseon.app.enums.StatusEnum;
 import com.twohoseon.app.enums.post.VisibilityScope;
 import com.twohoseon.app.repository.post.PostRepository;
 import com.twohoseon.app.service.comment.CommentService;
 import com.twohoseon.app.service.post.PostService;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.media.Schema;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -26,6 +22,8 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.util.List;
 
 import static org.springframework.http.ResponseEntity.ok;
 
@@ -109,6 +107,18 @@ public class PostRestController {
         return ok(response);
     }
 
+    @Operation(summary = "후기 구독 취소", description = "후기 구독")
+    @DeleteMapping("/{postId}/subscribe")
+    public ResponseEntity<GeneralResponse> unSubscribePost(@PathVariable("postId") Long postId) {
+        //TODO 중복 구독 핸들링
+        postService.unsubscribePost(postId);
+        GeneralResponse response = GeneralResponse.builder()
+                .status(StatusEnum.OK)
+                .message("success")
+                .build();
+        return ok(response);
+    }
+
     @Operation(summary = "리뷰 작성", description = "리뷰 작성")
     @PostMapping(value = "/{postId}/reviews", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
     public ResponseEntity<GeneralResponse> createReview(@PathVariable("postId") Long postId,
@@ -125,10 +135,11 @@ public class PostRestController {
     @Operation(summary = "리뷰 상세 조회", description = "리뷰 상세 조회")
     @GetMapping("/{postId}/reviews")
     public ResponseEntity<ReviewDetailResponse> fetchReview(@PathVariable("postId") Long postId) {
+        ReviewDetail reviewDetail = postService.fetchReviewDetail(postId);
         ReviewDetailResponse response = ReviewDetailResponse.builder()
                 .status(StatusEnum.OK)
                 .message("success")
-                .data(postService.getReviewDetail(postId))
+                .data(reviewDetail)
                 .build();
         return ok(response);
     }
@@ -164,43 +175,36 @@ public class PostRestController {
                                                        @RequestParam(defaultValue = "10", value = "size") int size,
                                                        @RequestParam(value = "visibilityScope") VisibilityScope visibilityScope) {
         Pageable pageable = PageRequest.of(page, size);
-
+        List<PostInfo> postInfoList = postService.fetchPosts(pageable, visibilityScope);
         PostListResponse response = PostListResponse.builder()
                 .status(StatusEnum.OK)
                 .message("success")
-                .data(postService.fetchPosts(pageable, visibilityScope))
+                .data(postInfoList)
                 .build();
         return ok(response);
     }
 
     @GetMapping("/{postId}")
     @Operation(summary = "게시글 상세 조회", description = "게시글 상세 조회")
-    public ResponseEntity<PostResponse> fetchPost(@PathVariable("postId") Long postId) {
-        PostResponse response = PostResponse.builder()
+    public ResponseEntity<PostDetailResponse> fetchPostDetail(@PathVariable("postId") Long postId) {
+        PostDetail postInfo = postService.fetchPostDetail(postId);
+        PostDetailResponse response = PostDetailResponse.builder()
                 .status(StatusEnum.OK)
                 .message("success")
-                .data(postService.fetchPost(postId))
+                .data(postInfo)
                 .build();
         return ok(response);
     }
 
 
     @Operation(summary = "게시글 투표 하기", description = "게시글 투표하기")
-    @ApiResponse(
-            responseCode = "200",
-            description = "투표 성공",
-            content = @Content(
-                    mediaType = "application/json",
-                    schema = @Schema(implementation = VoteResultResponse.class)
-            )
-    )
     @PostMapping("/{postId}/votes")
     public ResponseEntity<VoteResultResponse> vote(@PathVariable("postId") Long postId, @RequestBody VoteCreateRequest voteCreateRequest) {
-
+        VoteCounts voteCounts = postService.createVote(postId, voteCreateRequest.isMyChoice());
         VoteResultResponse response = VoteResultResponse.builder()
                 .status(StatusEnum.OK)
                 .message("success")
-                .data(postService.createVote(postId, voteCreateRequest.isMyChoice()))
+                .data(voteCounts)
                 .build();
         return ok(response);
     }

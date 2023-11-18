@@ -20,7 +20,7 @@ import lombok.Data;
 @Schema(name = "PostResponseDTO", description = "게시글 응답 DTO")
 @Builder
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class PostResponse {
+public class PostDetailResponse {
     @Schema(name = "status", type = "int", description = "응답 상태")
     @JsonSerialize(using = StatusEnumSerializer.class)
     private StatusEnum status;
@@ -28,6 +28,6 @@ public class PostResponse {
     @Schema(name = "message", type = "int", description = "응답 메시지")
     private String message;
 
-    @Schema(name = "data", type = "PostInfoDTO", description = "응답 데이터")
-    private PostInfo data;
+    @Schema(name = "data", type = "PostDetail", description = "응답 데이터")
+    private PostDetail data;
 }

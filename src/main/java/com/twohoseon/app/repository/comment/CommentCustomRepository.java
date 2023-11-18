@@ -16,4 +16,5 @@ public interface CommentCustomRepository {
     List<CommentInfo> getAllCommentsFromPost(Long postId);
 
     List<CommentInfo> getSubComments(Long parentId);
+    
 }

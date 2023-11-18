@@ -8,5 +8,8 @@ package com.twohoseon.app.repository.member;
  * @date : 11/15/23 12:35 AM
  * @modifyed : $
  **/
+
 public interface RefreshTokenCustomRepository {
+    boolean existsByAccessTokenAndIsBannedTrue(String accessToken);
+
 }

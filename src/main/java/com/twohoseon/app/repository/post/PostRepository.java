@@ -1,10 +1,8 @@
 package com.twohoseon.app.repository.post;
 
+import com.twohoseon.app.entity.member.Member;
 import com.twohoseon.app.entity.post.Post;
-import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
-
-import java.util.List;
 
 /**
  * @author : hyunwoopark
@@ -15,7 +13,8 @@ import java.util.List;
  * @modifyed : $
  **/
 
+
 public interface PostRepository extends JpaRepository<Post, Long>, PostCustomRepository {
-    @EntityGraph(attributePaths = "author")
-    List<Post> findAllBy();
+    void deleteByAuthor(Member author);
+
 }

@@ -4,6 +4,7 @@ import com.twohoseon.app.dto.request.post.PostRequest;
 import com.twohoseon.app.dto.request.review.ReviewRequest;
 import com.twohoseon.app.dto.response.VoteCounts;
 import com.twohoseon.app.dto.response.mypage.MypageFetch;
+import com.twohoseon.app.dto.response.post.PostDetail;
 import com.twohoseon.app.dto.response.post.PostInfo;
 import com.twohoseon.app.dto.response.post.ReviewDetail;
 import com.twohoseon.app.dto.response.post.ReviewFetch;
@@ -39,7 +40,7 @@ public interface PostService extends CommonService {
 
 //    VoteCountsDTO getVoteCounts(Long postId);
 
-    PostInfo fetchPost(Long postId);
+    PostDetail fetchPostDetail(Long postId);
 
     void updatePost(Long postId, PostRequest postRequest, MultipartFile file);
 
@@ -53,11 +54,14 @@ public interface PostService extends CommonService {
 
     void subscribePost(Long postId);
 
+    void unsubscribePost(Long postId);
+
     ReviewFetch fetchReviews(VisibilityScope visibilityScope, Pageable pageable, ReviewType reviewType);
 
     MypageFetch fetchMyReviews(VisibilityScope visibilityScope, Pageable pageable);
 
-    ReviewDetail getReviewDetail(Long postId);
+    ReviewDetail fetchReviewDetail(Long postId);
 
     MypageFetch fetchMypagePosts(Pageable pageable, MyVoteCategoryType myVoteCategoryType);
+
 }

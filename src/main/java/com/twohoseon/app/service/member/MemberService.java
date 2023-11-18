@@ -29,5 +29,10 @@ public interface MemberService extends UserDetailsService, CommonService {
 
     void setConsumptionTendency(ConsumerTypeRequest consumptionTendencyRequestDTO);
 
+    void deleteMember();
+
+//    void deleteSubscriptions(Member reqMember);
+
+
     ProfileInfo getProfile();
 }

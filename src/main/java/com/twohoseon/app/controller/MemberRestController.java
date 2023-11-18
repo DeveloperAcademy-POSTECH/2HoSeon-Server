@@ -77,6 +77,17 @@ public class MemberRestController {
         return ResponseEntity.ok(generalResponse);
     }
 
+    @Operation(summary = "회원 탈퇴", description = "회원 탈퇴")
+    @DeleteMapping("/api/members")
+    public ResponseEntity<GeneralResponse> deleteMember() {
+        memberService.deleteMember();
+        GeneralResponse generalResponse = GeneralResponse.builder()
+                .status(StatusEnum.OK)
+                .message("success")
+                .build();
+        return ResponseEntity.ok(generalResponse);
+    }
+
     @Operation(summary = "프로필 보기", description = "프로필 보기")
     @GetMapping("/api/profiles")
     public ResponseEntity<ProfileResponse> getProfile() {
@@ -87,6 +98,5 @@ public class MemberRestController {
                 .build();
         return ResponseEntity.ok(response);
     }
-
 
 }

@@ -5,7 +5,6 @@ import com.twohoseon.app.dto.request.post.PostRequest;
 import com.twohoseon.app.dto.request.review.ReviewRequest;
 import com.twohoseon.app.entity.member.Member;
 import com.twohoseon.app.entity.post.vote.Vote;
-import com.twohoseon.app.entity.post.vote.VoteId;
 import com.twohoseon.app.enums.VoteResult;
 import com.twohoseon.app.enums.post.PostStatus;
 import com.twohoseon.app.enums.post.VisibilityScope;
@@ -103,7 +102,7 @@ public class Post extends BaseTimeEntity {
     @Comment("이미지")
     private String image;
 
-    @OneToMany(mappedBy = "id.post", orphanRemoval = true, fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "post", orphanRemoval = true, fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @Builder.Default
     @Comment("투표 리스트")
     private Set<Vote> votes = new LinkedHashSet<>();
@@ -159,11 +158,10 @@ public class Post extends BaseTimeEntity {
 
     public void createVote(Member voter, boolean myChoice) {
         Vote vote = Vote.builder()
-                .id(VoteId.builder()
-                        .voter(voter)
-                        .post(this)
-                        .build())
+                .voter(voter)
+                .post(this)
                 .isAgree(myChoice)
+                .consumerType(voter.getConsumerType())
                 .build();
         if (myChoice)
             this.agreeCount += 1;
@@ -245,9 +243,13 @@ public class Post extends BaseTimeEntity {
 
     public boolean hasVoteFromMember(Member member) {
         for (Vote vote : votes) {
-            if (vote.getId().getVoter().equals(member))
+            if (vote.getVoter().equals(member))
                 return true;
         }
         return false;
+    }
+
+    public void unsubscribe(Member member) {
+        subscribers.remove(member);
     }
 }

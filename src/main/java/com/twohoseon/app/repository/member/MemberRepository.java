@@ -2,7 +2,6 @@ package com.twohoseon.app.repository.member;
 
 import com.twohoseon.app.entity.member.Member;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
 
@@ -14,7 +13,7 @@ import java.util.Optional;
  * @date : 2023/10/07 1:48 PM
  * @modifyed : $
  **/
-@Repository
+//@Repository
 public interface MemberRepository extends JpaRepository<Member, Long>, MemberCustomRepository {
     Optional<Member> findByProviderId(String providerId);
 

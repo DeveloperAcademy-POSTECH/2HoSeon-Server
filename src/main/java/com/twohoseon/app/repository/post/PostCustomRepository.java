@@ -1,6 +1,7 @@
 package com.twohoseon.app.repository.post;
 
 import com.twohoseon.app.dto.response.VoteCounts;
+import com.twohoseon.app.dto.response.post.PostDetail;
 import com.twohoseon.app.dto.response.post.PostInfo;
 import com.twohoseon.app.dto.response.post.PostSummary;
 import com.twohoseon.app.entity.member.Member;
@@ -20,6 +21,7 @@ import java.util.List;
  * @date : 10/19/23 10:37 PM
  * @modifyed : $
  **/
+
 public interface PostCustomRepository {
     List<PostInfo> findAllPosts(Pageable pageable, Member memberId, VisibilityScope visibilityScope);
 
@@ -51,4 +53,12 @@ public interface PostCustomRepository {
     List<PostSummary> findAllPostsByMyVoteCategoryType(Pageable pageable, Member reqMember, MyVoteCategoryType myVoteCategoryType);
 
     long getTotalReviewCount(Member reqMember, VisibilityScope visibilityScope);
+
+    void deleteSubscriptionsFromMember(Member reqMember);
+
+    PostDetail findPostDetailById(Long postId, Long id);
+
+    Integer calculateCommentCountByPostId(Long postId);
+
+    String getCommentPreviewByPostId(Long postId);
 }

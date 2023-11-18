@@ -1,5 +1,7 @@
 package com.twohoseon.app.repository.member;
 
+import com.twohoseon.app.entity.member.Member;
+
 import com.twohoseon.app.dto.response.profile.ProfileInfo;
 
 /**
@@ -11,6 +13,16 @@ import com.twohoseon.app.dto.response.profile.ProfileInfo;
  * @modifyed : $
  **/
 public interface MemberCustomRepository {
+    void detachVoteFromMember(Long memberId);
+
+    void detachCommentsFromMember(Long memberId);
+
+    void deleteSubscriptionsFromMember(Long memberId);
+
+    void deletePostsFromMember(Member memberId);
+
+    void deletePostById(Long postId);
+//    void deleteSubscriptions(Member reqMember);
 
     ProfileInfo getProfile(long memberId);
 }

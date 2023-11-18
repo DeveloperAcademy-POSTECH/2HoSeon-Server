@@ -52,28 +52,16 @@ public class NotificationServiceImpl implements NotificationService {
                     TokenUtil.sanitizeTokenString(deviceToken),
                     appIdentifier,
                     new CustomApnsPayloadBuilder()
-                            .setPostDetails(post.getId())
+                            .setPostDetails(post)
                             .setAlertBody(alertBody)
                             .setSound("default")
                             .build()
             );
             PushNotificationResponse<SimpleApnsPushNotification> pushNotificationResponse =
                     apnsClient.sendNotification(pushNotification).get();
+            log.debug(pushNotification.toString());
             log.debug("push notification is success?: ", pushNotificationResponse.isAccepted());
         }
-//        String alertBody = String.format("%s 투표가 종료 되었어요.", post.getTitle());
-//        SimpleApnsPushNotification pushNotification = new SimpleApnsPushNotification(
-//                TokenUtil.sanitizeTokenString(deviceToken),
-//                appIdentifier,
-//                new CustomApnsPayloadBuilder()
-//                        .setPostDetails(post.getId())
-//                        .setAlertBody(alertBody)
-//                        .setSound("default")
-//                        .build()
-//        );
-//        PushNotificationResponse<SimpleApnsPushNotification> pushNotificationResponse =
-//                apnsClient.sendNotification(pushNotification).get();
-//        log.debug("push notification is success?: ", pushNotificationResponse.isAccepted());
     }
 
     @Override
@@ -82,16 +70,13 @@ public class NotificationServiceImpl implements NotificationService {
         //Sub comment 핸들링
 
         String alertBody = String.format("%s님이 회원님의 게시글에 댓글을 달았어요", userNickname);
-//                isSubComment ?
-//                String.format("%s님이 회원님의 댓글에 답글을 달았어요", userNickname) :
-
 
         for (String deviceToken : deviceTokens) {
             SimpleApnsPushNotification pushNotification = new SimpleApnsPushNotification(
                     TokenUtil.sanitizeTokenString(deviceToken),
                     appIdentifier,
                     new CustomApnsPayloadBuilder()
-                            .setPostDetails(post.getId())
+                            .setPostDetails(post)
                             .setAlertSubtitle(post.getTitle())
                             .setAlertBody(alertBody)
                             .setSound("default")
@@ -99,6 +84,7 @@ public class NotificationServiceImpl implements NotificationService {
             );
             PushNotificationResponse<SimpleApnsPushNotification> pushNotificationResponse =
                     apnsClient.sendNotification(pushNotification).get();
+            log.debug(pushNotification.toString());
             log.debug("push notification is success?: ", pushNotificationResponse.isAccepted());
         }
     }
@@ -114,7 +100,7 @@ public class NotificationServiceImpl implements NotificationService {
                     TokenUtil.sanitizeTokenString(deviceToken),
                     appIdentifier,
                     new CustomApnsPayloadBuilder()
-                            .setPostDetails(parentComment.getPost().getId())
+                            .setPostDetails(parentComment.getPost())
                             .setAlertSubtitle(parentComment.getPost().getTitle())
                             .setAlertBody(alertBody)
                             .setSound("default")
@@ -123,6 +109,7 @@ public class NotificationServiceImpl implements NotificationService {
             PushNotificationResponse<SimpleApnsPushNotification> pushNotificationResponse =
                     apnsClient.sendNotification(pushNotification).get();
             log.debug("push notification is success?: ", pushNotificationResponse.isAccepted());
+            log.debug(pushNotification.toString());
         }
     }
 
@@ -135,7 +122,7 @@ public class NotificationServiceImpl implements NotificationService {
                     TokenUtil.sanitizeTokenString(deviceToken),
                     appIdentifier,
                     new CustomApnsPayloadBuilder()
-                            .setPostDetails(post.getId())
+                            .setPostDetails(post)
                             .setAlertSubtitle(post.getTitle())
                             .setAlertBody("회원님의 투표에 후기가 작성되었어요.")
                             .setSound("default")
@@ -143,10 +130,9 @@ public class NotificationServiceImpl implements NotificationService {
             );
             PushNotificationResponse<SimpleApnsPushNotification> pushNotificationResponse =
                     apnsClient.sendNotification(pushNotification).get();
+            log.debug(pushNotification.toString());
             log.debug("push notification is success?: ", pushNotificationResponse.isAccepted());
         }
-
-
     }
 
     @Override
@@ -164,11 +150,10 @@ public class NotificationServiceImpl implements NotificationService {
                     Instant.now().plusSeconds(24 * 60 * 60), // 만료 시간 (예: 24시간 후)
                     DeliveryPriority.IMMEDIATE, // 우선 순위
                     PushType.BACKGROUND // 푸시 유형
-
             );
-            log.debug("pushNotification: " + pushNotification);
             PushNotificationResponse<SimpleApnsPushNotification> pushNotificationResponse =
                     apnsClient.sendNotification(pushNotification).get();
+            log.debug(pushNotification.toString());
             log.debug("push notification is success?: " + pushNotificationResponse.isAccepted());
         }
     }

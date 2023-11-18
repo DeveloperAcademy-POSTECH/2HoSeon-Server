@@ -9,7 +9,7 @@ package com.twohoseon.app.common;
  * @modifyed : $
  **/
 public abstract class ImageDTO {
-    private final String baseUri = "https:/test.hyunwoo.tech/images/";
+    private final String baseUri = "https:/www.wote.social/images/";
     private final String profileBaseUri = baseUri + "profiles/";
     private final String postBaseUri = baseUri + "posts/";
     private final String reviewBaseUri = baseUri + "reviews/";

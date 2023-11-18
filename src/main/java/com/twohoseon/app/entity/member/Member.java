@@ -47,7 +47,7 @@ public class Member extends BaseTimeEntity {
     @Column(length = 50, nullable = false, unique = true)
     private String providerId;
 
-    @Column(nullable = true)
+    @Column(nullable = true, unique = true)
     private String nickname;
 
     @Column(nullable = true)
@@ -96,6 +96,10 @@ public class Member extends BaseTimeEntity {
 
     public void setAppleRefreshToken(String appleRefreshToken) {
         this.appleRefreshToken = appleRefreshToken;
+    }
+
+    public String getAppleRefreshToken() {
+        return appleRefreshToken;
     }
 
     @Override

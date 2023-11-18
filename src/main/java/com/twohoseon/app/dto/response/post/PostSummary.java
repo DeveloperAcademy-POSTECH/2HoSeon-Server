@@ -31,11 +31,11 @@ public class PostSummary extends ImageDTO {
     private AuthorInfo author;
     @Schema(name = "postStatus", type = "PostStatus", description = "게시글 상태")
     private PostStatus postStatus;
-    @Schema(name = "viewCount", type = "int", description = "게시글 조회수")
+    @Schema(name = "viewCount", type = "Integer", description = "게시글 조회수")
     private Integer viewCount;
-    @Schema(name = "voteCount", type = "int", description = "총 투표 수")
+    @Schema(name = "voteCount", type = "Integer", description = "총 투표 수")
     private Integer voteCount;
-    @Schema(name = "commentCount", type = "int", description = "총 댓글 개수")
+    @Schema(name = "commentCount", type = "Integer", description = "총 댓글 개수")
     private Integer commentCount;
     @Schema(name = "voteResult", type = "VoteResult", description = "게시글 투표 결과")
     private VoteResult voteResult;
@@ -45,7 +45,7 @@ public class PostSummary extends ImageDTO {
     private String image;
     @Schema(name = "contents", type = "String", description = "게시글 내용")
     private String contents;
-    @Schema(name = "price", type = "int", description = "상품 가격")
+    @Schema(name = "price", type = "Integer", description = "상품 가격")
     private Integer price;
     @Schema(name = "isPurchased", type = "boolean", description = "구매 여부")
     private Boolean isPurchased;
@@ -54,7 +54,7 @@ public class PostSummary extends ImageDTO {
 
 
     //진행중인 투표 검색
-    public PostSummary(LocalDateTime createDate, LocalDateTime modifiedDate, Long postId, AuthorInfo author, PostStatus postStatus, int voteCount, String title, String image, String contents, int price, int commentCount) {
+    public PostSummary(LocalDateTime createDate, LocalDateTime modifiedDate, Long postId, AuthorInfo author, PostStatus postStatus, Integer voteCount, String title, String image, String contents, Integer price, Integer commentCount) {
         this.createDate = createDate;
         this.modifiedDate = modifiedDate;
         this.postId = postId;
@@ -69,7 +69,7 @@ public class PostSummary extends ImageDTO {
     }
 
     //종료된 투표 검색
-    public PostSummary(LocalDateTime createDate, LocalDateTime modifiedDate, Long postId, AuthorInfo author, PostStatus postStatus, int voteCount, int commentCount, VoteResult voteResult, String title, String image, String contents, int price) {
+    public PostSummary(LocalDateTime createDate, LocalDateTime modifiedDate, Long postId, AuthorInfo author, PostStatus postStatus, Integer voteCount, Integer commentCount, VoteResult voteResult, String title, String image, String contents, Integer price) {
         this.createDate = createDate;
         this.modifiedDate = modifiedDate;
         this.postId = postId;
@@ -85,7 +85,7 @@ public class PostSummary extends ImageDTO {
     }
 
     //후기 검색 결과
-    public PostSummary(LocalDateTime createDate, LocalDateTime modifiedDate, Long postId, AuthorInfo author, PostStatus postStatus, int viewCount, int commentCount, String title, String image, String contents, int price, boolean isPurchased) {
+    public PostSummary(LocalDateTime createDate, LocalDateTime modifiedDate, Long postId, AuthorInfo author, PostStatus postStatus, Integer viewCount, Integer commentCount, String title, String image, String contents, Integer price, boolean isPurchased) {
         this.createDate = createDate;
         this.modifiedDate = modifiedDate;
         this.postId = postId;
@@ -101,7 +101,7 @@ public class PostSummary extends ImageDTO {
     }
 
     //소비 후기 탭 fetch
-    public PostSummary(LocalDateTime createDate, LocalDateTime modifiedDate, Long postId, AuthorInfo author, PostStatus postStatus, int commentCount, String title, String image, String contents, int price, boolean isPurchased) {
+    public PostSummary(LocalDateTime createDate, LocalDateTime modifiedDate, Long postId, AuthorInfo author, PostStatus postStatus, Integer commentCount, String title, String image, String contents, Integer price, boolean isPurchased) {
         this.createDate = createDate;
         this.modifiedDate = modifiedDate;
         this.postId = postId;
@@ -126,7 +126,7 @@ public class PostSummary extends ImageDTO {
     }
 
     //후기 상세 fetch시 상단에 나오는 원본 게시글
-    public PostSummary(LocalDateTime createDate, LocalDateTime modifiedDate, Long postId, AuthorInfo author, PostStatus postStatus, VoteResult voteResult, String title, String image, String contents, int price) {
+    public PostSummary(LocalDateTime createDate, LocalDateTime modifiedDate, Long postId, AuthorInfo author, PostStatus postStatus, VoteResult voteResult, String title, String image, String contents, Integer price) {
         this.createDate = createDate;
         this.modifiedDate = modifiedDate;
         this.postId = postId;
@@ -140,7 +140,7 @@ public class PostSummary extends ImageDTO {
     }
 
     //마이페이지 리뷰 fetch
-    public PostSummary(LocalDateTime createDate, LocalDateTime modifiedDate, Long postId, PostStatus postStatus, String title, String image, String contents, int price, boolean isPurchased) {
+    public PostSummary(LocalDateTime createDate, LocalDateTime modifiedDate, Long postId, PostStatus postStatus, String title, String image, String contents, Integer price, boolean isPurchased) {
         this.createDate = createDate;
         this.modifiedDate = modifiedDate;
         this.postId = postId;
@@ -153,7 +153,7 @@ public class PostSummary extends ImageDTO {
     }
 
     // 마이페이지 투표 fetch
-    public PostSummary(LocalDateTime createDate, LocalDateTime modifiedDate, Long postId, PostStatus postStatus, VoteResult voteResult, String title, String image, String contents, int price, Boolean hasReview) {
+    public PostSummary(LocalDateTime createDate, LocalDateTime modifiedDate, Long postId, PostStatus postStatus, VoteResult voteResult, String title, String image, String contents, Integer price, Boolean hasReview) {
         this.createDate = createDate;
         this.modifiedDate = modifiedDate;
         this.postId = postId;

@@ -1,12 +1,14 @@
 package com.twohoseon.app.controller;
 
 import com.twohoseon.app.dto.request.member.TokenRefresh;
+import com.twohoseon.app.dto.response.GeneralResponse;
 import com.twohoseon.app.dto.response.JWTToken;
 import com.twohoseon.app.dto.response.TokenResponse;
 import com.twohoseon.app.enums.StatusEnum;
 import com.twohoseon.app.service.refreshToken.RefreshTokenService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -42,6 +44,17 @@ public class AuthRestController {
                 .status(StatusEnum.OK)
                 .message("token renew success.")
                 .data(renewJWTToken)
+                .build();
+        return ResponseEntity.ok(generalResponse);
+    }
+
+    @PostMapping("logout")
+    @Operation(summary = "로그아웃", description = "로그아웃")
+    public ResponseEntity<GeneralResponse> logout(HttpServletRequest request) {
+        refreshTokenService.logout(request);
+        GeneralResponse generalResponse = GeneralResponse.builder()
+                .status(StatusEnum.OK)
+                .message("logout success.")
                 .build();
         return ResponseEntity.ok(generalResponse);
     }

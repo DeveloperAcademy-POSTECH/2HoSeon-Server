@@ -9,6 +9,7 @@ import com.twohoseon.app.exception.SchoolUpdateRestrictionException;
 import com.twohoseon.app.repository.device.token.DeviceTokenRepository;
 import com.twohoseon.app.repository.member.MemberRepository;
 import com.twohoseon.app.security.MemberDetails;
+import com.twohoseon.app.service.apple.AppleService;
 import com.twohoseon.app.service.image.ImageService;
 import com.twohoseon.app.service.notification.NotificationService;
 import lombok.RequiredArgsConstructor;
@@ -35,10 +36,12 @@ import java.util.concurrent.ExecutionException;
 @Service
 @RequiredArgsConstructor
 public class MemberServiceImpl implements MemberService {
+
     private final MemberRepository memberRepository;
     private final ImageService imageService;
     private final DeviceTokenRepository deviceTokenRepository;
     private final NotificationService notificationService;
+    private final AppleService appleService;
 
     @Override
     public UserDetails loadUserByUsername(String providerId) throws UsernameNotFoundException {
@@ -113,8 +116,22 @@ public class MemberServiceImpl implements MemberService {
     }
 
     @Override
+    @Transactional
+    public void deleteMember() {
+        Member reqMember = getMemberFromRequest();
+        memberRepository.detachCommentsFromMember(reqMember.getId());
+        memberRepository.detachVoteFromMember(reqMember.getId());
+        memberRepository.deleteSubscriptionsFromMember(reqMember.getId());
+        memberRepository.deletePostsFromMember(reqMember);
+        memberRepository.delete(reqMember);
+        appleService.revokeAppleToken(reqMember.getAppleRefreshToken());
+    }
+
+
+    @Override
     public ProfileInfo getProfile() {
         Member member = getMemberFromRequest();
         return memberRepository.getProfile(member.getId());
     }
+
 }
