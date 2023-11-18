@@ -117,8 +117,6 @@ public class CommentRestController {
     public ResponseEntity<CommentResponse> getPostCommentChildren(@PathVariable(value = "commentId") Long commentId) {
 
         List<CommentInfo> postCommentLists = commentService.getSubComments(commentId);
-        commentRepository.getSubComments(commentId);
-
         CommentResponse commentResponse = CommentResponse.builder()
                 .status(StatusEnum.OK)
                 .message("success")

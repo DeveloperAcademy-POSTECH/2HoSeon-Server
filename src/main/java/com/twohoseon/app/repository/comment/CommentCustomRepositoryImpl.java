@@ -27,7 +27,7 @@ public class CommentCustomRepositoryImpl implements CommentCustomRepository {
     private final JPAQueryFactory jpaQueryFactory;
 
     @Override
-    public List<CommentInfo> getAllCommentsFromPost(Long postId) {
+    public List<CommentInfo> getAllCommentsFromPost(Long postId, Long memberId) {
         List<CommentInfo> commentInfoList = jpaQueryFactory.select(Projections.constructor(
                         CommentInfo.class,
                         comment.id,
@@ -40,7 +40,9 @@ public class CommentCustomRepositoryImpl implements CommentCustomRepository {
                                 member.nickname,
                                 member.profileImage,
                                 member.consumerType
-                        )
+                        ),
+                        comment.author.id.eq(memberId)
+
                 ))
                 .from(comment)
                 .leftJoin(comment.author, member)
@@ -53,7 +55,7 @@ public class CommentCustomRepositoryImpl implements CommentCustomRepository {
                 .fetch();
 
         for (CommentInfo comments : commentInfoList) {
-            List<CommentInfo> subComments = getSubComments(comments.getCommentId());
+            List<CommentInfo> subComments = getSubComments(comments.getCommentId(), memberId);
             comments.setSubComments(subComments.isEmpty() ? null : subComments);
         }
 
@@ -61,7 +63,7 @@ public class CommentCustomRepositoryImpl implements CommentCustomRepository {
     }
 
     @Override
-    public List<CommentInfo> getSubComments(Long parentId) {
+    public List<CommentInfo> getSubComments(Long parentId, Long memberId) {
         return jpaQueryFactory.select(Projections.constructor(
                         CommentInfo.class,
                         comment.id,
@@ -74,7 +76,8 @@ public class CommentCustomRepositoryImpl implements CommentCustomRepository {
                                 member.nickname,
                                 member.profileImage,
                                 member.consumerType
-                        )
+                        ),
+                        comment.author.id.eq(memberId)
                 ))
                 .from(comment)
                 .leftJoin(comment.author, member)

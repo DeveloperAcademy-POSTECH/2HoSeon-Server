@@ -44,5 +44,5 @@ public class ProfileInfo extends ImageDTO {
         this.consumerType = consumerType;
         this.schoolName = schoolName;
     }
-    
+
 }

@@ -99,5 +99,4 @@ public class MemberRestController {
         return ResponseEntity.ok(response);
     }
 
-
 }

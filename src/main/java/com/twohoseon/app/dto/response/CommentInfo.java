@@ -45,15 +45,19 @@ public class CommentInfo {
     @Schema(name = "subComments", type = "List<PostCommentInfoDTO>", description = "대댓글 정보 DTO 리스트")
     List<CommentInfo> subComments;
 
+    @Schema(name = "isMine", type = "Boolean", description = "내가 쓴 글인지 여부")
+    Boolean isMine;
+
     public void setSubComments(List<CommentInfo> subComments) {
         this.subComments = subComments;
     }
 
-    public CommentInfo(Long commentId, LocalDateTime createDate, LocalDateTime modifiedDate, String content, AuthorInfo author) {
+    public CommentInfo(Long commentId, LocalDateTime createDate, LocalDateTime modifiedDate, String content, AuthorInfo author, boolean isMine) {
         this.commentId = commentId;
         this.createDate = createDate;
         this.modifiedDate = modifiedDate;
         this.content = content;
         this.author = author;
+        this.isMine = isMine;
     }
 }

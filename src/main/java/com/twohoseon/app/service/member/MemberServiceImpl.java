@@ -146,4 +146,5 @@ public class MemberServiceImpl implements MemberService {
         Member member = getMemberFromRequest();
         return memberRepository.getProfile(member.getId());
     }
+
 }
