@@ -1,9 +1,12 @@
 package com.twohoseon.app.security;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.twohoseon.app.dto.response.GeneralResponse;
+import com.twohoseon.app.dto.ErrorResponse;
 import com.twohoseon.app.dto.response.JWTToken;
+import com.twohoseon.app.dto.response.LoginInfo;
+import com.twohoseon.app.dto.response.LoginResponse;
 import com.twohoseon.app.entity.member.Member;
+import com.twohoseon.app.enums.ErrorCode;
 import com.twohoseon.app.enums.StatusEnum;
 import com.twohoseon.app.exception.MemberNotFoundException;
 import com.twohoseon.app.repository.member.MemberRepository;
@@ -57,22 +60,26 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
         member.setAppleRefreshToken(appleRefreshToken);
         memberRepository.save(member);
 
-        GeneralResponse generalResponseDTO;
+        Object generalResponseDTO;
         JWTToken token = jwtTokenProvider.createAllToken(providerId);
+        LoginInfo loginInfo;
         refreshTokenService.saveRefreshTokenFromTokenDTO(token, providerId);
 
         if (member.getSchool() == null) {
             log.debug("member.getSchool() = {}", member.getSchool());
-            generalResponseDTO = GeneralResponse.builder()
-                    .status(StatusEnum.CONFLICT)
-                    .message("UNREGISTERED_USER")
-                    .data(token)
+            loginInfo = LoginInfo.builder()
+                    .jwtToken(token)
                     .build();
+            generalResponseDTO = ErrorResponse.of(ErrorCode.NOT_COMPLETED_SIGNUP_ERROR, loginInfo);
         } else {
-            generalResponseDTO = GeneralResponse.builder()
+            loginInfo = LoginInfo.builder()
+                    .consumerTypeExist(member.getConsumerType() != null)
+                    .jwtToken(token)
+                    .build();
+            generalResponseDTO = LoginResponse.builder()
                     .status(StatusEnum.OK)
                     .message("SUCCESS")
-                    .data(token)
+                    .data(loginInfo)
                     .build();
         }
 
