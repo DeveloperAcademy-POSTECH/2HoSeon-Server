@@ -5,13 +5,14 @@ import com.twohoseon.app.dto.request.member.ProfileRequest;
 import com.twohoseon.app.dto.response.profile.ProfileInfo;
 import com.twohoseon.app.entity.member.DeviceToken;
 import com.twohoseon.app.entity.member.Member;
+import com.twohoseon.app.exception.MemberNotFoundException;
 import com.twohoseon.app.exception.SchoolUpdateRestrictionException;
 import com.twohoseon.app.repository.device.token.DeviceTokenRepository;
 import com.twohoseon.app.repository.member.MemberRepository;
 import com.twohoseon.app.security.MemberDetails;
-import com.twohoseon.app.service.apple.AppleService;
 import com.twohoseon.app.service.image.ImageService;
 import com.twohoseon.app.service.notification.NotificationService;
+import com.twohoseon.app.util.AppleUtility;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -41,7 +42,7 @@ public class MemberServiceImpl implements MemberService {
     private final ImageService imageService;
     private final DeviceTokenRepository deviceTokenRepository;
     private final NotificationService notificationService;
-    private final AppleService appleService;
+    private final AppleUtility appleUtility;
 
     @Override
     public UserDetails loadUserByUsername(String providerId) throws UsernameNotFoundException {
@@ -124,7 +125,19 @@ public class MemberServiceImpl implements MemberService {
         memberRepository.deleteSubscriptionsFromMember(reqMember.getId());
         memberRepository.deletePostsFromMember(reqMember);
         memberRepository.delete(reqMember);
-        appleService.revokeAppleToken(reqMember.getAppleRefreshToken());
+        appleUtility.revokeAppleToken(reqMember.getAppleRefreshToken());
+    }
+
+    @Override
+    @Transactional
+    public void deleteAppleMember(String providerId) {
+        Member reqMember = memberRepository.findByProviderId(providerId)
+                .orElseThrow(MemberNotFoundException::new);
+        memberRepository.detachCommentsFromMember(reqMember.getId());
+        memberRepository.detachVoteFromMember(reqMember.getId());
+        memberRepository.deleteSubscriptionsFromMember(reqMember.getId());
+        memberRepository.deletePostsFromMember(reqMember);
+        memberRepository.delete(reqMember);
     }
 
 

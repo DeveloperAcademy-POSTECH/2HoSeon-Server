@@ -31,6 +31,8 @@ public interface MemberService extends UserDetailsService, CommonService {
 
     void deleteMember();
 
+    void deleteAppleMember(String providerId);
+
 //    void deleteSubscriptions(Member reqMember);
 
 

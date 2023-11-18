@@ -1,5 +1,7 @@
 package com.twohoseon.app.util;
 
+import com.twohoseon.app.dto.apple.ApplePublicKey;
+import com.twohoseon.app.dto.apple.ApplePublicKeyResponse;
 import com.twohoseon.app.service.schedule.JobSchedulingService;
 import io.jsonwebtoken.JwsHeader;
 import io.jsonwebtoken.Jwts;
@@ -15,12 +17,26 @@ import org.bouncycastle.openssl.jcajce.JcaPEMKeyConverter;
 import org.quartz.SchedulerException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.ClassPathResource;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Component;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
+import org.springframework.web.client.RestTemplate;
 
+import javax.naming.AuthenticationException;
 import java.io.*;
+import java.math.BigInteger;
+import java.security.KeyFactory;
+import java.security.NoSuchAlgorithmException;
 import java.security.PrivateKey;
+import java.security.PublicKey;
+import java.security.spec.InvalidKeySpecException;
+import java.security.spec.RSAPublicKeySpec;
+import java.util.Base64;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Map;
 
 /**
  * @author : hyunwoopark
@@ -35,6 +51,8 @@ import java.util.Date;
 @Component
 public class AppleUtility {
     private final JobSchedulingService jobSchedulingService;
+    private final RestTemplate restTemplate;
+
     @Value("${oauth.apple.key-path}")
     String keyFilePath;
     @Value("${oauth.apple.key-id}")
@@ -46,6 +64,20 @@ public class AppleUtility {
 
     private String appleClientSecret;
 
+    public PublicKey getApplePublicKey(Map<String, String> tokenHeaders, ApplePublicKeyResponse applePublicKeys) throws AuthenticationException, NoSuchAlgorithmException, InvalidKeySpecException {
+
+        ApplePublicKey applePublicKey = applePublicKeys.getMatchedKey((String) tokenHeaders.get("kid"), (String) tokenHeaders.get("alg"));
+        return createApplePublicKey(applePublicKey);
+    }
+
+    private PublicKey createApplePublicKey(ApplePublicKey applePublicKey) throws NoSuchAlgorithmException, InvalidKeySpecException {
+        byte[] nByte = Base64.getUrlDecoder().decode(applePublicKey.n());
+        byte[] eByte = Base64.getUrlDecoder().decode(applePublicKey.e());
+        RSAPublicKeySpec publicKeySpec = new RSAPublicKeySpec(new BigInteger(1, nByte), new BigInteger(1, eByte));
+        KeyFactory keyFactory = KeyFactory.getInstance(applePublicKey.kty());
+        return keyFactory.generatePublic(publicKeySpec);
+    }
+
     @PostConstruct
     public void loadAppleClientSecret() {
         try (BufferedReader reader = new BufferedReader(new FileReader("client_secret.txt"))) {
@@ -56,11 +88,26 @@ public class AppleUtility {
         }
     }
 
+    public void revokeAppleToken(String appleRefreshToken) {
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Content-Type", "application/x-www-form-urlencoded");
+
+        MultiValueMap<String, String> map = new LinkedMultiValueMap<>();
+        map.add("client_id", appleClientId);
+        map.add("client_secret", appleClientSecret);
+        map.add("token", appleRefreshToken);
+        map.add("token_type_hint", "refresh_token");
+
+        HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(map, headers);
+
+        String url = "https://appleid.apple.com/auth/revoke";
+        restTemplate.postForLocation(url, request);
+    }
+
     public String createAppleClientSecret() {
         String clientSecret = "";
         Calendar calendar = Calendar.getInstance();
         calendar.add(Calendar.MONTH, 6);
-        //application-oauth.yml에 설정해놓은 apple secret Key를 /를 기준으로 split
 
         try {
             InputStream inputStream = new ClassPathResource(keyFilePath).getInputStream();
@@ -111,7 +158,4 @@ public class AppleUtility {
         return appleClientSecret;
     }
 
-    public String getAppleClientId() {
-        return appleClientId;
-    }
 }
