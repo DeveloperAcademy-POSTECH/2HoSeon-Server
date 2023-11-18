@@ -13,8 +13,8 @@ import java.util.List;
  * @modifyed : $
  **/
 public interface CommentCustomRepository {
-    List<CommentInfo> getAllCommentsFromPost(Long postId);
+    List<CommentInfo> getAllCommentsFromPost(Long postId, Long memberId);
 
-    List<CommentInfo> getSubComments(Long parentId);
-    
+    List<CommentInfo> getSubComments(Long parentId, Long memberId);
+
 }
