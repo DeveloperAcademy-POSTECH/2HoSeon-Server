@@ -114,12 +114,14 @@ public class CommentServiceImpl implements CommentService {
 
     @Override
     public List<CommentInfo> getPostComments(Long postId) {
-        return commentRepository.getAllCommentsFromPost(postId);
+        Member member = getMemberFromRequest();
+        return commentRepository.getAllCommentsFromPost(postId, member.getId());
     }
 
     @Override
     public List<CommentInfo> getSubComments(Long commentId) {
-        return commentRepository.getSubComments(commentId);
+        Member member = getMemberFromRequest();
+        return commentRepository.getSubComments(commentId, member.getId());
     }
 
 
