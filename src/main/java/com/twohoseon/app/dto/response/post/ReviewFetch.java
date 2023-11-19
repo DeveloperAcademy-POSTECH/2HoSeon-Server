@@ -23,9 +23,6 @@ import java.util.List;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @Schema(name = "ReviewFetch", description = "리뷰 fetch 정보")
 public class ReviewFetch {
-    //나의 소비 성향 최근 리뷰
-    @Schema(name = "recentReviews", type = "List<PostSummary>", description = "나의 소비 성향 중 최근 리뷰")
-    List<PostSummary> recentReviews;
     @Schema(name = "reviewType", type = "ReviewType", description = "리뷰 타입")
     ReviewType reviewType;
     @Schema(name = "reviews", type = "List<PostSummary>", description = "리뷰 리스트")

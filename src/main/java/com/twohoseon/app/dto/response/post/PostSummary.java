@@ -116,13 +116,14 @@ public class PostSummary extends ImageDTO {
     }
 
     //소비 후기 탭 최근 후기 fetch
-    public PostSummary(LocalDateTime createDate, LocalDateTime modifiedDate, Long postId, PostStatus postStatus, String title, String contents) {
+    public PostSummary(LocalDateTime createDate, LocalDateTime modifiedDate, Long postId, PostStatus postStatus, String title, String contents, Boolean isPurchased) {
         this.createDate = createDate;
         this.modifiedDate = modifiedDate;
         this.postId = postId;
         this.postStatus = postStatus;
         this.title = title;
         this.contents = contents;
+        this.isPurchased = isPurchased;
     }
 
     //후기 상세 fetch시 상단에 나오는 원본 게시글

@@ -8,8 +8,6 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;
 import lombok.Data;
 
-import java.util.List;
-
 /**
  * @author : hyunwoopark
  * @version : 1.0.0
@@ -19,10 +17,10 @@ import java.util.List;
  * @modifyed : $
  **/
 @Data
-@Schema(name = "ReviewFetchResponse", description = "게시글 응답 DTO")
+@Schema(name = "AllReviewFetchResponse", description = "게시글 응답 DTO")
 @Builder
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class ReviewFetchResponse {
+public class AllReviewFetchResponse {
     @Schema(name = "status", type = "int", description = "응답 상태")
     @JsonSerialize(using = StatusEnumSerializer.class)
     private StatusEnum status;
@@ -31,5 +29,5 @@ public class ReviewFetchResponse {
     private String message;
 
     @Schema(name = "data", type = "ReviewFetch", description = "응답 데이터")
-    private List<PostSummary> data;
+    private AllReviewFetch data;
 }

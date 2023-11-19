@@ -4,10 +4,7 @@ import com.twohoseon.app.dto.request.post.PostRequest;
 import com.twohoseon.app.dto.request.review.ReviewRequest;
 import com.twohoseon.app.dto.response.VoteCounts;
 import com.twohoseon.app.dto.response.mypage.MypageFetch;
-import com.twohoseon.app.dto.response.post.PostDetail;
-import com.twohoseon.app.dto.response.post.PostInfo;
-import com.twohoseon.app.dto.response.post.ReviewDetail;
-import com.twohoseon.app.dto.response.post.ReviewFetch;
+import com.twohoseon.app.dto.response.post.*;
 import com.twohoseon.app.enums.ReviewType;
 import com.twohoseon.app.enums.mypage.MyVoteCategoryType;
 import com.twohoseon.app.enums.post.VisibilityScope;
@@ -56,7 +53,7 @@ public interface PostService extends CommonService {
 
     void unsubscribePost(Long postId);
 
-    ReviewFetch fetchReviews(VisibilityScope visibilityScope, Pageable pageable, ReviewType reviewType);
+//    AllReviewFetch fetchReviewsTemp(VisibilityScope visibilityScope, Pageable pageable, ReviewType reviewType);
 
     MypageFetch fetchMyReviews(VisibilityScope visibilityScope, Pageable pageable);
 
@@ -64,4 +61,7 @@ public interface PostService extends CommonService {
 
     MypageFetch fetchMypagePosts(Pageable pageable, MyVoteCategoryType myVoteCategoryType);
 
+    AllReviewFetch fetchAllReviews(VisibilityScope visibilityScope);
+
+    List<PostSummary> fetchReviews(VisibilityScope visibilityScope, Pageable pageable, ReviewType reviewType);
 }

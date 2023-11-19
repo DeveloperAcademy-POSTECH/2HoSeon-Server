@@ -279,10 +279,10 @@ public class PostCustomRepositoryImpl implements PostCustomRepository {
 
     @Override
     public List<PostSummary> findRecentReviews(VisibilityScope visibilityScope, Member reqMember, ConsumerType consumerType) {
-        BooleanBuilder whereClause = new BooleanBuilder(post.postStatus.eq(PostStatus.REVIEW)
-                .and(post.visibilityScope.eq(visibilityScope)))
+        BooleanBuilder whereClause = new BooleanBuilder(post.postStatus.eq(PostStatus.REVIEW))
+                .and(post.visibilityScope.eq(visibilityScope))
                 .and(post.postStatus.eq(PostStatus.REVIEW))
-                .and(member.consumerType.eq(consumerType));
+                .and(post.author.consumerType.eq(consumerType));
 
         if (visibilityScope == VisibilityScope.SCHOOL) {
             whereClause.and(post.author.school.eq(reqMember.getSchool()));
@@ -295,7 +295,8 @@ public class PostCustomRepositoryImpl implements PostCustomRepository {
                         post.id,
                         post.postStatus,
                         post.title,
-                        post.contents.substring(0, 25)
+                        post.contents.substring(0, 25),
+                        post.isPurchased
                 ))
                 .from(post)
                 .leftJoin(post.author, member)
@@ -308,8 +309,8 @@ public class PostCustomRepositoryImpl implements PostCustomRepository {
 
     @Override
     public List<PostSummary> findReviews(Pageable pageable, Member reqMember, VisibilityScope visibilityScope, ReviewType reviewType) {
-        BooleanBuilder whereClause = new BooleanBuilder(post.postStatus.eq(PostStatus.REVIEW)
-                .and(post.visibilityScope.eq(visibilityScope)))
+        BooleanBuilder whereClause = new BooleanBuilder(post.postStatus.eq(PostStatus.REVIEW))
+                .and(post.visibilityScope.eq(visibilityScope))
                 .and(post.postStatus.eq(PostStatus.REVIEW));
 
         if (visibilityScope == VisibilityScope.SCHOOL) {

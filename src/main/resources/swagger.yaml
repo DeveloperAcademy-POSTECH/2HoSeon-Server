@@ -410,119 +410,149 @@ paths:
                   data:
                     type: object
                     properties:
-                      originalPost:
-                        type: object
-                        properties:
-                          createDate:
-                            type: string
-                            format: date-time
-                            example: 2021-05-30T14:00:00.000+00:00
-                          modifiedDate:
-                            type: string
-                            format: date-time
-                            example: 2021-05-30T14:00:00.000+00:00
-                          postId:
-                            type: integer
-                          author:
-                            type: object
-                            properties:
-                              id:
-                                type: integer
-                              nickname:
-                                type: string
-                              profileImage:
-                                type: string
-                                nullable: true
-                              consumerType:
-                                type: string
-                                enum:
-                                  - TRENDSETTER
-                                  - FLEXER
-                                  - BUDGET_KEEPER
-                                  - ECO_WARRIOR
-                                  - BEAUTY_LOVER
-                                  - IMPULSE_BUYER
-                                  - ADVENTURER
-                                  - RISK_AVERSE
-                                example: TRENDSETTER
-                          postStatus:
-                            type: string
-                            enum:
-                              - ACTIVE
-                              - CLOSED
-                              - REVIEW
-                            example: CLOSED
-                          voteResult:
-                            type: string
-                          title:
-                            type: string
-                          contents:
-                            type: string
-                          image:
-                            type: string
-                            nullable: true
-                          price:
-                            type: integer
-                      reviewPost:
-                        type: object
-                        properties:
-                          postId:
-                            type: integer
-                          createDate:
-                            type: string
-                            format: date-time
-                            example: 2021-05-30T14:00:00.000+00:00
-                          modifiedDate:
-                            type: string
-                            format: date-time
-                            example: 2021-05-30T14:00:00.000+00:00
-                          postStatus:
-                            type: string
-                            enum:
-                              - ACTIVE
-                              - CLOSED
-                              - REVIEW
-                            example: REVIEW
-                          author:
-                            type: object
-                            properties:
-                              id:
-                                type: integer
-                              nickname:
-                                type: string
-                              profileImage:
-                                type: string
-                                nullable: true
-                              consumerType:
-                                type: string
-                                enum:
-                                  - TRENDSETTER
-                                  - FLEXER
-                                  - BUDGET_KEEPER
-                                  - ECO_WARRIOR
-                                  - BEAUTY_LOVER
-                                  - IMPULSE_BUYER
-                                  - ADVENTURER
-                                  - RISK_AVERSE
-                                example: TRENDSETTER
-                          title:
-                            type: string
-                          contents:
-                            type: string
-                          image:
-                            type: string
-                            nullable: true
-                          price:
-                            type: integer
-                          isPurchased:
-                            type: boolean
-                      isMine:
-                        type: boolean
-                      commentCount:
-                        type: integer
-                      commentPreview:
+                      myConsumerType:
                         type: string
-                        nullable: true
+                        example: TRENDSETTER
+                      recentReviews:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/Review'
+                      allReviews:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/Review'
+                      purchasedReviews:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/Review'
+                      notPurchasedReviews:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/Review'
+  components:
+    schemas:
+      Review:
+        type: object
+        properties:
+          createDate:
+            type: string
+            format: date-time
+          modifiedDate:
+            type: string
+            format: date-time
+          postId:
+            type: integer
+          author:
+            type: object
+            properties:
+              id:
+                type: integer
+              nickname:
+                type: string
+              consumerType:
+                type: string
+                enum:
+                  - TRENDSETTER
+                  - FLEXER
+                  - BUDGET_KEEPER
+                  - ECO_WARRIOR
+                  - BEAUTY_LOVER
+                  - IMPULSE_BUYER
+                  - ADVENTURER
+                  - RISK_AVERSE
+          postStatus:
+            type: string
+            enum:
+              - ACTIVE
+              - CLOSED
+              - REVIEW
+          commentCount:
+            type: integer
+          title:
+            type: string
+          image:
+            type: string
+            nullable: true
+          contents:
+            type: string
+          price:
+            type: integer
+          isPurchased:
+            type: boolean
+  /api/reviews/{reviewType}:
+    get:
+      summary: 리뷰 조회
+      parameters:
+        - name: reviewType
+          in: path
+          description: Review type
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    example: 200
+                  message:
+                    type: string
+                    example: success
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        createDate:
+                          type: string
+                          format: date-time
+                        modifiedDate:
+                          type: string
+                          format: date-time
+                        postId:
+                          type: integer
+                        author:
+                          type: object
+                          properties:
+                            id:
+                              type: integer
+                            nickname:
+                              type: string
+                            consumerType:
+                              type: string
+                              enum:
+                                - TRENDSETTER
+                                - FLEXER
+                                - BUDGET_KEEPER
+                                - ECO_WARRIOR
+                                - BEAUTY_LOVER
+                                - IMPULSE_BUYER
+                                - ADVENTURER
+                                - RISK_AVERSE
+                        postStatus:
+                          type: string
+                          enum:
+                            - ACTIVE
+                            - CLOSED
+                            - REVIEW
+                        commentCount:
+                          type: integer
+                        title:
+                          type: string
+                        image:
+                          type: string
+                          nullable: true
+                        contents:
+                          type: string
+                        price:
+                          type: integer
+                        isPurchased:
+                          type: boolean
   /api/mypage/posts:
     get:
       summary: 마이페이지 포스트 조회

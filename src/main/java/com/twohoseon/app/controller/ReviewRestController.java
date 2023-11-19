@@ -1,6 +1,8 @@
 package com.twohoseon.app.controller;
 
-import com.twohoseon.app.dto.response.post.ReviewFetch;
+import com.twohoseon.app.dto.response.post.AllReviewFetch;
+import com.twohoseon.app.dto.response.post.AllReviewFetchResponse;
+import com.twohoseon.app.dto.response.post.PostSummary;
 import com.twohoseon.app.dto.response.post.ReviewFetchResponse;
 import com.twohoseon.app.enums.ReviewType;
 import com.twohoseon.app.enums.StatusEnum;
@@ -13,10 +15,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 /**
  * @author : hyunwoopark
@@ -36,18 +37,28 @@ public class ReviewRestController {
     private final PostService postService;
 
     @GetMapping
-    @Operation(summary = "리뷰 탭 게시글 조회")
+    @Operation(summary = "리뷰 탭 조회")
+    public ResponseEntity<AllReviewFetchResponse> fetchAllReviews(@RequestParam(defaultValue = "GLOBAL", value = "visibilityScope") VisibilityScope visibilityScope) {
+        AllReviewFetch allReviewFetch = postService.fetchAllReviews(visibilityScope);
+        AllReviewFetchResponse response = AllReviewFetchResponse.builder()
+                .status(StatusEnum.OK)
+                .message("success")
+                .data(allReviewFetch)
+                .build();
+        return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/{reviewType}")
     public ResponseEntity<ReviewFetchResponse> fetchReviews(@RequestParam(defaultValue = "GLOBAL", value = "visibilityScope") VisibilityScope visibilityScope,
-                                                            @RequestParam(defaultValue = "ALL", value = "reviewType") ReviewType reviewType,
+                                                            @PathVariable(value = "reviewType") ReviewType reviewType,
                                                             @RequestParam(defaultValue = "0", value = "page") int page,
                                                             @RequestParam(defaultValue = "10", value = "size") int size) {
-
         Pageable pageable = PageRequest.of(page, size);
-        ReviewFetch reviewFetch = postService.fetchReviews(visibilityScope, pageable, reviewType);
+        List<PostSummary> reviews = postService.fetchReviews(visibilityScope, pageable, reviewType);
         ReviewFetchResponse response = ReviewFetchResponse.builder()
                 .status(StatusEnum.OK)
                 .message("success")
-                .data(reviewFetch)
+                .data(reviews)
                 .build();
         return ResponseEntity.ok(response);
     }

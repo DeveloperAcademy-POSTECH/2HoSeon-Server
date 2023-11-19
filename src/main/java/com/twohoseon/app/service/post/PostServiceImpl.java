@@ -23,6 +23,7 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.quartz.SchedulerException;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -238,17 +239,41 @@ public class PostServiceImpl implements PostService {
         post.unsubscribe(reqMember);
     }
 
+//    @Override
+//    public ReviewFetch fetchReviewsTemp(VisibilityScope visibilityScope, Pageable pageable, ReviewType reviewType) {
+//        Member reqMember = getMemberFromRequest();
+//        ConsumerType consumerType = reqMember.getConsumerType();
+//        List<PostSummary> recentReviews = postRepository.findRecentReviews(visibilityScope, reqMember, reviewType, consumerType);
+//        List<PostSummary> reviews = postRepository.findReviews(pageable, reqMember, visibilityScope, reviewType);
+//        return AllReviewFetch.builder()
+//                .recentReviews(recentReviews)
+//                .reviewType(reviewType)
+//                .reviews(reviews)
+//                .build();
+//    }
+
     @Override
-    public ReviewFetch fetchReviews(VisibilityScope visibilityScope, Pageable pageable, ReviewType reviewType) {
+    public AllReviewFetch fetchAllReviews(VisibilityScope visibilityScope) {
         Member reqMember = getMemberFromRequest();
         ConsumerType consumerType = reqMember.getConsumerType();
+        Pageable pageable = PageRequest.of(0, 5);
         List<PostSummary> recentReviews = postRepository.findRecentReviews(visibilityScope, reqMember, consumerType);
-        List<PostSummary> reviews = postRepository.findReviews(pageable, reqMember, visibilityScope, reviewType);
-        return ReviewFetch.builder()
+        List<PostSummary> allReviews = postRepository.findReviews(pageable, reqMember, visibilityScope, ReviewType.ALL);
+        List<PostSummary> purchasedReviews = postRepository.findReviews(pageable, reqMember, visibilityScope, ReviewType.PURCHASED);
+        List<PostSummary> notPurchasedReviews = postRepository.findReviews(pageable, reqMember, visibilityScope, ReviewType.NOT_PURCHASED);
+        return AllReviewFetch.builder()
+                .myConsumerType(consumerType)
                 .recentReviews(recentReviews)
-                .reviewType(reviewType)
-                .reviews(reviews)
+                .allReviews(allReviews)
+                .purchasedReviews(purchasedReviews)
+                .notPurchasedReviews(notPurchasedReviews)
                 .build();
+    }
+
+    @Override
+    public List<PostSummary> fetchReviews(VisibilityScope visibilityScope, Pageable pageable, ReviewType reviewType) {
+        List<PostSummary> reviews = postRepository.findReviews(pageable, getMemberFromRequest(), visibilityScope, reviewType);
+        return reviews;
     }
 
     @Override
@@ -301,6 +326,7 @@ public class PostServiceImpl implements PostService {
 
         return mypageFetch;
     }
+
 
     @Override
     @Transactional
