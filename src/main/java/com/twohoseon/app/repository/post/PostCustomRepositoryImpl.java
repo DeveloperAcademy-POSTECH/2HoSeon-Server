@@ -278,7 +278,7 @@ public class PostCustomRepositoryImpl implements PostCustomRepository {
     }
 
     @Override
-    public List<PostSummary> findRecentReviews(VisibilityScope visibilityScope, Member reqMember, ReviewType reviewType, ConsumerType consumerType) {
+    public List<PostSummary> findRecentReviews(VisibilityScope visibilityScope, Member reqMember, ConsumerType consumerType) {
         BooleanBuilder whereClause = new BooleanBuilder(post.postStatus.eq(PostStatus.REVIEW)
                 .and(post.visibilityScope.eq(visibilityScope)))
                 .and(post.postStatus.eq(PostStatus.REVIEW))
@@ -286,11 +286,6 @@ public class PostCustomRepositoryImpl implements PostCustomRepository {
 
         if (visibilityScope == VisibilityScope.SCHOOL) {
             whereClause.and(post.author.school.eq(reqMember.getSchool()));
-        }
-        // ReviewType에 따른 조건 추가
-        switch (reviewType) {
-            case PURCHASED -> whereClause.and(post.isPurchased.isTrue());
-            case NOT_PURCHASED -> whereClause.and(post.isPurchased.isFalse());
         }
 
         List<PostSummary> result = jpaQueryFactory
@@ -437,7 +432,8 @@ public class PostCustomRepositoryImpl implements PostCustomRepository {
 
     @Override
     public Long countAllPostsByMyVoteCategoryType(Member reqMember, MyVoteCategoryType myVoteCategoryType) {
-        BooleanBuilder whereClause = new BooleanBuilder(post.author.eq(reqMember));
+        BooleanBuilder whereClause = new BooleanBuilder(post.author.eq(reqMember))
+                .and(post.postStatus.ne(PostStatus.REVIEW));
 
         JPAQuery<Long> jpaQuery = jpaQueryFactory.select(post.count())
                 .from(post);
@@ -445,7 +441,8 @@ public class PostCustomRepositoryImpl implements PostCustomRepository {
             case ACTIVE_VOTES -> whereClause.and(post.postStatus.eq(PostStatus.ACTIVE));
             case CLOSED_VOTES -> whereClause.and(post.postStatus.eq(PostStatus.CLOSED));
             case GLOBAL_VOTES -> whereClause.and(post.visibilityScope.eq(VisibilityScope.GLOBAL));
-            case SCHOOL_VOTES -> whereClause.and(post.author.school.eq(reqMember.getSchool()));
+            case SCHOOL_VOTES -> whereClause.and(post.author.school.eq(reqMember.getSchool()))
+                    .and(post.visibilityScope.eq(VisibilityScope.SCHOOL));
         }
         jpaQuery.where(whereClause);
 
@@ -454,12 +451,15 @@ public class PostCustomRepositoryImpl implements PostCustomRepository {
 
     @Override
     public List<PostSummary> findAllPostsByMyVoteCategoryType(Pageable pageable, Member reqMember, MyVoteCategoryType myVoteCategoryType) {
-        BooleanBuilder whereClause = new BooleanBuilder();
+        BooleanBuilder whereClause = new BooleanBuilder(post.author.eq(reqMember))
+                .and(post.postStatus.ne(PostStatus.REVIEW));
+
         switch (myVoteCategoryType) {
             case ACTIVE_VOTES -> whereClause.and(post.postStatus.eq(PostStatus.ACTIVE));
             case CLOSED_VOTES -> whereClause.and(post.postStatus.eq(PostStatus.CLOSED));
             case GLOBAL_VOTES -> whereClause.and(post.visibilityScope.eq(VisibilityScope.GLOBAL));
-            case SCHOOL_VOTES -> whereClause.and(post.author.school.eq(reqMember.getSchool()));
+            case SCHOOL_VOTES -> whereClause.and(post.author.school.eq(reqMember.getSchool()))
+                    .and(post.visibilityScope.eq(VisibilityScope.SCHOOL));
         }
         List<PostSummary> result = jpaQueryFactory
                 .select(Projections.constructor(PostSummary.class,
