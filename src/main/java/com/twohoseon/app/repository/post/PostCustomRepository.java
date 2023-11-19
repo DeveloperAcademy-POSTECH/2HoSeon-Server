@@ -38,7 +38,7 @@ public interface PostCustomRepository {
     List<PostSummary> findReviewPostsByKeyword(VisibilityScope visibilityScope, Member reqMember, Pageable pageable, String keyword);
 
 
-    List<PostSummary> findRecentReviews(VisibilityScope visibilityScope, Member reqMember, ReviewType reviewType, ConsumerType consumerType);
+    List<PostSummary> findRecentReviews(VisibilityScope visibilityScope, Member reqMember, ConsumerType consumerType);
 
     List<PostSummary> findReviews(Pageable pageable, Member reqMember, VisibilityScope visibilityScope, ReviewType reviewType);
 
