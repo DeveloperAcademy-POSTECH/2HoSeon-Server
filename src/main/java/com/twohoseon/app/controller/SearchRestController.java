@@ -42,8 +42,8 @@ public class SearchRestController {
 
     @Operation(summary = "검색")
     @GetMapping
-    public ResponseEntity<SearchResponse> searchKeyword(@RequestParam(defaultValue = "ACTIVE", value = "postStatus") PostStatus postStatus,
-                                                        @RequestParam(defaultValue = "GLOBAL", value = "visibilityScope") VisibilityScope visibilityScope,
+    public ResponseEntity<SearchResponse> searchKeyword(@RequestParam(value = "postStatus") PostStatus postStatus,
+                                                        @RequestParam(value = "visibilityScope") VisibilityScope visibilityScope,
                                                         @RequestParam(defaultValue = "0", value = "page") int page,
                                                         @RequestParam(defaultValue = "10", value = "size") int size,
                                                         @RequestParam(defaultValue = "", value = "keyword") String keyword) {

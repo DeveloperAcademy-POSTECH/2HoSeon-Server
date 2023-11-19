@@ -39,7 +39,7 @@ public class MypageRestController {
     @Operation(summary = "게시글 조회", description = "게시글 조회")
     public ResponseEntity<MypageFetchResponse> fetchPosts(@RequestParam(defaultValue = "0", value = "page") int page,
                                                           @RequestParam(defaultValue = "10", value = "size") int size,
-                                                          @RequestParam(defaultValue = "ALL_VOTES", value = "myVoteCategoryType") MyVoteCategoryType myVoteCategoryType) {
+                                                          @RequestParam(value = "myVoteCategoryType") MyVoteCategoryType myVoteCategoryType) {
         Pageable pageable = PageRequest.of(page, size);
         MypageFetch mypageFetch = postService.fetchMypagePosts(pageable, myVoteCategoryType);
         MypageFetchResponse response = MypageFetchResponse.builder()
@@ -52,7 +52,7 @@ public class MypageRestController {
 
     @GetMapping("/reviews")
     @Operation(summary = "마이페이지 리뷰 조회", description = "마이페이지 리뷰 조회")
-    public ResponseEntity<MypageFetchResponse> fetchReviews(@RequestParam(defaultValue = "GLOBAL", value = "visibilityScope") VisibilityScope visibilityScope,
+    public ResponseEntity<MypageFetchResponse> fetchReviews(@RequestParam(value = "visibilityScope") VisibilityScope visibilityScope,
                                                             @RequestParam(defaultValue = "0", value = "page") int page,
                                                             @RequestParam(defaultValue = "10", value = "size") int size) {
 
