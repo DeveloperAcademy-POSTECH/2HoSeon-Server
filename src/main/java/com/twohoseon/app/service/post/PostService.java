@@ -59,6 +59,8 @@ public interface PostService extends CommonService {
 
     ReviewDetail fetchReviewDetail(Long postId);
 
+    ReviewDetail fetchReviewDetailByReviewId(Long reviewId);
+
     MypageFetch fetchMypagePosts(Pageable pageable, MyVoteCategoryType myVoteCategoryType);
 
     AllReviewFetch fetchAllReviews(VisibilityScope visibilityScope);

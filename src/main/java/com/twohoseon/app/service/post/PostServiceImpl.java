@@ -313,6 +313,34 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
+    public ReviewDetail fetchReviewDetailByReviewId(Long reviewId) {
+        Member member = getMemberFromRequest();
+        Post post = postRepository.findPostByReviewId(reviewId);
+        if (post == null) {
+            throw new PostNotFoundException();
+        }
+
+        PostSummary originalPost = null;
+        PostInfo reviewPost = null;
+        String commentPreview = null;
+        Integer commentCount = null;
+        originalPost = postRepository.getPostSummaryInReviewDetail(post.getId());
+        reviewPost = postRepository.getReviewDetailByPostId(post.getReview().getId());
+        commentCount = postRepository.calculateCommentCountByPostId(reviewPost.getPostId());
+        if (commentCount != null) {
+            commentPreview = postRepository.getCommentPreviewByPostId(reviewPost.getPostId());
+        }
+        ReviewDetail reviewDetail = ReviewDetail.builder()
+                .originalPost(originalPost)
+                .reviewPost(reviewPost)
+                .isMine(originalPost.getAuthor().getId().equals(member.getId()))
+                .commentCount(commentCount)
+                .commentPreview(commentPreview)
+                .build();
+        return reviewDetail;
+    }
+
+    @Override
     public MypageFetch fetchMypagePosts(Pageable pageable, MyVoteCategoryType myVoteCategoryType) {
         Member reqMember = getMemberFromRequest();
         long total = 0;

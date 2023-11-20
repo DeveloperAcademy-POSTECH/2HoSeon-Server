@@ -1,9 +1,6 @@
 package com.twohoseon.app.controller;
 
-import com.twohoseon.app.dto.response.post.AllReviewFetch;
-import com.twohoseon.app.dto.response.post.AllReviewFetchResponse;
-import com.twohoseon.app.dto.response.post.PostSummary;
-import com.twohoseon.app.dto.response.post.ReviewFetchResponse;
+import com.twohoseon.app.dto.response.post.*;
 import com.twohoseon.app.enums.ReviewType;
 import com.twohoseon.app.enums.StatusEnum;
 import com.twohoseon.app.enums.post.VisibilityScope;
@@ -18,6 +15,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+
+import static org.springframework.http.ResponseEntity.ok;
 
 /**
  * @author : hyunwoopark
@@ -62,5 +61,18 @@ public class ReviewRestController {
                 .build();
         return ResponseEntity.ok(response);
     }
+
+    @Operation(summary = "리뷰 상세 조회", description = "리뷰 상세 조회")
+    @GetMapping("/{reviewId}/detail")
+    public ResponseEntity<ReviewDetailResponse> fetchReview(@PathVariable("reviewId") Long reviewId) {
+        ReviewDetail reviewDetail = postService.fetchReviewDetailByReviewId(reviewId);
+        ReviewDetailResponse response = ReviewDetailResponse.builder()
+                .status(StatusEnum.OK)
+                .message("success")
+                .data(reviewDetail)
+                .build();
+        return ok(response);
+    }
+
 
 }
