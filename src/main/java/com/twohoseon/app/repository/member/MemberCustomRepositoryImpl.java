@@ -113,7 +113,7 @@ public class MemberCustomRepositoryImpl implements MemberCustomRepository {
                         member.nickname,
                         member.profileImage,
                         member.consumerType,
-                        member.school.schoolName))
+                        member.school))
                 .from(member)
                 .where(member.id.eq(memberId))
                 .fetchOne();

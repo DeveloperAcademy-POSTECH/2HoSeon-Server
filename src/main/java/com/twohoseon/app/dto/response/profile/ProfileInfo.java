@@ -2,6 +2,7 @@ package com.twohoseon.app.dto.response.profile;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.twohoseon.app.common.ImageDTO;
+import com.twohoseon.app.entity.member.School;
 import com.twohoseon.app.enums.ConsumerType;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
@@ -33,17 +34,17 @@ public class ProfileInfo extends ImageDTO {
     String profileImage;
     @Schema(name = "consumerType", type = "ConsumerType", description = "소비 성향")
     ConsumerType consumerType;
-    @Schema(name = "schoolName", type = "String", description = "학교 이름")
-    String schoolName;
+    @Schema(name = "school", type = "School", description = "학교 정보")
+    School school;
 
-    public ProfileInfo(LocalDateTime createDate, LocalDateTime modifiedDate, LocalDate lastSchoolRegisterDate, String nickname, String profileImage, ConsumerType consumerType, String schoolName) {
+    public ProfileInfo(LocalDateTime createDate, LocalDateTime modifiedDate, LocalDate lastSchoolRegisterDate, String nickname, String profileImage, ConsumerType consumerType, School school) {
         this.createDate = createDate;
         this.modifiedDate = modifiedDate;
         this.lastSchoolRegisterDate = lastSchoolRegisterDate;
         this.nickname = nickname;
         this.profileImage = generateProfileImageURL(profileImage);
         this.consumerType = consumerType;
-        this.schoolName = schoolName;
+        this.school = school;
     }
 
 }
