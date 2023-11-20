@@ -6,6 +6,7 @@ import com.twohoseon.app.enums.ConsumerType;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 /**
@@ -25,7 +26,7 @@ public class ProfileInfo extends ImageDTO {
     @Schema(name = "modifiedDate", type = "LocalDateTime", description = "유저 수정일")
     LocalDateTime modifiedDate;
     @Schema(name = "lastSchoolRegisterDate", type = "LocalDateTime", description = "유저 마지막 학교 등록일")
-    LocalDateTime lastSchoolRegisterDate;
+    LocalDate lastSchoolRegisterDate;
     @Schema(name = "nickname", type = "String", description = "유저 닉네임")
     String nickname;
     @Schema(name = "profileImage", type = "String", description = "유저 프로필 이미지")
@@ -35,7 +36,7 @@ public class ProfileInfo extends ImageDTO {
     @Schema(name = "schoolName", type = "String", description = "학교 이름")
     String schoolName;
 
-    public ProfileInfo(LocalDateTime createDate, LocalDateTime modifiedDate, LocalDateTime lastSchoolRegisterDate, String nickname, String profileImage, ConsumerType consumerType, String schoolName) {
+    public ProfileInfo(LocalDateTime createDate, LocalDateTime modifiedDate, LocalDate lastSchoolRegisterDate, String nickname, String profileImage, ConsumerType consumerType, String schoolName) {
         this.createDate = createDate;
         this.modifiedDate = modifiedDate;
         this.lastSchoolRegisterDate = lastSchoolRegisterDate;
