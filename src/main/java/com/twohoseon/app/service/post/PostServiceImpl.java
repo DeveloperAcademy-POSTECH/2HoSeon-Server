@@ -15,6 +15,7 @@ import com.twohoseon.app.exception.PermissionDeniedException;
 import com.twohoseon.app.exception.PostNotFoundException;
 import com.twohoseon.app.exception.ReviewExistException;
 import com.twohoseon.app.exception.VoteExistException;
+import com.twohoseon.app.repository.comment.CommentRepository;
 import com.twohoseon.app.repository.post.PostRepository;
 import com.twohoseon.app.service.image.ImageService;
 import com.twohoseon.app.service.notification.NotificationService;
@@ -46,6 +47,7 @@ import java.util.concurrent.ExecutionException;
 @RequiredArgsConstructor
 @Slf4j
 public class PostServiceImpl implements PostService {
+    private final CommentRepository commentRepository;
     private final PostRepository postRepository;
     private final JobSchedulingService jobSchedulingService;
     private final NotificationService notificationService;
@@ -151,6 +153,12 @@ public class PostServiceImpl implements PostService {
         Member member = getMemberFromRequest();
         if (!author.equals(member))
             throw new PermissionDeniedException();
+        if (post.getReview() != null) {
+            commentRepository.deleteByPost(post.getReview());
+            postRepository.delete(post.getReview());
+        }
+
+        commentRepository.deleteByPost(post);
         postRepository.delete(post);
     }
 
@@ -218,7 +226,6 @@ public class PostServiceImpl implements PostService {
                 .orElseThrow(() -> new PostNotFoundException());
         if (!post.isAuthor(member))
             throw new PermissionDeniedException();
-
         postRepository.delete(post.deleteReview());
     }
 
@@ -315,15 +322,13 @@ public class PostServiceImpl implements PostService {
     @Override
     public ReviewDetail fetchReviewDetailByReviewId(Long reviewId) {
         Member member = getMemberFromRequest();
-        Post post = postRepository.findPostByReviewId(reviewId);
-        if (post == null) {
-            throw new PostNotFoundException();
-        }
+        Post post = postRepository.findPostByReviewId(reviewId)
+                .orElseThrow(PostNotFoundException::new);
 
-        PostSummary originalPost = null;
-        PostInfo reviewPost = null;
+        PostSummary originalPost;
+        PostInfo reviewPost;
         String commentPreview = null;
-        Integer commentCount = null;
+        Integer commentCount;
         originalPost = postRepository.getPostSummaryInReviewDetail(post.getId());
         reviewPost = postRepository.getReviewDetailByPostId(post.getReview().getId());
         commentCount = postRepository.calculateCommentCountByPostId(reviewPost.getPostId());
@@ -343,8 +348,8 @@ public class PostServiceImpl implements PostService {
     @Override
     public MypageFetch fetchMypagePosts(Pageable pageable, MyVoteCategoryType myVoteCategoryType) {
         Member reqMember = getMemberFromRequest();
-        long total = 0;
-        List<PostSummary> posts = null;
+        long total;
+        List<PostSummary> posts;
         total = postRepository.countAllPostsByMyVoteCategoryType(reqMember, myVoteCategoryType);
         posts = postRepository.findAllPostsByMyVoteCategoryType(pageable, reqMember, myVoteCategoryType);
         MypageFetch mypageFetch = MypageFetch.builder()

@@ -31,7 +31,7 @@ class PushServiceTest {
 
     public void pushTest() throws ExecutionException, InterruptedException {
 
-        final String deviceToken = "2db472571a37892fa24184642d4aaa15a9b48973346144d68aff5a2985cfc5bf"; // Replace with the actual device token
+        final String deviceToken = "e5e93ab36e1be3f17e71f394c0909d6fecdb46c1caa7cbbe2758574f358fc658"; // Replace with the actual device token
 
         final SimpleApnsPushNotification pushNotification = new SimpleApnsPushNotification(
                 TokenUtil.sanitizeTokenString(deviceToken),

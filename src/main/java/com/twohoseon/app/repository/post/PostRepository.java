@@ -4,6 +4,8 @@ import com.twohoseon.app.entity.member.Member;
 import com.twohoseon.app.entity.post.Post;
 import org.springframework.data.jpa.repository.JpaRepository;
 
+import java.util.Optional;
+
 /**
  * @author : hyunwoopark
  * @version : 1.0.0
@@ -17,6 +19,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 public interface PostRepository extends JpaRepository<Post, Long>, PostCustomRepository {
     void deleteByAuthor(Member author);
 
-    Post findPostByReviewId(Long reviewId);
+    Optional<Post> findPostByReviewId(Long reviewId);
 
 }
