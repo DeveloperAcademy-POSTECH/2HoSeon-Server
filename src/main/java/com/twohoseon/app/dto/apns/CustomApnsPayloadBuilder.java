@@ -13,11 +13,19 @@ import com.twohoseon.app.entity.post.Post;
  * @modifyed : $
  **/
 public class CustomApnsPayloadBuilder extends ApnsPayloadBuilder {
+    private final String baseUri = "https:/www.wote.social/images/";
+    private final String profileBaseUri = baseUri + "profiles/";
+    private final String postBaseUri = baseUri + "posts/";
+    private final String reviewBaseUri = baseUri + "reviews/";
 
     private static final String DESTINATION_KEY = "destination";
     private static final String POST_ID_KEY = "post_id";
     private static final String POST_STATUS = "post_status";
     private static final String CONSUMER_TYPE_EXIST_KEY = "consumer_type_exist";
+
+    private static final String AUTHOR_PROFILE = "author_profile";
+    private static final String POST_IMAGE = "post_image";
+    private static final String IS_COMMENT = "is_comment";
 
     @Override
     public String build() {
@@ -29,20 +37,53 @@ public class CustomApnsPayloadBuilder extends ApnsPayloadBuilder {
         return JsonSerializer.writeJsonTextAsString(this.buildMdmPayloadMap(pushMagicValue));
     }
 
-    public ApnsPayloadBuilder setPostDetails(final String postId) {
+    public CustomApnsPayloadBuilder setPostDetails(final String postId) {
         super.addCustomProperty(DESTINATION_KEY, "post_detail");
         super.addCustomProperty(POST_ID_KEY, postId);
         return this;
     }
 
-    public ApnsPayloadBuilder setPostDetails(final Post post) {
+    public CustomApnsPayloadBuilder setPostDetails(final Post post) {
         super.addCustomProperty(POST_ID_KEY, post.getId());
+        switch (post.getPostStatus()) {
+            case REVIEW -> super.addCustomProperty(POST_IMAGE, generateReviewImageURL(post.getImage()));
+            case ACTIVE, CLOSED -> super.addCustomProperty(POST_IMAGE, generatePostImageURL(post.getImage()));
+        }
+
         super.addCustomProperty(POST_STATUS, post.getPostStatus().name());
+        super.addCustomProperty(AUTHOR_PROFILE, generateProfileImageURL(post.getAuthor().getProfileImage()));
         return this;
     }
 
-    public ApnsPayloadBuilder setConsumerTypeExist(final boolean consumerTypeExist) {
+    public CustomApnsPayloadBuilder setConsumerTypeExist(final boolean consumerTypeExist) {
         super.addCustomProperty(CONSUMER_TYPE_EXIST_KEY, consumerTypeExist);
         return this;
     }
+
+    public CustomApnsPayloadBuilder setIsComment(final boolean isComment) {
+        super.addCustomProperty(IS_COMMENT, isComment);
+        return this;
+    }
+
+    private String generateProfileImageURL(String imageName) {
+        String resultURL = null;
+        if (imageName != null)
+            resultURL = profileBaseUri + imageName;
+        return resultURL;
+    }
+
+    private String generatePostImageURL(String imageName) {
+        String resultURL = null;
+        if (imageName != null)
+            resultURL = postBaseUri + imageName;
+        return resultURL;
+    }
+
+    private String generateReviewImageURL(String imageName) {
+        String resultURL = null;
+        if (imageName != null)
+            resultURL = reviewBaseUri + imageName;
+        return resultURL;
+    }
+
 }

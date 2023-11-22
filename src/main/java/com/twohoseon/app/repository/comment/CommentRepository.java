@@ -19,6 +19,7 @@ import java.util.Optional;
  **/
 @Repository
 public interface CommentRepository extends JpaRepository<Comment, Long>, CommentCustomRepository {
+    void deleteByPost(Post post);
 
     Optional<List<Comment>> findPostCommentsByPost(Post post);
 

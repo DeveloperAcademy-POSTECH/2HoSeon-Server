@@ -52,6 +52,7 @@ public class NotificationServiceImpl implements NotificationService {
                     TokenUtil.sanitizeTokenString(deviceToken),
                     appIdentifier,
                     new CustomApnsPayloadBuilder()
+                            .setIsComment(false)
                             .setPostDetails(post)
                             .setAlertBody(alertBody)
                             .setSound("default")
@@ -76,6 +77,7 @@ public class NotificationServiceImpl implements NotificationService {
                     TokenUtil.sanitizeTokenString(deviceToken),
                     appIdentifier,
                     new CustomApnsPayloadBuilder()
+                            .setIsComment(true)
                             .setPostDetails(post)
                             .setAlertSubtitle(post.getTitle())
                             .setAlertBody(alertBody)
@@ -100,6 +102,7 @@ public class NotificationServiceImpl implements NotificationService {
                     TokenUtil.sanitizeTokenString(deviceToken),
                     appIdentifier,
                     new CustomApnsPayloadBuilder()
+                            .setIsComment(true)
                             .setPostDetails(parentComment.getPost())
                             .setAlertSubtitle(parentComment.getPost().getTitle())
                             .setAlertBody(alertBody)
@@ -122,6 +125,7 @@ public class NotificationServiceImpl implements NotificationService {
                     TokenUtil.sanitizeTokenString(deviceToken),
                     appIdentifier,
                     new CustomApnsPayloadBuilder()
+                            .setIsComment(false)
                             .setPostDetails(post)
                             .setAlertSubtitle(post.getTitle())
                             .setAlertBody("회원님의 투표에 후기가 작성되었어요.")
