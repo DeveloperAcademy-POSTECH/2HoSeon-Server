@@ -53,11 +53,14 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         String accessToken = jwtTokenProvider.getHeaderToken(request, "Access");
         //밴 리스트 확인
-        boolean isValidToken = refreshTokenRepository.existsByAccessTokenAndIsBannedTrue(accessToken);
-        if (isValidToken) {
-            jwtExceptionHandler(response, ErrorResponse.of(ErrorCode.EXPIRED_TOKEN_ERROR));
-            return;
+        if (accessToken != null) {
+            boolean isValidToken = refreshTokenRepository.existsByAccessTokenAndIsBannedTrue(accessToken);
+            if (isValidToken) {
+                jwtExceptionHandler(response, ErrorResponse.of(ErrorCode.EXPIRED_TOKEN_ERROR));
+                return;
+            }
         }
+
 
         //특정 url 요청시
         RequestMatcher skipPath = new AntPathRequestMatcher("/api/profiles/**");

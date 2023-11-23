@@ -24,7 +24,9 @@ public class RefreshTokenCustomRepositoryImpl implements RefreshTokenCustomRepos
     public boolean existsByAccessTokenAndIsBannedTrue(String accessToken) {
         return jpaQueryFactory.selectOne()
                 .from(refreshToken1)
-                .where(refreshToken1.isBanned.isTrue())
+                .where(refreshToken1.isBanned.isTrue()
+                        .and(refreshToken1.accessToken.eq(accessToken))
+                )
                 .fetchFirst() != null;
     }
 }
