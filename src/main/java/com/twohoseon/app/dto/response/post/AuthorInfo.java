@@ -18,11 +18,21 @@ public class AuthorInfo extends ImageDTO {
     String profileImage;
     @Schema(name = "consumerType", type = "ConsumerType", description = "소비 성향")
     ConsumerType consumerType;
+    @Schema(name = "isBlocked", type = "Boolean", description = "차단 여부")
+    Boolean isBlocked;
 
     public AuthorInfo(long id, String nickname, String profileImage, ConsumerType consumerType) {
         this.id = id;
         this.nickname = nickname;
         this.profileImage = generateProfileImageURL(profileImage);
         this.consumerType = consumerType;
+    }
+
+    public AuthorInfo(long id, String nickname, String profileImage, ConsumerType consumerType, Boolean isBlocked) {
+        this.id = id;
+        this.nickname = nickname;
+        this.profileImage = generateProfileImageURL(profileImage);
+        this.consumerType = consumerType;
+        this.isBlocked = isBlocked;
     }
 }

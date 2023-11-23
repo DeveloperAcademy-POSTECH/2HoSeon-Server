@@ -2,12 +2,14 @@ package com.twohoseon.app.service.member;
 
 import com.twohoseon.app.dto.ConsumerTypeRequest;
 import com.twohoseon.app.dto.request.member.ProfileRequest;
+import com.twohoseon.app.dto.response.mypage.BlockedMember;
 import com.twohoseon.app.dto.response.profile.ProfileInfo;
 import com.twohoseon.app.entity.member.Member;
 import com.twohoseon.app.service.CommonService;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -37,4 +39,10 @@ public interface MemberService extends UserDetailsService, CommonService {
 
 
     ProfileInfo getProfile();
+
+    void blockMember(Long memberId);
+
+    void unblockMember(Long memberId);
+
+    List<BlockedMember> getBlockedMembers();
 }

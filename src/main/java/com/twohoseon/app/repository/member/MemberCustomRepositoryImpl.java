@@ -2,6 +2,7 @@ package com.twohoseon.app.repository.member;
 
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
+import com.twohoseon.app.dto.response.mypage.BlockedMember;
 import com.twohoseon.app.dto.response.profile.ProfileInfo;
 import com.twohoseon.app.entity.member.Member;
 import com.twohoseon.app.entity.post.Comment;
@@ -78,33 +79,7 @@ public class MemberCustomRepositoryImpl implements MemberCustomRepository {
     }
 
     @Override
-    public void deletePostById(Long postId) {
-        jpaQueryFactory.delete(comment)
-                .where(comment.post.id.eq(postId))
-                .execute();
-
-        jpaQueryFactory.delete(post)
-                .where(post.id.eq(postId))
-                .execute();
-    }
-
-
-    @Override
     public ProfileInfo getProfile(long memberId) {
-//        @Schema(name = "createDate", type = "LocalDateTime", description = "유저 생성일")
-//        LocalDateTime createDate;
-//        @Schema(name = "modifiedDate", type = "LocalDateTime", description = "유저 수정일")
-//        LocalDateTime modifiedDate;
-//        @Schema(name = "lastSchoolRegisterDate", type = "LocalDateTime", description = "유저 마지막 학교 등록일")
-//        LocalDateTime lastSchoolRegisterDate;
-//        @Schema(name = "nickname", type = "String", description = "유저 닉네임")
-//        String nickname;
-//        @Schema(name = "profileImage", type = "String", description = "유저 프로필 이미지")
-//        String profileImage;
-//        @Schema(name = "consumerType", type = "ConsumerType", description = "소비 성향")
-//        ConsumerType consumerType;
-//        @Schema(name = "schoolName", type = "String", description = "학교 이름")
-//        String schoolName;
         ProfileInfo profileInfo = jpaQueryFactory
                 .select(Projections.constructor(ProfileInfo.class,
                         member.createDate,
@@ -120,5 +95,17 @@ public class MemberCustomRepositoryImpl implements MemberCustomRepository {
 
         return profileInfo;
     }
+
+    @Override
+    public List<BlockedMember> getBlockedMembers(Long id) {
+        return jpaQueryFactory.select(Projections.constructor(BlockedMember.class,
+                        member.id,
+                        member.nickname
+                ))
+                .from(member)
+                .where(member.blockedMember.any().id.eq(id))
+                .fetch();
+    }
+
 
 }

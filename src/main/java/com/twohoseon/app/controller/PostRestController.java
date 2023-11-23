@@ -9,8 +9,6 @@ import com.twohoseon.app.dto.response.VoteResultResponse;
 import com.twohoseon.app.dto.response.post.*;
 import com.twohoseon.app.enums.StatusEnum;
 import com.twohoseon.app.enums.post.VisibilityScope;
-import com.twohoseon.app.repository.post.PostRepository;
-import com.twohoseon.app.service.comment.CommentService;
 import com.twohoseon.app.service.post.PostService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -43,9 +41,6 @@ import static org.springframework.http.ResponseEntity.ok;
 @RequestMapping("/api/posts")
 public class PostRestController {
     private final PostService postService;
-
-    private final CommentService commentService;
-    private final PostRepository postRepository;
 
     @Operation(summary = "게시글 작성", description = "게시글 작성")
     @PostMapping(consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})

@@ -45,16 +45,15 @@ import static com.twohoseon.app.entity.post.vote.QVote.vote;
 @RequiredArgsConstructor
 @Repository
 public class PostCustomRepositoryImpl implements PostCustomRepository {
-//    private final PostRepository postRepository;
-
 
     private final JPAQueryFactory jpaQueryFactory;
 
     @Override
     public List<PostInfo> findAllPosts(Pageable pageable, Member reqMember, VisibilityScope visibilityScope) {
-        BooleanBuilder whereClause = new BooleanBuilder(post.postStatus.ne(PostStatus.REVIEW)
+        BooleanBuilder whereClause = new BooleanBuilder(post.postStatus.ne(PostStatus.REVIEW))
                 .and(post.visibilityScope.eq(visibilityScope))
-        );
+                .and(post.author.notIn(reqMember.getBlockedMember()));
+
         if (visibilityScope == VisibilityScope.SCHOOL) {
             whereClause.and(post.author.school.eq(reqMember.getSchool()));
         }
@@ -167,6 +166,7 @@ public class PostCustomRepositoryImpl implements PostCustomRepository {
         BooleanBuilder whereClause = new BooleanBuilder((post.title.contains(keyword).or(post.contents.contains(keyword)))
                 .and(post.postStatus.eq(PostStatus.ACTIVE))
                 .and(post.visibilityScope.eq(visibilityScope))
+                .and(post.author.notIn(reqMember.getBlockedMember()))
         );
         if (visibilityScope == VisibilityScope.SCHOOL) {
             whereClause.and(post.author.school.eq(reqMember.getSchool()));
@@ -205,6 +205,7 @@ public class PostCustomRepositoryImpl implements PostCustomRepository {
         BooleanBuilder whereClause = new BooleanBuilder((post.title.contains(keyword).or(post.contents.contains(keyword)))
                 .and(post.postStatus.eq(PostStatus.CLOSED))
                 .and(post.visibilityScope.eq(visibilityScope))
+                .and(post.author.notIn(reqMember.getBlockedMember()))
         );
         if (visibilityScope == VisibilityScope.SCHOOL) {
             whereClause.and(post.author.school.eq(reqMember.getSchool()));
@@ -244,6 +245,7 @@ public class PostCustomRepositoryImpl implements PostCustomRepository {
                 .or(post.contents.contains(keyword)))
                 .and(post.postStatus.eq(PostStatus.REVIEW))
                 .and(post.visibilityScope.eq(visibilityScope))
+                .and(post.author.notIn(reqMember.getBlockedMember()))
         );
         if (visibilityScope == VisibilityScope.SCHOOL) {
             whereClause.and(post.author.school.eq(reqMember.getSchool()));
@@ -282,7 +284,8 @@ public class PostCustomRepositoryImpl implements PostCustomRepository {
         BooleanBuilder whereClause = new BooleanBuilder(post.postStatus.eq(PostStatus.REVIEW))
                 .and(post.visibilityScope.eq(visibilityScope))
                 .and(post.postStatus.eq(PostStatus.REVIEW))
-                .and(post.author.consumerType.eq(consumerType));
+                .and(post.author.consumerType.eq(consumerType))
+                .and(post.author.notIn(reqMember.getBlockedMember()));
 
         if (visibilityScope == VisibilityScope.SCHOOL) {
             whereClause.and(post.author.school.eq(reqMember.getSchool()));
@@ -311,7 +314,8 @@ public class PostCustomRepositoryImpl implements PostCustomRepository {
     public List<PostSummary> findReviews(Pageable pageable, Member reqMember, VisibilityScope visibilityScope, ReviewType reviewType) {
         BooleanBuilder whereClause = new BooleanBuilder(post.postStatus.eq(PostStatus.REVIEW))
                 .and(post.visibilityScope.eq(visibilityScope))
-                .and(post.postStatus.eq(PostStatus.REVIEW));
+                .and(post.postStatus.eq(PostStatus.REVIEW))
+                .and(post.author.notIn(reqMember.getBlockedMember()));
 
         if (visibilityScope == VisibilityScope.SCHOOL) {
             whereClause.and(post.author.school.eq(reqMember.getSchool()));

@@ -4,6 +4,8 @@ import com.twohoseon.app.dto.ConsumerTypeRequest;
 import com.twohoseon.app.dto.request.member.NicknameValidCheckRequest;
 import com.twohoseon.app.dto.request.member.ProfileRequest;
 import com.twohoseon.app.dto.response.GeneralResponse;
+import com.twohoseon.app.dto.response.mypage.BlockedMember;
+import com.twohoseon.app.dto.response.mypage.BlockedMemberResponse;
 import com.twohoseon.app.dto.response.profile.ProfileResponse;
 import com.twohoseon.app.enums.StatusEnum;
 import com.twohoseon.app.service.member.MemberService;
@@ -17,6 +19,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Slf4j
@@ -87,6 +90,41 @@ public class MemberRestController {
                 .build();
         return ResponseEntity.ok(generalResponse);
     }
+
+    @Operation(summary = "회원 차단", description = "회원 차단")
+    @PostMapping("/api/members/block/{memberId}")
+    public ResponseEntity<GeneralResponse> blockMember(@PathVariable Long memberId) {
+        memberService.blockMember(memberId);
+        GeneralResponse generalResponse = GeneralResponse.builder()
+                .status(StatusEnum.OK)
+                .message("block success")
+                .build();
+        return ResponseEntity.ok(generalResponse);
+    }
+
+    @Operation(summary = "회원 차단 해제", description = "회원 차단 해제")
+    @DeleteMapping("/api/members/block/{memberId}")
+    public ResponseEntity<GeneralResponse> unblockMember(@PathVariable Long memberId) {
+        memberService.unblockMember(memberId);
+        GeneralResponse generalResponse = GeneralResponse.builder()
+                .status(StatusEnum.OK)
+                .message("unblock success")
+                .build();
+        return ResponseEntity.ok(generalResponse);
+    }
+
+    @Operation(summary = "차단한 유저 조회", description = "차단한 유저 조회")
+    @GetMapping("/api/members/block")
+    public ResponseEntity<BlockedMemberResponse> getBlockedMembers() {
+        List<BlockedMember> blockedMembers = memberService.getBlockedMembers();
+        BlockedMemberResponse generalResponse = BlockedMemberResponse.builder()
+                .status(StatusEnum.OK)
+                .message("success")
+                .data(blockedMembers)
+                .build();
+        return ResponseEntity.ok(generalResponse);
+    }
+
 
     @Operation(summary = "프로필 보기", description = "프로필 보기")
     @GetMapping("/api/profiles")

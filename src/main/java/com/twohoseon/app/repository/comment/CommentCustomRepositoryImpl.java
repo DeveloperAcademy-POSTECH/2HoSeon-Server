@@ -4,6 +4,7 @@ import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.twohoseon.app.dto.response.CommentInfo;
 import com.twohoseon.app.dto.response.post.AuthorInfo;
+import com.twohoseon.app.entity.member.Member;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
@@ -27,7 +28,8 @@ public class CommentCustomRepositoryImpl implements CommentCustomRepository {
     private final JPAQueryFactory jpaQueryFactory;
 
     @Override
-    public List<CommentInfo> getAllCommentsFromPost(Long postId, Long memberId) {
+    public List<CommentInfo> getAllCommentsFromPost(Long postId, Member reqMember) {
+
         List<CommentInfo> commentInfoList = jpaQueryFactory.select(Projections.constructor(
                         CommentInfo.class,
                         comment.id,
@@ -39,9 +41,10 @@ public class CommentCustomRepositoryImpl implements CommentCustomRepository {
                                 member.id,
                                 member.nickname,
                                 member.profileImage,
-                                member.consumerType
+                                member.consumerType,
+                                member.in(reqMember.getBlockedMember())
                         ),
-                        comment.author.id.eq(memberId)
+                        comment.author.id.eq(reqMember.getId())
 
                 ))
                 .from(comment)
@@ -55,7 +58,7 @@ public class CommentCustomRepositoryImpl implements CommentCustomRepository {
                 .fetch();
 
         for (CommentInfo comments : commentInfoList) {
-            List<CommentInfo> subComments = getSubComments(comments.getCommentId(), memberId);
+            List<CommentInfo> subComments = getSubComments(comments.getCommentId(), reqMember);
             comments.setSubComments(subComments.isEmpty() ? null : subComments);
         }
 
@@ -63,7 +66,7 @@ public class CommentCustomRepositoryImpl implements CommentCustomRepository {
     }
 
     @Override
-    public List<CommentInfo> getSubComments(Long parentId, Long memberId) {
+    public List<CommentInfo> getSubComments(Long parentId, Member reqMember) {
         return jpaQueryFactory.select(Projections.constructor(
                         CommentInfo.class,
                         comment.id,
@@ -75,9 +78,10 @@ public class CommentCustomRepositoryImpl implements CommentCustomRepository {
                                 member.id,
                                 member.nickname,
                                 member.profileImage,
-                                member.consumerType
+                                member.consumerType,
+                                member.in(reqMember.getBlockedMember())
                         ),
-                        comment.author.id.eq(memberId)
+                        comment.author.id.eq(reqMember.getId())
                 ))
                 .from(comment)
                 .leftJoin(comment.author, member)

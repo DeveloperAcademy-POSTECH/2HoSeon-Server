@@ -2,6 +2,7 @@ package com.twohoseon.app.service.member;
 
 import com.twohoseon.app.dto.ConsumerTypeRequest;
 import com.twohoseon.app.dto.request.member.ProfileRequest;
+import com.twohoseon.app.dto.response.mypage.BlockedMember;
 import com.twohoseon.app.dto.response.profile.ProfileInfo;
 import com.twohoseon.app.entity.member.DeviceToken;
 import com.twohoseon.app.entity.member.Member;
@@ -21,6 +22,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
@@ -145,6 +147,32 @@ public class MemberServiceImpl implements MemberService {
     public ProfileInfo getProfile() {
         Member member = getMemberFromRequest();
         return memberRepository.getProfile(member.getId());
+    }
+
+    @Override
+    @Transactional
+    public void blockMember(Long memberId) {
+        Member reqMember = getMemberFromRequest();
+        Member blockMember = memberRepository.findById(memberId)
+                .orElseThrow(MemberNotFoundException::new);
+        reqMember.blockedMember(blockMember);
+        memberRepository.save(reqMember);
+    }
+
+    @Override
+    public void unblockMember(Long memberId) {
+        Member reqMember = getMemberFromRequest();
+        Member blockedMember = memberRepository.findById(memberId)
+                .orElseThrow(MemberNotFoundException::new);
+        reqMember.unBlockedMember(blockedMember);
+        memberRepository.save(reqMember);
+    }
+
+    @Override
+    public List<BlockedMember> getBlockedMembers() {
+        Member reqMember = getMemberFromRequest();
+        List<BlockedMember> blockedMembers = memberRepository.getBlockedMembers(reqMember.getId());
+        return blockedMembers;
     }
 
 }

@@ -1,8 +1,10 @@
 package com.twohoseon.app.repository.member;
 
+import com.twohoseon.app.dto.response.mypage.BlockedMember;
+import com.twohoseon.app.dto.response.profile.ProfileInfo;
 import com.twohoseon.app.entity.member.Member;
 
-import com.twohoseon.app.dto.response.profile.ProfileInfo;
+import java.util.List;
 
 /**
  * @author : hyunwoopark
@@ -21,8 +23,9 @@ public interface MemberCustomRepository {
 
     void deletePostsFromMember(Member memberId);
 
-    void deletePostById(Long postId);
-//    void deleteSubscriptions(Member reqMember);
 
     ProfileInfo getProfile(long memberId);
+
+    List<BlockedMember> getBlockedMembers(Long id);
+
 }

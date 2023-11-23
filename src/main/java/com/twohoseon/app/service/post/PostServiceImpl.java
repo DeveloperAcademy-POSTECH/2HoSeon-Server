@@ -226,7 +226,7 @@ public class PostServiceImpl implements PostService {
                 .orElseThrow(() -> new PostNotFoundException());
         if (!post.isAuthor(member))
             throw new PermissionDeniedException();
-        postRepository.delete(post.deleteReview());
+        post.deleteReview();
     }
 
     @Override

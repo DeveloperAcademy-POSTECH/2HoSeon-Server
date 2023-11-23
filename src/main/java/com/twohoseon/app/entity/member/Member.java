@@ -72,6 +72,13 @@ public class Member extends BaseTimeEntity {
     @Column
     private String appleRefreshToken;
 
+    @ToString.Exclude
+    @ManyToMany(fetch = FetchType.EAGER)
+    @Builder.Default
+    @JoinTable(name = "Member_Block",
+            joinColumns = @JoinColumn(name = "blocker_id"),
+            inverseJoinColumns = @JoinColumn(name = "blocked_id"))
+    private Set<Member> blockedMember = new LinkedHashSet<>();
 
     public void updateAdditionalUserInfo(String profileImage, String nickname, School school) {
         if (profileImage != null)
@@ -82,6 +89,7 @@ public class Member extends BaseTimeEntity {
             this.school = school;
         lastSchoolRegisterDate = LocalDate.now();
     }
+    
 
     public boolean isSchoolRegisterable() {
         return lastSchoolRegisterDate == null || lastSchoolRegisterDate.isBefore(LocalDate.now().minusMonths(6));
@@ -121,4 +129,11 @@ public class Member extends BaseTimeEntity {
     }
 
 
+    public void unBlockedMember(Member blockedMember) {
+        this.blockedMember.remove(blockedMember);
+    }
+
+    public void blockedMember(Member blockedMember) {
+        this.blockedMember.add(blockedMember);
+    }
 }
