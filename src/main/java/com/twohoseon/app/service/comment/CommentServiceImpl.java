@@ -54,7 +54,7 @@ public class CommentServiceImpl implements CommentService {
         commentRepository.save(comment);
         CompletableFuture.runAsync(() -> {
             try {
-                notificationService.sendPostCommentNotification(post, member.getNickname());
+                notificationService.sendPostCommentNotification(post, member.getNickname(), member.getProfileImage());
             } catch (ExecutionException | InterruptedException e) {
                 log.debug("sendPostCommentNotification error: ", e);
             }
@@ -78,7 +78,7 @@ public class CommentServiceImpl implements CommentService {
         commentRepository.save(subComment);
         CompletableFuture.runAsync(() -> {
             try {
-                notificationService.sendPostSubCommentNotification(parentComment, member.getNickname());
+                notificationService.sendPostSubCommentNotification(parentComment, member.getNickname(), member.getProfileImage());
             } catch (ExecutionException | InterruptedException e) {
                 log.debug("sendPostCommentNotification error: ", e);
             }
@@ -114,14 +114,14 @@ public class CommentServiceImpl implements CommentService {
 
     @Override
     public List<CommentInfo> getPostComments(Long postId) {
-        Member member = getMemberFromRequest();
-        return commentRepository.getAllCommentsFromPost(postId, member.getId());
+        Member reqMember = getMemberFromRequest();
+        return commentRepository.getAllCommentsFromPost(postId, reqMember);
     }
 
     @Override
     public List<CommentInfo> getSubComments(Long commentId) {
-        Member member = getMemberFromRequest();
-        return commentRepository.getSubComments(commentId, member.getId());
+        Member reqMember = getMemberFromRequest();
+        return commentRepository.getSubComments(commentId, reqMember);
     }
 
 

@@ -4,6 +4,8 @@ import com.eatthepath.json.JsonSerializer;
 import com.eatthepath.pushy.apns.util.ApnsPayloadBuilder;
 import com.twohoseon.app.entity.post.Post;
 
+import java.time.LocalDateTime;
+
 /**
  * @author : hyunwoopark
  * @version : 1.0.0
@@ -27,6 +29,8 @@ public class CustomApnsPayloadBuilder extends ApnsPayloadBuilder {
     private static final String POST_IMAGE = "post_image";
     private static final String IS_COMMENT = "is_comment";
 
+    private static final String NOTIFICATION_TIME = "notification_time";
+
     @Override
     public String build() {
         return JsonSerializer.writeJsonTextAsString(this.buildPayloadMap());
@@ -45,13 +49,18 @@ public class CustomApnsPayloadBuilder extends ApnsPayloadBuilder {
 
     public CustomApnsPayloadBuilder setPostDetails(final Post post) {
         super.addCustomProperty(POST_ID_KEY, post.getId());
+        super.addCustomProperty(NOTIFICATION_TIME, LocalDateTime.now());
         switch (post.getPostStatus()) {
             case REVIEW -> super.addCustomProperty(POST_IMAGE, generateReviewImageURL(post.getImage()));
             case ACTIVE, CLOSED -> super.addCustomProperty(POST_IMAGE, generatePostImageURL(post.getImage()));
         }
 
         super.addCustomProperty(POST_STATUS, post.getPostStatus().name());
-        super.addCustomProperty(AUTHOR_PROFILE, generateProfileImageURL(post.getAuthor().getProfileImage()));
+        return this;
+    }
+
+    public CustomApnsPayloadBuilder setAuthor(final String memberProfileImage) {
+        super.addCustomProperty(AUTHOR_PROFILE, generateProfileImageURL(memberProfileImage));
         return this;
     }
 
@@ -64,6 +73,7 @@ public class CustomApnsPayloadBuilder extends ApnsPayloadBuilder {
         super.addCustomProperty(IS_COMMENT, isComment);
         return this;
     }
+
 
     private String generateProfileImageURL(String imageName) {
         String resultURL = null;

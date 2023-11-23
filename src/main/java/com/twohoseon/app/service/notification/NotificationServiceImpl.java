@@ -13,6 +13,7 @@ import com.twohoseon.app.entity.post.Post;
 import com.twohoseon.app.repository.device.token.DeviceTokenRepository;
 import com.twohoseon.app.repository.member.MemberRepository;
 import com.twohoseon.app.repository.post.PostRepository;
+import com.twohoseon.app.service.CommonService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -33,7 +34,7 @@ import java.util.concurrent.ExecutionException;
 @Service
 @Slf4j
 @RequiredArgsConstructor
-public class NotificationServiceImpl implements NotificationService {
+public class NotificationServiceImpl implements NotificationService, CommonService {
     private final ApnsClient apnsClient;
     private final MemberRepository memberRepository;
     private final DeviceTokenRepository deviceTokenRepository;
@@ -66,7 +67,7 @@ public class NotificationServiceImpl implements NotificationService {
     }
 
     @Override
-    public void sendPostCommentNotification(Post post, String userNickname) throws ExecutionException, InterruptedException {
+    public void sendPostCommentNotification(Post post, String userNickname, String profileImage) throws ExecutionException, InterruptedException {
         List<String> deviceTokens = deviceTokenRepository.findAllByMemberId(post.getAuthor().getId());
         //Sub comment 핸들링
 
@@ -77,6 +78,7 @@ public class NotificationServiceImpl implements NotificationService {
                     TokenUtil.sanitizeTokenString(deviceToken),
                     appIdentifier,
                     new CustomApnsPayloadBuilder()
+                            .setAuthor(profileImage)
                             .setIsComment(true)
                             .setPostDetails(post)
                             .setAlertSubtitle(post.getTitle())
@@ -92,7 +94,8 @@ public class NotificationServiceImpl implements NotificationService {
     }
 
     @Override
-    public void sendPostSubCommentNotification(Comment parentComment, String userNickname) throws ExecutionException, InterruptedException {
+    public void sendPostSubCommentNotification(Comment parentComment, String userNickname, String profileImage) throws ExecutionException, InterruptedException {
+
         List<String> deviceTokens = deviceTokenRepository.findAllByMemberId(parentComment.getAuthor().getId());
         //Sub comment 핸들링
 
@@ -102,6 +105,7 @@ public class NotificationServiceImpl implements NotificationService {
                     TokenUtil.sanitizeTokenString(deviceToken),
                     appIdentifier,
                     new CustomApnsPayloadBuilder()
+                            .setAuthor(profileImage)
                             .setIsComment(true)
                             .setPostDetails(parentComment.getPost())
                             .setAlertSubtitle(parentComment.getPost().getTitle())
