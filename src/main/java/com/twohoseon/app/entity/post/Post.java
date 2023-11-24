@@ -12,6 +12,7 @@ import jakarta.annotation.Nullable;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
+import lombok.extern.slf4j.Slf4j;
 import org.hibernate.annotations.Comment;
 
 import java.util.LinkedHashSet;
@@ -31,6 +32,7 @@ import java.util.Set;
 @EqualsAndHashCode(of = "id", callSuper = false)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
+@Slf4j
 public class Post extends BaseTimeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
@@ -234,7 +236,7 @@ public class Post extends BaseTimeEntity {
     }
 
     public void subscribe(Member member) {
-        subscribers.add(member);
+        this.subscribers.add(member);
     }
 
     public int getVoteCount() {
@@ -250,6 +252,6 @@ public class Post extends BaseTimeEntity {
     }
 
     public void unsubscribe(Member member) {
-        subscribers.remove(member);
+        this.subscribers.remove(member);
     }
 }

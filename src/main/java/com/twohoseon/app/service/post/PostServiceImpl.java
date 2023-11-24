@@ -239,6 +239,7 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
+    @Transactional
     public void unsubscribePost(Long postId) {
         Member reqMember = getMemberFromRequest();
         Post post = postRepository.findById(postId)

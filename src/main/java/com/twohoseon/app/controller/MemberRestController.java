@@ -93,7 +93,7 @@ public class MemberRestController {
 
     @Operation(summary = "회원 차단", description = "회원 차단")
     @PostMapping("/api/members/block/{memberId}")
-    public ResponseEntity<GeneralResponse> blockMember(@PathVariable Long memberId) {
+    public ResponseEntity<GeneralResponse> blockMember(@PathVariable("memberId") Long memberId) {
         memberService.blockMember(memberId);
         GeneralResponse generalResponse = GeneralResponse.builder()
                 .status(StatusEnum.OK)
@@ -104,7 +104,7 @@ public class MemberRestController {
 
     @Operation(summary = "회원 차단 해제", description = "회원 차단 해제")
     @DeleteMapping("/api/members/block/{memberId}")
-    public ResponseEntity<GeneralResponse> unblockMember(@PathVariable Long memberId) {
+    public ResponseEntity<GeneralResponse> unblockMember(@PathVariable("memberId") Long memberId) {
         memberService.unblockMember(memberId);
         GeneralResponse generalResponse = GeneralResponse.builder()
                 .status(StatusEnum.OK)

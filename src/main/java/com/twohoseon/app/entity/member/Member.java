@@ -1,16 +1,12 @@
 package com.twohoseon.app.entity.member;
 
-import com.google.common.base.Objects;
 import com.twohoseon.app.common.BaseTimeEntity;
 import com.twohoseon.app.entity.post.Post;
 import com.twohoseon.app.enums.ConsumerType;
 import com.twohoseon.app.enums.OAuth2Provider;
 import com.twohoseon.app.enums.UserRole;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.ToString;
+import lombok.*;
 
 import java.time.LocalDate;
 import java.util.LinkedHashSet;
@@ -30,6 +26,7 @@ import java.util.Set;
 @Getter
 @Builder
 @AllArgsConstructor
+@EqualsAndHashCode(of = "id")
 public class Member extends BaseTimeEntity {
 
     @Id
@@ -89,7 +86,7 @@ public class Member extends BaseTimeEntity {
             this.school = school;
         lastSchoolRegisterDate = LocalDate.now();
     }
-    
+
 
     public boolean isSchoolRegisterable() {
         return lastSchoolRegisterDate == null || lastSchoolRegisterDate.isBefore(LocalDate.now().minusMonths(6));
@@ -109,26 +106,7 @@ public class Member extends BaseTimeEntity {
     public String getAppleRefreshToken() {
         return appleRefreshToken;
     }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (o == null || getClass() != o.getClass()) {
-            return false;
-        }
-        Member member = (Member) o;
-        return Objects.equal(id, member.id) && provider == member.provider
-                && Objects.equal(providerId, member.providerId) && role == member.role;
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hashCode(id, provider, providerId, role);
-    }
-
-
+    
     public void unBlockedMember(Member blockedMember) {
         this.blockedMember.remove(blockedMember);
     }
