@@ -26,6 +26,6 @@ public interface MemberCustomRepository {
 
     ProfileInfo getProfile(long memberId);
 
-    List<BlockedMember> getBlockedMembers(Long id);
+    List<BlockedMember> getBlockedMembers(Member reqMember);
 
 }

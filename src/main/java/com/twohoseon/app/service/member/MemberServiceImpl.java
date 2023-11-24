@@ -171,7 +171,7 @@ public class MemberServiceImpl implements MemberService {
     @Override
     public List<BlockedMember> getBlockedMembers() {
         Member reqMember = getMemberFromRequest();
-        List<BlockedMember> blockedMembers = memberRepository.getBlockedMembers(reqMember.getId());
+        List<BlockedMember> blockedMembers = memberRepository.getBlockedMembers(reqMember);
         return blockedMembers;
     }
 

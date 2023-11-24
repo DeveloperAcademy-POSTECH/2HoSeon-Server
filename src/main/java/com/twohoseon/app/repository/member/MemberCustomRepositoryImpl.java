@@ -14,6 +14,8 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import static com.twohoseon.app.entity.member.QMember.member;
 import static com.twohoseon.app.entity.post.QComment.comment;
@@ -97,13 +99,18 @@ public class MemberCustomRepositoryImpl implements MemberCustomRepository {
     }
 
     @Override
-    public List<BlockedMember> getBlockedMembers(Long id) {
-        return jpaQueryFactory.select(Projections.constructor(BlockedMember.class,
-                        member.id,
-                        member.nickname
-                ))
+    public List<BlockedMember> getBlockedMembers(Member reqMember) {
+        Set<Member> blockedMembers = reqMember.getBlockedMember();
+        List<Long> blockedMemberIds = blockedMembers.stream()
+                .map(Member::getId)
+                .collect(Collectors.toList());
+        return jpaQueryFactory.select(
+                        Projections.constructor(BlockedMember.class,
+                                member.id,
+                                member.nickname
+                        ))
                 .from(member)
-                .where(member.blockedMember.any().id.eq(id))
+                .where(member.id.in(blockedMemberIds))
                 .fetch();
     }
 
