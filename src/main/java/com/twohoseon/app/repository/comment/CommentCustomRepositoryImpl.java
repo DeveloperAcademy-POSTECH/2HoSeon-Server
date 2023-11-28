@@ -1,6 +1,8 @@
 package com.twohoseon.app.repository.comment;
 
 import com.querydsl.core.types.Projections;
+import com.querydsl.core.types.dsl.CaseBuilder;
+import com.querydsl.core.types.dsl.StringExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.twohoseon.app.dto.response.CommentInfo;
 import com.twohoseon.app.dto.response.post.AuthorInfo;
@@ -29,20 +31,24 @@ public class CommentCustomRepositoryImpl implements CommentCustomRepository {
 
     @Override
     public List<CommentInfo> getAllCommentsFromPost(Long postId, Member reqMember) {
-
+        StringExpression contentExpression = new CaseBuilder()
+                .when(member.isBaned.isTrue())
+                .then("")
+                .otherwise(comment.content);
         List<CommentInfo> commentInfoList = jpaQueryFactory.select(Projections.constructor(
                         CommentInfo.class,
                         comment.id,
                         comment.createDate,
                         comment.modifiedDate,
-                        comment.content,
+                        contentExpression,
                         Projections.constructor(
                                 AuthorInfo.class,
                                 member.id,
                                 member.nickname,
                                 member.profileImage,
                                 member.consumerType,
-                                member.in(reqMember.getBlockedMember())
+                                member.in(reqMember.getBlockedMember()),
+                                member.isBaned
                         ),
                         comment.author.id.eq(reqMember.getId())
 
@@ -67,19 +73,25 @@ public class CommentCustomRepositoryImpl implements CommentCustomRepository {
 
     @Override
     public List<CommentInfo> getSubComments(Long parentId, Member reqMember) {
+
+        StringExpression contentExpression = new CaseBuilder()
+                .when(member.isBaned.isTrue())
+                .then("")
+                .otherwise(comment.content);
         return jpaQueryFactory.select(Projections.constructor(
                         CommentInfo.class,
                         comment.id,
                         comment.createDate,
                         comment.modifiedDate,
-                        comment.content,
+                        contentExpression,
                         Projections.constructor(
                                 AuthorInfo.class,
                                 member.id,
                                 member.nickname,
                                 member.profileImage,
                                 member.consumerType,
-                                member.in(reqMember.getBlockedMember())
+                                member.in(reqMember.getBlockedMember()),
+                                member.isBaned
                         ),
                         comment.author.id.eq(reqMember.getId())
                 ))

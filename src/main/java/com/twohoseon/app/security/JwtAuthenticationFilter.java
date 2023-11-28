@@ -73,11 +73,18 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 String providerId = jwtTokenProvider.getProviderIdFromToken(accessToken);
 
                 Optional<Member> memberOptional = memberRepository.findByProviderId(providerId);
+
                 if (memberOptional.isEmpty()) {
                     jwtExceptionHandler(response, ErrorResponse.of(ErrorCode.MEMBER_NOT_FOUND_ERROR));
                     return;
                 }
                 Member member = memberOptional.get();
+                if (member.isBaned()) {
+                    log.debug("member is baned");
+                    log.debug("member.getProviderId() = " + member.getProviderId());
+                    jwtExceptionHandler(response, ErrorResponse.of(ErrorCode.BANED_MEMBER_ERROR));
+                    return;
+                }
                 log.info("ProviderId : ", providerId);
 
                 setAuthentication(jwtTokenProvider.getProviderIdFromToken(accessToken));

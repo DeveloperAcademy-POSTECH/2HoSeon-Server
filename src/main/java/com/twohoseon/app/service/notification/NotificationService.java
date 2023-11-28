@@ -18,9 +18,9 @@ import java.util.concurrent.ExecutionException;
 public interface NotificationService {
     void sendPostExpiredNotification(Post post) throws ExecutionException, InterruptedException;
 
-    void sendPostCommentNotification(Post post, String userNickname, String profileImage) throws ExecutionException, InterruptedException;
+    void sendPostCommentNotification(Post post, Member reqMember) throws ExecutionException, InterruptedException;
 
-    void sendPostSubCommentNotification(Comment parentComment, String userNickname, String profileImage) throws ExecutionException, InterruptedException;
+    void sendPostSubCommentNotification(Comment parentComment, Member reqMember) throws ExecutionException, InterruptedException;
 
     void sendPostReviewNotification(Post post) throws ExecutionException, InterruptedException;
 

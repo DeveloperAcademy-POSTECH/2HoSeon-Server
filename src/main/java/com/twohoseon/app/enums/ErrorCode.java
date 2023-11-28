@@ -122,7 +122,11 @@ public enum ErrorCode {
     INVALID_REFRESH_TOKEN_ERROR(401, "E016", "Invalid Refresh Token"),
 
     //학교를 업데이트 한지 6개월이 넘지 않음
-    SCHOOL_UPDATE_RESTRICTION_ERROR(400, "E017", "It has not been 6 months since the school was updated.");
+    SCHOOL_UPDATE_RESTRICTION_ERROR(400, "E017", "It has not been 6 months since the school was updated."),
+
+    //유저가 서비스 이용이 제한됨
+    BANED_MEMBER_ERROR(403, "E018", "You are banned from using the service.");
+
 
     /**
      * ******************************* Error Code Constructor ***************************************

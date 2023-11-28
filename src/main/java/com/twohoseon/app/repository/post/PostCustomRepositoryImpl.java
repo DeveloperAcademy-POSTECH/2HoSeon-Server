@@ -52,7 +52,8 @@ public class PostCustomRepositoryImpl implements PostCustomRepository {
     public List<PostInfo> findAllPosts(Pageable pageable, Member reqMember, VisibilityScope visibilityScope) {
         BooleanBuilder whereClause = new BooleanBuilder(post.postStatus.ne(PostStatus.REVIEW))
                 .and(post.visibilityScope.eq(visibilityScope))
-                .and(post.author.notIn(reqMember.getBlockedMember()));
+                .and(post.author.notIn(reqMember.getBlockedMember()))
+                .and(post.author.isBaned.eq(false));
 
         if (visibilityScope == VisibilityScope.SCHOOL) {
             whereClause.and(post.author.school.eq(reqMember.getSchool()));
@@ -163,11 +164,11 @@ public class PostCustomRepositoryImpl implements PostCustomRepository {
 
     @Override
     public List<PostSummary> findActivePostsByKeyword(VisibilityScope visibilityScope, Member reqMember, Pageable pageable, String keyword) {
-        BooleanBuilder whereClause = new BooleanBuilder((post.title.contains(keyword).or(post.contents.contains(keyword)))
+        BooleanBuilder whereClause = new BooleanBuilder(post.title.contains(keyword).or(post.contents.contains(keyword)))
                 .and(post.postStatus.eq(PostStatus.ACTIVE))
                 .and(post.visibilityScope.eq(visibilityScope))
                 .and(post.author.notIn(reqMember.getBlockedMember()))
-        );
+                .and(post.author.isBaned.eq(false));
         if (visibilityScope == VisibilityScope.SCHOOL) {
             whereClause.and(post.author.school.eq(reqMember.getSchool()));
         }
@@ -202,11 +203,12 @@ public class PostCustomRepositoryImpl implements PostCustomRepository {
 
     @Override
     public List<PostSummary> findClosedPostsByKeyword(VisibilityScope visibilityScope, Member reqMember, Pageable pageable, String keyword) {
-        BooleanBuilder whereClause = new BooleanBuilder((post.title.contains(keyword).or(post.contents.contains(keyword)))
+        BooleanBuilder whereClause = new BooleanBuilder(post.title.contains(keyword).or(post.contents.contains(keyword)))
                 .and(post.postStatus.eq(PostStatus.CLOSED))
                 .and(post.visibilityScope.eq(visibilityScope))
                 .and(post.author.notIn(reqMember.getBlockedMember()))
-        );
+                .and(post.author.isBaned.eq(false));
+
         if (visibilityScope == VisibilityScope.SCHOOL) {
             whereClause.and(post.author.school.eq(reqMember.getSchool()));
         }
@@ -241,12 +243,11 @@ public class PostCustomRepositoryImpl implements PostCustomRepository {
 
     @Override
     public List<PostSummary> findReviewPostsByKeyword(VisibilityScope visibilityScope, Member reqMember, Pageable pageable, String keyword) {
-        BooleanBuilder whereClause = new BooleanBuilder((post.title.contains(keyword)
-                .or(post.contents.contains(keyword)))
+        BooleanBuilder whereClause = new BooleanBuilder(post.title.contains(keyword).or(post.contents.contains(keyword)))
                 .and(post.postStatus.eq(PostStatus.REVIEW))
                 .and(post.visibilityScope.eq(visibilityScope))
                 .and(post.author.notIn(reqMember.getBlockedMember()))
-        );
+                .and(post.author.isBaned.eq(false));
         if (visibilityScope == VisibilityScope.SCHOOL) {
             whereClause.and(post.author.school.eq(reqMember.getSchool()));
         }
@@ -285,7 +286,8 @@ public class PostCustomRepositoryImpl implements PostCustomRepository {
                 .and(post.visibilityScope.eq(visibilityScope))
                 .and(post.postStatus.eq(PostStatus.REVIEW))
                 .and(post.author.consumerType.eq(consumerType))
-                .and(post.author.notIn(reqMember.getBlockedMember()));
+                .and(post.author.notIn(reqMember.getBlockedMember()))
+                .and(post.author.isBaned.eq(false));
 
         if (visibilityScope == VisibilityScope.SCHOOL) {
             whereClause.and(post.author.school.eq(reqMember.getSchool()));
@@ -315,7 +317,9 @@ public class PostCustomRepositoryImpl implements PostCustomRepository {
         BooleanBuilder whereClause = new BooleanBuilder(post.postStatus.eq(PostStatus.REVIEW))
                 .and(post.visibilityScope.eq(visibilityScope))
                 .and(post.postStatus.eq(PostStatus.REVIEW))
-                .and(post.author.notIn(reqMember.getBlockedMember()));
+                .and(post.author.notIn(reqMember.getBlockedMember()))
+                .and(post.author.isBaned.eq(false));
+
 
         if (visibilityScope == VisibilityScope.SCHOOL) {
             whereClause.and(post.author.school.eq(reqMember.getSchool()));
@@ -553,6 +557,7 @@ public class PostCustomRepositoryImpl implements PostCustomRepository {
         PostInfo postInfo;
         Integer commentCount;
         String commentPreview;
+        String commentPreviewImage;
         postInfo = jpaQueryFactory
                 .select(Projections.constructor(PostInfo.class,
                         post.id.as("post_id"),
@@ -591,10 +596,12 @@ public class PostCustomRepositoryImpl implements PostCustomRepository {
             postInfo.setIsNotified(getIsNotified(postId, memberId));
             postInfo.setIsMine(postInfo.getAuthor().getId() == memberId);
             postInfo.setVoteInfoList(getVoteInfoList(postId));
+
             commentCount = calculateCommentCountByPostId(postId);
             if (commentCount != null) {
                 commentPreview = getCommentPreviewByPostId(postId);
-                postDetail = new PostDetail(postInfo, commentCount, commentPreview);
+                commentPreviewImage = getCommentPreviewImageByPostId(postId);
+                postDetail = new PostDetail(postInfo, commentCount, commentPreview, commentPreviewImage);
                 return postDetail;
             }
         }
@@ -614,6 +621,16 @@ public class PostCustomRepositoryImpl implements PostCustomRepository {
     public String getCommentPreviewByPostId(Long postId) {
         return jpaQueryFactory
                 .select(comment.content)
+                .from(comment)
+                .where(post.id.eq(postId))
+                .orderBy(comment.createDate.desc())
+                .fetchFirst();
+    }
+
+    @Override
+    public String getCommentPreviewImageByPostId(Long postId) {
+        return jpaQueryFactory
+                .select(comment.author.profileImage)
                 .from(comment)
                 .where(post.id.eq(postId))
                 .orderBy(comment.createDate.desc())

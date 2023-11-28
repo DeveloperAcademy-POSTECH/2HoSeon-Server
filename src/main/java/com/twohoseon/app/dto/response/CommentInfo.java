@@ -57,7 +57,8 @@ public class CommentInfo {
         this.createDate = createDate;
         this.modifiedDate = modifiedDate;
         this.content = content;
-        this.author = author;
+        if (author.getId() != null)
+            this.author = author;
         this.isMine = isMine;
     }
 }

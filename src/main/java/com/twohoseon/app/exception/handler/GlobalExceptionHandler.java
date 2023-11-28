@@ -292,6 +292,12 @@ public class GlobalExceptionHandler {
         log.error("handleSchoolUpdateRestrictionException: It has not been 6 months since the school was updated.", ex);
         return ErrorResponse.toResponseEntity(ErrorCode.SCHOOL_UPDATE_RESTRICTION_ERROR);
     }
+
+    @ExceptionHandler(BanedMemberException.class)
+    protected ResponseEntity<ErrorResponse> handleBanedMemberException(BanedMemberException ex) {
+        log.error("handleBanedMemberException: You are banned from using the service.", ex);
+        return ErrorResponse.toResponseEntity(ErrorCode.BANED_MEMBER_ERROR);
+    }
     // ==================================================================================================================
 
     /**

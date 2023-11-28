@@ -61,4 +61,6 @@ public interface PostCustomRepository {
     Integer calculateCommentCountByPostId(Long postId);
 
     String getCommentPreviewByPostId(Long postId);
+
+    String getCommentPreviewImageByPostId(Long postId);
 }

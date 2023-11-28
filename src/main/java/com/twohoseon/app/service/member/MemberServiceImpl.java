@@ -8,6 +8,7 @@ import com.twohoseon.app.entity.member.DeviceToken;
 import com.twohoseon.app.entity.member.Member;
 import com.twohoseon.app.exception.MemberNotFoundException;
 import com.twohoseon.app.exception.SchoolUpdateRestrictionException;
+import com.twohoseon.app.repository.banlist.BanListRepository;
 import com.twohoseon.app.repository.device.token.DeviceTokenRepository;
 import com.twohoseon.app.repository.member.MemberRepository;
 import com.twohoseon.app.security.MemberDetails;
@@ -39,6 +40,7 @@ import java.util.concurrent.ExecutionException;
 @Service
 @RequiredArgsConstructor
 public class MemberServiceImpl implements MemberService {
+    private final BanListRepository banListRepository;
 
     private final MemberRepository memberRepository;
     private final ImageService imageService;
@@ -81,6 +83,9 @@ public class MemberServiceImpl implements MemberService {
                 profileRequest.getNickname(),
                 profileRequest.getSchool()
         );
+        if (banListRepository.existsByProviderId(member.getProviderId())) {
+            member.setIsBaned(true);
+        }
         memberRepository.save(member);
     }
 
@@ -122,23 +127,28 @@ public class MemberServiceImpl implements MemberService {
     @Transactional
     public void deleteMember() {
         Member reqMember = getMemberFromRequest();
-        memberRepository.detachCommentsFromMember(reqMember.getId());
         memberRepository.detachVoteFromMember(reqMember.getId());
         memberRepository.deleteSubscriptionsFromMember(reqMember.getId());
+        memberRepository.detachCommentsFromMember(reqMember.getId());
+        memberRepository.detachReportsFromMember(reqMember.getId());
         memberRepository.deletePostsFromMember(reqMember);
-        memberRepository.delete(reqMember);
+        memberRepository.deleteMemberBlockFromMember(reqMember.getId());
+        memberRepository.deleteDeviceTokenFromMember(reqMember.getId());
         appleUtility.revokeAppleToken(reqMember.getAppleRefreshToken());
+        memberRepository.delete(reqMember);
     }
 
     @Override
     @Transactional
     public void deleteAppleMember(String providerId) {
-        Member reqMember = memberRepository.findByProviderId(providerId)
-                .orElseThrow(MemberNotFoundException::new);
-        memberRepository.detachCommentsFromMember(reqMember.getId());
+        Member reqMember = getMemberFromRequest();
         memberRepository.detachVoteFromMember(reqMember.getId());
         memberRepository.deleteSubscriptionsFromMember(reqMember.getId());
+        memberRepository.detachCommentsFromMember(reqMember.getId());
+        memberRepository.detachReportsFromMember(reqMember.getId());
         memberRepository.deletePostsFromMember(reqMember);
+        memberRepository.deleteMemberBlockFromMember(reqMember.getId());
+        memberRepository.deleteDeviceTokenFromMember(reqMember.getId());
         memberRepository.delete(reqMember);
     }
 

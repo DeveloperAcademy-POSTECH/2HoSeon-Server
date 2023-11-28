@@ -42,19 +42,19 @@ public class CommentServiceImpl implements CommentService {
     @Override
     @Transactional
     public void createComment(CommentCreateRequest commentCreateRequest) {
-        Member member = getMemberFromRequest();
+        Member reqMember = getMemberFromRequest();
         Post post = postRepository.findById(commentCreateRequest.getPostId())
                 .orElseThrow(() -> new PostNotFoundException());
         Comment comment = Comment
                 .builder()
-                .author(member)
+                .author(reqMember)
                 .post(post)
                 .content(commentCreateRequest.getContents())
                 .build();
         commentRepository.save(comment);
         CompletableFuture.runAsync(() -> {
             try {
-                notificationService.sendPostCommentNotification(post, member.getNickname(), member.getProfileImage());
+                notificationService.sendPostCommentNotification(post, reqMember);
             } catch (ExecutionException | InterruptedException e) {
                 log.debug("sendPostCommentNotification error: ", e);
             }
@@ -64,7 +64,7 @@ public class CommentServiceImpl implements CommentService {
     @Override
     @Transactional
     public void createSubComment(Long commentId, SubCommentCreateRequest subCommentCreateRequest) {
-        Member member = getMemberFromRequest();
+        Member reqMember = getMemberFromRequest();
 
         Comment parentComment = commentRepository.findById(commentId)
                 .orElseThrow(() -> new CommentNotFoundException());
@@ -72,13 +72,13 @@ public class CommentServiceImpl implements CommentService {
         Comment subComment = Comment.builder()
                 .parentComment(parentComment)
                 .content(subCommentCreateRequest.getContents())
-                .author(member)
+                .author(reqMember)
                 .post(parentComment.getPost())
                 .build();
         commentRepository.save(subComment);
         CompletableFuture.runAsync(() -> {
             try {
-                notificationService.sendPostSubCommentNotification(parentComment, member.getNickname(), member.getProfileImage());
+                notificationService.sendPostSubCommentNotification(parentComment, reqMember);
             } catch (ExecutionException | InterruptedException e) {
                 log.debug("sendPostCommentNotification error: ", e);
             }
@@ -95,7 +95,7 @@ public class CommentServiceImpl implements CommentService {
         if (comment.getAuthor().getId() != member.getId()) {
             throw new PermissionDeniedException();
         }
-        comment.getPost().decrementCommentCount();
+
         commentRepository.delete(comment);
     }
 

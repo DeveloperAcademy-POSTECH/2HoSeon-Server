@@ -77,6 +77,9 @@ public class Member extends BaseTimeEntity {
             inverseJoinColumns = @JoinColumn(name = "blocked_id"))
     private Set<Member> blockedMember = new LinkedHashSet<>();
 
+    @Column
+    private boolean isBaned;
+
     public void updateAdditionalUserInfo(String profileImage, String nickname, School school) {
         if (profileImage != null)
             this.profileImage = profileImage;
@@ -106,12 +109,24 @@ public class Member extends BaseTimeEntity {
     public String getAppleRefreshToken() {
         return appleRefreshToken;
     }
-    
+
     public void unBlockedMember(Member blockedMember) {
         this.blockedMember.remove(blockedMember);
     }
 
     public void blockedMember(Member blockedMember) {
         this.blockedMember.add(blockedMember);
+    }
+
+    public void setBaned(boolean isBlocked) {
+        this.isBaned = isBlocked;
+    }
+
+    public boolean isBaned() {
+        return isBaned;
+    }
+
+    public void setIsBaned(boolean isBaned) {
+        this.isBaned = isBaned;
     }
 }

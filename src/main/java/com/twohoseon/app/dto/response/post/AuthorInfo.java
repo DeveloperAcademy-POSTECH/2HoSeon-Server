@@ -10,7 +10,7 @@ import lombok.Data;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @Schema(name = "AuthorInfoDTO", description = "게시글 작성자 정보 DTO")
 public class AuthorInfo extends ImageDTO {
-    @Schema(name = "id", type = "long", description = "유저 ID")
+    @Schema(name = "id", type = "Long", description = "유저 ID")
     Long id;
     @Schema(name = "nickname", type = "String", description = "유저 닉네임")
     String nickname;
@@ -20,6 +20,8 @@ public class AuthorInfo extends ImageDTO {
     ConsumerType consumerType;
     @Schema(name = "isBlocked", type = "Boolean", description = "차단 여부")
     Boolean isBlocked;
+    @Schema(name = "isBaned", type = "Boolean", description = "정지 여부")
+    Boolean isBaned;
 
     public AuthorInfo(long id, String nickname, String profileImage, ConsumerType consumerType) {
         this.id = id;
@@ -28,11 +30,12 @@ public class AuthorInfo extends ImageDTO {
         this.consumerType = consumerType;
     }
 
-    public AuthorInfo(long id, String nickname, String profileImage, ConsumerType consumerType, Boolean isBlocked) {
+    public AuthorInfo(Long id, String nickname, String profileImage, ConsumerType consumerType, Boolean isBlocked, boolean isBaned) {
         this.id = id;
         this.nickname = nickname;
         this.profileImage = generateProfileImageURL(profileImage);
         this.consumerType = consumerType;
         this.isBlocked = isBlocked;
+        this.isBaned = isBaned;
     }
 }

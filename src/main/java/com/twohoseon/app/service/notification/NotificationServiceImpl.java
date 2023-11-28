@@ -46,6 +46,8 @@ public class NotificationServiceImpl implements NotificationService, CommonServi
 
     @Override
     public void sendPostExpiredNotification(Post post) throws ExecutionException, InterruptedException {
+        if (post.getAuthor().isBaned())
+            return;
         List<String> deviceTokens = deviceTokenRepository.findAllByMemberId(post.getAuthor().getId());
         for (String deviceToken : deviceTokens) {
             String alertBody = String.format("%s 투표가 종료 되었어요.", post.getTitle());
@@ -67,18 +69,20 @@ public class NotificationServiceImpl implements NotificationService, CommonServi
     }
 
     @Override
-    public void sendPostCommentNotification(Post post, String userNickname, String profileImage) throws ExecutionException, InterruptedException {
-        List<String> deviceTokens = deviceTokenRepository.findAllByMemberId(post.getAuthor().getId());
-        //Sub comment 핸들링
+    public void sendPostCommentNotification(Post post, Member reqMember) throws ExecutionException, InterruptedException {
+        if (post.getAuthor().isBaned() || post.getAuthor().getId() == reqMember.getId())
+            return;
 
-        String alertBody = String.format("%s님이 회원님의 게시글에 댓글을 달았어요", userNickname);
+        List<String> deviceTokens = deviceTokenRepository.findAllByMemberId(post.getAuthor().getId());
+
+        String alertBody = String.format("%s님이 회원님의 게시글에 댓글을 달았어요", reqMember.getNickname());
 
         for (String deviceToken : deviceTokens) {
             SimpleApnsPushNotification pushNotification = new SimpleApnsPushNotification(
                     TokenUtil.sanitizeTokenString(deviceToken),
                     appIdentifier,
                     new CustomApnsPayloadBuilder()
-                            .setAuthor(profileImage)
+                            .setAuthor(reqMember.getProfileImage())
                             .setIsComment(true)
                             .setPostDetails(post)
                             .setAlertSubtitle(post.getTitle())
@@ -94,18 +98,19 @@ public class NotificationServiceImpl implements NotificationService, CommonServi
     }
 
     @Override
-    public void sendPostSubCommentNotification(Comment parentComment, String userNickname, String profileImage) throws ExecutionException, InterruptedException {
-
+    public void sendPostSubCommentNotification(Comment parentComment, Member reqMember) throws ExecutionException, InterruptedException {
+        if (parentComment.getAuthor().isBaned() || parentComment.getAuthor().getId() == reqMember.getId()) {
+            return;
+        }
         List<String> deviceTokens = deviceTokenRepository.findAllByMemberId(parentComment.getAuthor().getId());
-        //Sub comment 핸들링
 
-        String alertBody = String.format("%s님이 회원님의 댓글에 답글을 달았어요", userNickname);
+        String alertBody = String.format("%s님이 회원님의 댓글에 답글을 달았어요", reqMember.getNickname());
         for (String deviceToken : deviceTokens) {
             SimpleApnsPushNotification pushNotification = new SimpleApnsPushNotification(
                     TokenUtil.sanitizeTokenString(deviceToken),
                     appIdentifier,
                     new CustomApnsPayloadBuilder()
-                            .setAuthor(profileImage)
+                            .setAuthor(reqMember.getProfileImage())
                             .setIsComment(true)
                             .setPostDetails(parentComment.getPost())
                             .setAlertSubtitle(parentComment.getPost().getTitle())
@@ -122,8 +127,8 @@ public class NotificationServiceImpl implements NotificationService, CommonServi
 
     @Override
     public void sendPostReviewNotification(Post post) throws ExecutionException, InterruptedException {
-        List<String> deviceTokens = deviceTokenRepository.findAllByPostId(post.getId());
-
+        List<String> deviceTokens = deviceTokenRepository.findAllTokensBySubscribers(post.getId());
+        log.debug("deviceTokens: " + deviceTokens);
         for (String deviceToken : deviceTokens) {
             SimpleApnsPushNotification pushNotification = new SimpleApnsPushNotification(
                     TokenUtil.sanitizeTokenString(deviceToken),
@@ -132,7 +137,7 @@ public class NotificationServiceImpl implements NotificationService, CommonServi
                             .setIsComment(false)
                             .setPostDetails(post)
                             .setAlertSubtitle(post.getTitle())
-                            .setAlertBody("회원님의 투표에 후기가 작성되었어요.")
+                            .setAlertBody("받아 보기로 한 리뷰가 도착했어요!")
                             .setSound("default")
                             .build()
             );
