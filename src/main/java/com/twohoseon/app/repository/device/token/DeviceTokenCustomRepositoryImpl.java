@@ -35,12 +35,19 @@ public class DeviceTokenCustomRepositoryImpl implements DeviceTokenCustomReposit
     }
 
     @Override
-    public List<String> findAllByPostId(Long postId) {
+    public List<String> findAllTokensBySubscribers(Long postId) {
         return jpaQueryFactory
                 .select(deviceToken.token)
                 .from(deviceToken)
-                .join(post.subscribers, member)
-                .where(post.id.eq(postId))
+                .where(deviceToken.member.in(
+                        jpaQueryFactory
+                                .select(member)
+                                .from(post)
+                                .join(post.subscribers, member)
+                                .where(post.id.eq(postId).and(member.isBaned.isFalse()))
+                ))
                 .fetch();
     }
+
+
 }

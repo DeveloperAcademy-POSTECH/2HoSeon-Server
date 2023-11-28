@@ -13,5 +13,6 @@ import java.util.List;
 public interface DeviceTokenCustomRepository {
     List<String> findAllByMemberId(Long memberId);
 
-    List<String> findAllByPostId(Long id);
+    List<String> findAllTokensBySubscribers(Long id);
+    
 }
