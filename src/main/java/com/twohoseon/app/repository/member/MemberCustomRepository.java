@@ -32,4 +32,6 @@ public interface MemberCustomRepository {
     void deleteDeviceTokenFromMember(Long memberId);
 
     void detachReportsFromMember(Long memberId);
+
+    void banJWTTokenFromMember(Member reqMember);
 }

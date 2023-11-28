@@ -41,7 +41,6 @@ import java.util.concurrent.ExecutionException;
 @RequiredArgsConstructor
 public class MemberServiceImpl implements MemberService {
     private final BanListRepository banListRepository;
-
     private final MemberRepository memberRepository;
     private final ImageService imageService;
     private final DeviceTokenRepository deviceTokenRepository;
@@ -77,7 +76,6 @@ public class MemberServiceImpl implements MemberService {
                 throw new SchoolUpdateRestrictionException();
             }
         }
-
         member.updateAdditionalUserInfo(
                 imageName,
                 profileRequest.getNickname(),
@@ -127,31 +125,16 @@ public class MemberServiceImpl implements MemberService {
     @Transactional
     public void deleteMember() {
         Member reqMember = getMemberFromRequest();
-        memberRepository.detachVoteFromMember(reqMember.getId());
-        memberRepository.deleteSubscriptionsFromMember(reqMember.getId());
-        memberRepository.detachCommentsFromMember(reqMember.getId());
-        memberRepository.detachReportsFromMember(reqMember.getId());
-        memberRepository.deletePostsFromMember(reqMember);
-        memberRepository.deleteMemberBlockFromMember(reqMember.getId());
-        memberRepository.deleteDeviceTokenFromMember(reqMember.getId());
-        appleUtility.revokeAppleToken(reqMember.getAppleRefreshToken());
-        memberRepository.delete(reqMember);
+        deleteMember(reqMember);
+        CompletableFuture.runAsync(() -> appleUtility.revokeAppleToken(reqMember.getAppleRefreshToken()));
     }
 
     @Override
     @Transactional
     public void deleteAppleMember(String providerId) {
         Member reqMember = getMemberFromRequest();
-        memberRepository.detachVoteFromMember(reqMember.getId());
-        memberRepository.deleteSubscriptionsFromMember(reqMember.getId());
-        memberRepository.detachCommentsFromMember(reqMember.getId());
-        memberRepository.detachReportsFromMember(reqMember.getId());
-        memberRepository.deletePostsFromMember(reqMember);
-        memberRepository.deleteMemberBlockFromMember(reqMember.getId());
-        memberRepository.deleteDeviceTokenFromMember(reqMember.getId());
-        memberRepository.delete(reqMember);
+        deleteMember(reqMember);
     }
-
 
     @Override
     public ProfileInfo getProfile() {
@@ -186,4 +169,16 @@ public class MemberServiceImpl implements MemberService {
         return blockedMembers;
     }
 
+
+    private void deleteMember(Member reqMember) {
+        memberRepository.detachVoteFromMember(reqMember.getId());
+        memberRepository.deleteSubscriptionsFromMember(reqMember.getId());
+        memberRepository.detachCommentsFromMember(reqMember.getId());
+        memberRepository.detachReportsFromMember(reqMember.getId());
+        memberRepository.deletePostsFromMember(reqMember);
+        memberRepository.deleteMemberBlockFromMember(reqMember.getId());
+        memberRepository.deleteDeviceTokenFromMember(reqMember.getId());
+        memberRepository.banJWTTokenFromMember(reqMember);
+        memberRepository.delete(reqMember);
+    }
 }

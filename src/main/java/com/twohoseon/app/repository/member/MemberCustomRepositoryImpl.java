@@ -10,7 +10,6 @@ import com.twohoseon.app.repository.comment.CommentRepository;
 import com.twohoseon.app.repository.post.PostRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Set;
@@ -18,6 +17,7 @@ import java.util.stream.Collectors;
 
 import static com.twohoseon.app.entity.member.QDeviceToken.deviceToken;
 import static com.twohoseon.app.entity.member.QMember.member;
+import static com.twohoseon.app.entity.member.QRefreshToken.refreshToken1;
 import static com.twohoseon.app.entity.member.QReport.report;
 import static com.twohoseon.app.entity.post.QComment.comment;
 import static com.twohoseon.app.entity.post.QPost.post;
@@ -67,7 +67,6 @@ public class MemberCustomRepositoryImpl implements MemberCustomRepository {
     }
 
     @Override
-    @Transactional
     public void deletePostsFromMember(Member author) {
 
         List<Long> postIds = jpaQueryFactory.select(post.id)
@@ -146,6 +145,14 @@ public class MemberCustomRepositoryImpl implements MemberCustomRepository {
         jpaQueryFactory.update(report)
                 .set(report.reporter, (Member) null)
                 .where(report.reporter.id.eq(memberId))
+                .execute();
+    }
+
+    @Override
+    public void banJWTTokenFromMember(Member reqMember) {
+        jpaQueryFactory.update(refreshToken1)
+                .set(refreshToken1.isBanned, true)
+                .where(refreshToken1.providerId.eq(reqMember.getProviderId()))
                 .execute();
     }
 
