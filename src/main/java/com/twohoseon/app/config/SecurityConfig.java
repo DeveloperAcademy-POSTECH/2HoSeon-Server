@@ -54,7 +54,7 @@ public class SecurityConfig {
         http.addFilterBefore(jwtAuthenticationFilter, BasicAuthenticationFilter.class);
 
         http.authorizeHttpRequests()
-                .requestMatchers("/login/**", "/user", "/oauth2/**", "/auth/**", "/h2-console/**", "/swagger-ui", "/swagger-ui/**", "/api-docs", "/api-docs/**", "/api/auth/**", "/api/profiles/isValidNickname", "/images/**").permitAll()
+                .requestMatchers("/login/**", "/user", "/oauth2/**", "/auth/**", "/h2-console/**", "/swagger-ui", "/swagger-ui/**", "/api-docs", "/api-docs/**", "/api/auth/**", "/api/profiles/isValidNickname", "/images/**", "/error", "/apple/notification").permitAll()
                 .anyRequest().authenticated();
 
         return http.build();

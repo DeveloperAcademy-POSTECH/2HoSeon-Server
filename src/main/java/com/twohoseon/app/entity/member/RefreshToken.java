@@ -7,6 +7,8 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
+
 /**
  * @author : hyunwoopark
  * @version : 1.0.0
@@ -27,17 +29,30 @@ public class RefreshToken extends BaseTimeEntity {
     private Long id;
 
     @Column(nullable = false)
+    private String accessToken;
+
+    @Column(nullable = false)
+    private LocalDateTime accessTokenExpirationTime;
+
+    @Column(nullable = false)
     private String refreshToken;
+
+    @Column(nullable = false)
+    private LocalDateTime refreshTokenExpirationTime;
 
     @Column(nullable = false)
     private String providerId;
 
     @Column(nullable = false)
-    private Long expirationTime;
+    boolean isBanned;
 
     public RefreshToken updateToken(String refreshToken) {
         this.refreshToken = refreshToken;
         return this;
+    }
+
+    public void banRefreshToken() {
+        this.isBanned = true;
     }
 
 

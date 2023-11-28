@@ -1,11 +1,9 @@
 package com.twohoseon.app.entity.post.vote;
 
-import com.twohoseon.app.enums.GenderType;
-import com.twohoseon.app.enums.RegionType;
-import com.twohoseon.app.enums.SchoolType;
-import jakarta.persistence.Column;
-import jakarta.persistence.EmbeddedId;
-import jakarta.persistence.Entity;
+import com.twohoseon.app.entity.member.Member;
+import com.twohoseon.app.entity.post.Post;
+import com.twohoseon.app.enums.ConsumerType;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -15,28 +13,29 @@ import lombok.Getter;
 @Entity
 @Builder
 @AllArgsConstructor
+@Table(name = "VOTE", uniqueConstraints = {
+        @UniqueConstraint(columnNames = {"voter_id", "post_id"})
+})
 public class Vote {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id", nullable = false)
+    private Long id;
 
-    @EmbeddedId
-    VoteId id;
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
+    @JoinColumn(name = "post_id")
+    private Post post;
 
-    @Column
-    GenderType gender;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "voter_id")
+    private Member voter;
 
     @Column
     Boolean isAgree;
 
     @Column
-    SchoolType schoolType;
-
-    @Column
-    Integer grade;
-
-    @Column
-    RegionType regionType;
-
-
-//    @Column
+    @Enumerated(EnumType.STRING)
+    ConsumerType consumerType;
 
 
     protected Vote() {

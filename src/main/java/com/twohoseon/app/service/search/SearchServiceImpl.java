@@ -1,7 +1,9 @@
 package com.twohoseon.app.service.search;
 
-import com.twohoseon.app.dto.response.PostInfoDTO;
+import com.twohoseon.app.dto.response.post.PostSummary;
 import com.twohoseon.app.entity.member.Member;
+import com.twohoseon.app.enums.post.PostStatus;
+import com.twohoseon.app.enums.post.VisibilityScope;
 import com.twohoseon.app.repository.post.PostRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -27,9 +29,21 @@ public class SearchServiceImpl implements SearchService {
 
     @Override
     @Transactional
-    public List<PostInfoDTO> getSearchByKeyword(Pageable pageable, String keyword) {
-        Member member = getMemberFromRequest();
-        return postRepository.findAllPostsByKeyword(pageable, keyword, member.getId());
+    public List<PostSummary> getSearchByKeyword(PostStatus postStatus, VisibilityScope visibilityScope, Pageable pageable, String keyword) {
+        Member reqMember = getMemberFromRequest();
+        switch (postStatus) {
+            case ACTIVE -> {
+                return postRepository.findActivePostsByKeyword(visibilityScope, reqMember, pageable, keyword);
+            }
+            case CLOSED -> {
+                return postRepository.findClosedPostsByKeyword(visibilityScope, reqMember, pageable, keyword);
+            }
+            case REVIEW -> {
+                return postRepository.findReviewPostsByKeyword(visibilityScope, reqMember, pageable, keyword);
+            }
+        }
+        return null;
+//        return postRepository.findAllPostsByKeyword(pageable, keyword, member.getId());
     }
 
 }

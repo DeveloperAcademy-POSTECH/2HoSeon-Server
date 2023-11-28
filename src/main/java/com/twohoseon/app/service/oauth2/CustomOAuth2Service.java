@@ -32,8 +32,6 @@ public interface CustomOAuth2Service {
                     Member member = Member.builder()
                             .provider(provider)
                             .providerId(providerId)
-                            .userEmail(userEmail)
-                            .userName(userName)
                             .role(UserRole.ROLE_USER)
                             .build();
                     System.out.println("member = " + member);

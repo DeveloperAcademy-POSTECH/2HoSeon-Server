@@ -1,9 +1,14 @@
 package com.twohoseon.app.repository.post;
 
-import com.twohoseon.app.dto.response.PostCommentInfoDTO;
-import com.twohoseon.app.dto.response.PostInfoDTO;
-import com.twohoseon.app.dto.response.VoteCountsDTO;
-import com.twohoseon.app.entity.post.enums.PostStatus;
+import com.twohoseon.app.dto.response.VoteCounts;
+import com.twohoseon.app.dto.response.post.PostDetail;
+import com.twohoseon.app.dto.response.post.PostInfo;
+import com.twohoseon.app.dto.response.post.PostSummary;
+import com.twohoseon.app.entity.member.Member;
+import com.twohoseon.app.enums.ConsumerType;
+import com.twohoseon.app.enums.ReviewType;
+import com.twohoseon.app.enums.mypage.MyVoteCategoryType;
+import com.twohoseon.app.enums.post.VisibilityScope;
 import org.springframework.data.domain.Pageable;
 
 import java.util.List;
@@ -16,20 +21,46 @@ import java.util.List;
  * @date : 10/19/23 10:37 PM
  * @modifyed : $
  **/
+
 public interface PostCustomRepository {
-    List<PostInfoDTO> findAllPosts(Pageable pageable, PostStatus postStatus, long memberId);
+    List<PostInfo> findAllPosts(Pageable pageable, Member memberId, VisibilityScope visibilityScope);
 
 //    PostInfoDTO findPostById(long postId);
 
-    PostInfoDTO findPostById(long postId, long memberId);
+    PostInfo findPostById(Long postId, long memberId);
 
-    List<PostCommentInfoDTO> getAllCommentsFromPost(Long postId);
+    VoteCounts getVoteInfo(long postId);
 
-    List<PostInfoDTO> findAllPostsByKeyword(Pageable pageable, String keyword, long memberId);
+    List<PostSummary> findActivePostsByKeyword(VisibilityScope visibilityScope, Member reqMember, Pageable pageable, String keyword);
 
-    List<PostCommentInfoDTO> getChildComments(Long parentId);
+    List<PostSummary> findClosedPostsByKeyword(VisibilityScope visibilityScope, Member reqMember, Pageable pageable, String keyword);
 
-    VoteCountsDTO getVoteInfo(long postId);
+    List<PostSummary> findReviewPostsByKeyword(VisibilityScope visibilityScope, Member reqMember, Pageable pageable, String keyword);
 
 
+    List<PostSummary> findRecentReviews(VisibilityScope visibilityScope, Member reqMember, ConsumerType consumerType);
+
+    List<PostSummary> findReviews(Pageable pageable, Member reqMember, VisibilityScope visibilityScope, ReviewType reviewType);
+
+    List<PostSummary> findReviewsById(Pageable pageable, Member reqMember, VisibilityScope visibilityScope);
+
+    PostSummary getPostSummaryInReviewDetail(Long postId);
+
+    PostInfo getReviewDetailByPostId(Long postId);
+
+    Long countAllPostsByMyVoteCategoryType(Member reqMember, MyVoteCategoryType myVoteCategoryType);
+
+    List<PostSummary> findAllPostsByMyVoteCategoryType(Pageable pageable, Member reqMember, MyVoteCategoryType myVoteCategoryType);
+
+    long getTotalReviewCount(Member reqMember, VisibilityScope visibilityScope);
+
+    void deleteSubscriptionsFromMember(Member reqMember);
+
+    PostDetail findPostDetailById(Long postId, Long id);
+
+    Integer calculateCommentCountByPostId(Long postId);
+
+    String getCommentPreviewByPostId(Long postId);
+
+    String getCommentPreviewImageByPostId(Long postId);
 }

@@ -1,12 +1,15 @@
 package com.twohoseon.app.controller;
 
-import com.twohoseon.app.dto.request.TokenRefreshDTO;
-import com.twohoseon.app.dto.response.GeneralResponseDTO;
-import com.twohoseon.app.dto.response.TokenDTO;
+import com.twohoseon.app.dto.request.member.LogoutRequest;
+import com.twohoseon.app.dto.request.member.TokenRefresh;
+import com.twohoseon.app.dto.response.GeneralResponse;
+import com.twohoseon.app.dto.response.JWTToken;
+import com.twohoseon.app.dto.response.TokenResponse;
 import com.twohoseon.app.enums.StatusEnum;
 import com.twohoseon.app.service.refreshToken.RefreshTokenService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -33,16 +36,27 @@ public class AuthRestController {
 
     @PostMapping("refresh")
     @Operation(summary = "토큰 재발급", description = "토큰 재발급")
-    public ResponseEntity<GeneralResponseDTO> tokenRefresh(@RequestBody TokenRefreshDTO tokenRefreshDTO) {
+
+    public ResponseEntity<TokenResponse> tokenRefresh(@RequestBody TokenRefresh tokenRefresh) {
         log.debug("token refresh request.");
-        log.debug("refresh token : {}", tokenRefreshDTO.getRefreshToken());
-        log.debug("identifier : {}", tokenRefreshDTO.getIdentifier());
-        TokenDTO renewToken = refreshTokenService.renewToken(tokenRefreshDTO.getRefreshToken(), tokenRefreshDTO.getIdentifier());
-        GeneralResponseDTO generalResponseDTO = GeneralResponseDTO.builder()
+        log.debug("refresh token : {}", tokenRefresh.getRefreshToken());
+        JWTToken renewJWTToken = refreshTokenService.renewToken(tokenRefresh.getRefreshToken());
+        TokenResponse generalResponse = TokenResponse.builder()
                 .status(StatusEnum.OK)
                 .message("token renew success.")
-                .data(renewToken)
+                .data(renewJWTToken)
                 .build();
-        return ResponseEntity.ok(generalResponseDTO);
+        return ResponseEntity.ok(generalResponse);
+    }
+
+    @PostMapping("logout")
+    @Operation(summary = "로그아웃", description = "로그아웃")
+    public ResponseEntity<GeneralResponse> logout(HttpServletRequest request, @RequestBody LogoutRequest logoutRequest) {
+        refreshTokenService.logout(request, logoutRequest);
+        GeneralResponse generalResponse = GeneralResponse.builder()
+                .status(StatusEnum.OK)
+                .message("logout success.")
+                .build();
+        return ResponseEntity.ok(generalResponse);
     }
 }

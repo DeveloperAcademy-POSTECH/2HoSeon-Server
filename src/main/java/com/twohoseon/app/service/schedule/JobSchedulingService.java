@@ -11,5 +11,10 @@ import org.quartz.SchedulerException;
  * @modifyed : $
  **/
 public interface JobSchedulingService {
-    void schedulePostExpireJob(Long memberId, Long postId) throws SchedulerException;
+    void schedulePostExpireJob(Long postId) throws SchedulerException;
+
+    void deleteScheduledPostExpireJob(Long postId) throws SchedulerException;
+
+    void refreshAppleSecretJob() throws SchedulerException;
+
 }

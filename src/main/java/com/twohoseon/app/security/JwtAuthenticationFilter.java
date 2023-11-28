@@ -1,13 +1,18 @@
 package com.twohoseon.app.security;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.twohoseon.app.dto.response.GeneralResponseDTO;
+import com.twohoseon.app.dto.ErrorResponse;
 import com.twohoseon.app.entity.member.Member;
-import com.twohoseon.app.enums.StatusEnum;
+import com.twohoseon.app.enums.ErrorCode;
 import com.twohoseon.app.enums.UserRole;
 import com.twohoseon.app.repository.member.MemberRepository;
+import com.twohoseon.app.repository.member.RefreshTokenRepository;
 import com.twohoseon.app.service.member.MemberService;
 import com.twohoseon.app.util.JwtTokenProvider;
+import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.MalformedJwtException;
+import io.jsonwebtoken.SignatureException;
+import io.jsonwebtoken.UnsupportedJwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -24,6 +29,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
+import java.util.Optional;
 
 /**
  * @author : hyunwoopark
@@ -41,21 +47,44 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private final JwtTokenProvider jwtTokenProvider;
     private final MemberRepository memberRepository;
     private final MemberService memberService;
+    private final RefreshTokenRepository refreshTokenRepository;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         String accessToken = jwtTokenProvider.getHeaderToken(request, "Access");
+        //밴 리스트 확인
+        if (accessToken != null) {
+            boolean isValidToken = refreshTokenRepository.existsByAccessTokenAndIsBannedTrue(accessToken);
+            if (isValidToken) {
+                jwtExceptionHandler(response, ErrorResponse.of(ErrorCode.EXPIRED_TOKEN_ERROR));
+                return;
+            }
+        }
+
+
         //특정 url 요청시
         RequestMatcher skipPath = new AntPathRequestMatcher("/api/profiles/**");
 
         if (accessToken != null) {
             // 어세스 토큰값이 유효하다면 setAuthentication를 통해
             // security context에 인증 정보저장
-            if (jwtTokenProvider.tokenValidation(accessToken, true)) {
+            try {
+                jwtTokenProvider.tokenValidation(accessToken, true);
                 String providerId = jwtTokenProvider.getProviderIdFromToken(accessToken);
 
-                Member member = memberRepository.findByProviderId(providerId)
-                        .orElseThrow(() -> new IllegalArgumentException("Member Not Found"));
+                Optional<Member> memberOptional = memberRepository.findByProviderId(providerId);
+
+                if (memberOptional.isEmpty()) {
+                    jwtExceptionHandler(response, ErrorResponse.of(ErrorCode.MEMBER_NOT_FOUND_ERROR));
+                    return;
+                }
+                Member member = memberOptional.get();
+                if (member.isBaned()) {
+                    log.debug("member is baned");
+                    log.debug("member.getProviderId() = " + member.getProviderId());
+                    jwtExceptionHandler(response, ErrorResponse.of(ErrorCode.BANED_MEMBER_ERROR));
+                    return;
+                }
                 log.info("ProviderId : ", providerId);
 
                 setAuthentication(jwtTokenProvider.getProviderIdFromToken(accessToken));
@@ -66,19 +95,28 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 if (member.getRole() == UserRole.ROLE_ADMIN) {
                     log.info("ROLE_ADMIN");
                 } else if (member.getSchool() == null) {
-                    jwtExceptionHandler(response,
-                            GeneralResponseDTO.builder()
-                                    .status(StatusEnum.CONFLICT)
-                                    .message("UNREGISTERED_USER")
-                                    .build());
+                    jwtExceptionHandler(response, ErrorResponse.of(ErrorCode.NOT_COMPLETED_SIGNUP_ERROR));
                     return;
                 }
-            } else {
-                jwtExceptionHandler(response,
-                        GeneralResponseDTO.builder()
-                                .status(StatusEnum.BAD_REQUEST)
-                                .message("Invalid JWT signature")
-                                .build());
+            } catch (SignatureException ex) {
+                log.info("Invalid JWT signature");
+                jwtExceptionHandler(response, ErrorResponse.of(ErrorCode.INVALID_SIGNATURE_ERROR));
+                return;
+            } catch (MalformedJwtException ex) {
+                log.info("Invalid JWT token");
+                jwtExceptionHandler(response, ErrorResponse.of(ErrorCode.MALFORMED_TOKEN_ERROR));
+                return;
+            } catch (ExpiredJwtException ex) {
+                log.info("Expired JWT token");
+                jwtExceptionHandler(response, ErrorResponse.of(ErrorCode.EXPIRED_TOKEN_ERROR));
+                return;
+            } catch (UnsupportedJwtException ex) {
+                log.info("Unsupported JWT token");
+                jwtExceptionHandler(response, ErrorResponse.of(ErrorCode.UNSUPPORTED_TOKEN_ERROR));
+                return;
+            } catch (IllegalArgumentException ex) {
+                log.info("JWT claims string is empty");
+                jwtExceptionHandler(response, ErrorResponse.of(ErrorCode.EMPTY_CLAIMS_ERROR));
                 return;
             }
         }
@@ -93,10 +131,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     }
 
     // Jwt 예외처리
-    public void jwtExceptionHandler(HttpServletResponse response, GeneralResponseDTO result) throws IOException {
-
+    public void jwtExceptionHandler(HttpServletResponse response, ErrorResponse errorResponse) throws IOException {
         response.setContentType("application/json;charset=UTF-8");
-        response.setStatus(result.getStatus().getStatusCode());
-        response.getWriter().write(new ObjectMapper().writeValueAsString(result));
+        response.setStatus(errorResponse.getStatus());
+        response.getWriter().write(new ObjectMapper().writeValueAsString(errorResponse));
     }
 }

@@ -1,11 +1,20 @@
 package com.twohoseon.app.service.refreshToken;
 
-import com.twohoseon.app.dto.response.TokenDTO;
+import com.twohoseon.app.dto.request.member.LogoutRequest;
+import com.twohoseon.app.dto.response.JWTToken;
 import com.twohoseon.app.entity.member.RefreshToken;
+import com.twohoseon.app.exception.InvalidRefreshTokenException;
+import com.twohoseon.app.repository.device.token.DeviceTokenRepository;
 import com.twohoseon.app.repository.member.RefreshTokenRepository;
 import com.twohoseon.app.util.JwtTokenProvider;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 
 /**
  * @author : hyunwoopark
@@ -17,30 +26,61 @@ import org.springframework.stereotype.Service;
  **/
 @RequiredArgsConstructor
 @Service
+@Slf4j
 public class RefreshTokenServiceImpl implements RefreshTokenService {
+    private final DeviceTokenRepository deviceTokenRepository;
     private final RefreshTokenRepository refreshTokenRepository;
     private final JwtTokenProvider jwtTokenProvider;
 
     @Override
     public void saveRefreshToken(String refreshToken, String identifier, long expirationTime) {
         RefreshToken refreshTokenEntity = RefreshToken.builder()
-                .providerId(identifier)
+
                 .refreshToken(refreshToken)
-                .expirationTime(expirationTime)
+//                .expirationTime(expirationTime)
                 .build();
         refreshTokenRepository.save(refreshTokenEntity);
     }
 
     @Override
-    public TokenDTO renewToken(String refreshToken, String identifier) {
-
+    public JWTToken renewToken(String refreshToken) {
         RefreshToken refreshTokenEntity = refreshTokenRepository.findByRefreshToken(refreshToken)
-                .orElseThrow(() -> new IllegalArgumentException("Refresh Token이 존재하지 않습니다."));
-        if (!refreshTokenEntity.getProviderId().equals(identifier)) {
-            throw new IllegalArgumentException("Refresh Token의 소유자가 아닙니다.");
-        }
-        refreshTokenRepository.delete(refreshTokenEntity);
-        return jwtTokenProvider.createAllToken(identifier);
+                .orElseThrow(() -> new InvalidRefreshTokenException("Refresh Token does not exist."));
+
+        refreshTokenEntity.banRefreshToken();
+        refreshTokenRepository.save(refreshTokenEntity);
+        JWTToken newToken = jwtTokenProvider.createAllToken(refreshTokenEntity.getProviderId());
+        saveRefreshTokenFromTokenDTO(newToken, refreshTokenEntity.getProviderId());
+        return newToken;
+    }
+
+    @Override
+    public void logout(HttpServletRequest request, LogoutRequest logoutRequest) {
+        String accessToken = request.getHeader("Authorization").substring(7);
+        RefreshToken refreshToken = refreshTokenRepository.findByAccessToken(accessToken)
+                .orElseThrow(() -> new InvalidRefreshTokenException("Refresh Token does not exist."));
+        deviceTokenRepository.findByToken(logoutRequest.getDeviceToken())
+                .ifPresent(deviceToken -> deviceTokenRepository.delete(deviceToken));
+        refreshToken.banRefreshToken();
+        refreshTokenRepository.save(refreshToken);
+        log.debug("logout request. access token : {}", accessToken);
+    }
+
+    @Override
+    public void saveRefreshTokenFromTokenDTO(JWTToken tokenDTO, String providerId) {
+        refreshTokenRepository.save(RefreshToken.builder()
+                .accessToken(tokenDTO.getAccessToken())
+                .accessTokenExpirationTime(convertUnixTimestampToLocalDateTime(tokenDTO.getAccessExpirationTime()))
+                .refreshToken(tokenDTO.getRefreshToken())
+                .refreshTokenExpirationTime(convertUnixTimestampToLocalDateTime(tokenDTO.getRefreshExpirationTime()))
+                .providerId(providerId)
+                .build());
+    }
+
+
+    private static LocalDateTime convertUnixTimestampToLocalDateTime(long unixTimestamp) {
+        Instant instant = Instant.ofEpochMilli(unixTimestamp);
+        return LocalDateTime.ofInstant(instant, ZoneId.systemDefault());
     }
 
 }

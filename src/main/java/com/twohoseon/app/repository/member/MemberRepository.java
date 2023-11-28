@@ -2,7 +2,9 @@ package com.twohoseon.app.repository.member;
 
 import com.twohoseon.app.entity.member.Member;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.stereotype.Repository;
+import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 
@@ -14,11 +16,18 @@ import java.util.Optional;
  * @date : 2023/10/07 1:48 PM
  * @modifyed : $
  **/
-@Repository
-public interface MemberRepository extends JpaRepository<Member, Long> {
+//@Repository
+public interface MemberRepository extends JpaRepository<Member, Long>, MemberCustomRepository {
     Optional<Member> findByProviderId(String providerId);
 
     boolean existsByProviderId(String providerId);
 
-    boolean existsByUserNickname(String userNickname);
+    boolean existsByNickname(String userNickname);
+
+    @Transactional
+    @Modifying
+    @Query(value = "DELETE FROM ADMIN.MEMBER_BLOCK WHERE BLOCKER_ID = ?1 OR BLOCKED_ID = ?1", nativeQuery = true)
+    void deleteMemberBlockFromMember(Long memberId);
+
+//    void deleteMemberBlockFromMember(Member reqMember);
 }

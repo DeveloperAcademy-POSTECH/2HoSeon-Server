@@ -110,7 +110,23 @@ public enum ErrorCode {
     DELETE_ERROR(200, "E012", "Delete Transaction Error Exception"),
 
     // 닉네임이 중복됨
-    NICKNAME_DUPLICATE_ERROR(409, "E013", "Nickname is already in use");
+    NICKNAME_DUPLICATE_ERROR(409, "E013", "Nickname is already in use"),
+
+    //후기를 중복해서 작성할 수 없음
+    REVIEW_DUPLICATE_ERROR(409, "E014", "Review is already exist"),
+
+    //투표를 중복해서 작성할 수 없음
+    VOTE_DUPLICATE_ERROR(409, "E015", "Vote is already exist"),
+
+    //유효하지 않은 리프레쉬 토큰
+    INVALID_REFRESH_TOKEN_ERROR(401, "E016", "Invalid Refresh Token"),
+
+    //학교를 업데이트 한지 6개월이 넘지 않음
+    SCHOOL_UPDATE_RESTRICTION_ERROR(400, "E017", "It has not been 6 months since the school was updated."),
+
+    //유저가 서비스 이용이 제한됨
+    BANED_MEMBER_ERROR(403, "E018", "You are banned from using the service.");
+
 
     /**
      * ******************************* Error Code Constructor ***************************************

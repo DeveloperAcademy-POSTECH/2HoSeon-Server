@@ -1,6 +1,8 @@
 package com.twohoseon.app.service.refreshToken;
 
-import com.twohoseon.app.dto.response.TokenDTO;
+import com.twohoseon.app.dto.request.member.LogoutRequest;
+import com.twohoseon.app.dto.response.JWTToken;
+import jakarta.servlet.http.HttpServletRequest;
 
 /**
  * @author : hyunwoopark
@@ -14,6 +16,9 @@ public interface RefreshTokenService {
 
     void saveRefreshToken(String refreshToken, String identifier, long expirationTime);
 
-    TokenDTO renewToken(String refreshToken, String identifier);
+    void saveRefreshTokenFromTokenDTO(JWTToken tokenDTO, String providerId);
 
+    JWTToken renewToken(String refreshToken);
+
+    void logout(HttpServletRequest request, LogoutRequest logoutRequest);
 }

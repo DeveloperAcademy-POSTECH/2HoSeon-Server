@@ -1,9 +1,5 @@
 server:
-  ssl:
-    key-store: ${ssl.key-store}
-    key-store-password: ${ssl.key-store-password}
-    key-store-type: ${ssl.key-store-type}
-  port: 443
+
   servlet:
     encoding:
       charset: UTF-8

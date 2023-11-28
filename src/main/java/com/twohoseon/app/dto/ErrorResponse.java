@@ -30,6 +30,7 @@ public class ErrorResponse {
     private int status;                 // 에러 상태 코드
     private String divisionCode;        // 에러 구분 코드
     private String message;           // 에러 메시지
+    private Object data;
     private List<FieldError> errors;    // 상세 에러 메시지
     private String reason;              // 에러 이유
 
@@ -95,6 +96,12 @@ public class ErrorResponse {
         return new ErrorResponse(code);
     }
 
+    public static ErrorResponse of(final ErrorCode code, Object object) {
+        ErrorResponse response = new ErrorResponse(code);
+        response.setData(object);
+        return response;
+    }
+
     /**
      * Global Exception 전송 타입-3
      *
@@ -114,6 +121,10 @@ public class ErrorResponse {
      */
     public static ResponseEntity toResponseEntity(final ErrorCode code) {
         return ResponseEntity.status(code.getStatus()).body(ErrorResponse.of(code));
+    }
+
+    private void setData(Object object) {
+        this.data = object;
     }
 
     /**
