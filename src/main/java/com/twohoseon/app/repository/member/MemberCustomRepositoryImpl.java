@@ -5,7 +5,6 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.twohoseon.app.dto.response.mypage.BlockedMember;
 import com.twohoseon.app.dto.response.profile.ProfileInfo;
 import com.twohoseon.app.entity.member.Member;
-import com.twohoseon.app.entity.post.Comment;
 import com.twohoseon.app.entity.post.Post;
 import com.twohoseon.app.repository.comment.CommentRepository;
 import com.twohoseon.app.repository.post.PostRepository;
@@ -17,7 +16,9 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import static com.twohoseon.app.entity.member.QDeviceToken.deviceToken;
 import static com.twohoseon.app.entity.member.QMember.member;
+import static com.twohoseon.app.entity.member.QReport.report;
 import static com.twohoseon.app.entity.post.QComment.comment;
 import static com.twohoseon.app.entity.post.QPost.post;
 import static com.twohoseon.app.entity.post.vote.QVote.vote;
@@ -68,17 +69,36 @@ public class MemberCustomRepositoryImpl implements MemberCustomRepository {
     @Override
     @Transactional
     public void deletePostsFromMember(Member author) {
-        List<Post> posts = jpaQueryFactory.selectFrom(post)
+
+        List<Long> postIds = jpaQueryFactory.select(post.id)
+                .from(post)
                 .where(post.author.id.eq(author.getId()))
                 .fetch();
-        for (Post post : posts) {
-            List<Comment> comments = jpaQueryFactory.selectFrom(comment)
-                    .where(comment.post.id.eq(post.getId()))
-                    .fetch();
-            commentRepository.deleteAll(comments);
-        }
-        postRepository.deleteByAuthor(author);
+        List<Long> commentIds = jpaQueryFactory.select(comment.id)
+                .from(comment)
+                .where(comment.post.id.in(postIds).and(comment.parentComment.isNull()))
+                .fetch();
+        jpaQueryFactory.delete(comment)
+                .where(comment.parentComment.id.in(commentIds))
+                .execute();
+        jpaQueryFactory.delete(comment)
+                .where(comment.post.id.in(postIds))
+                .execute();
+        jpaQueryFactory.delete(vote)
+                .where(vote.post.id.in(postIds))
+                .execute();
+        jpaQueryFactory.delete(post)
+                .where(post.author.id.eq(author.getId())).execute();
+
+//        for (Post post : posts) {
+//            List<Comment> comments = jpaQueryFactory.selectFrom(comment)
+//                    .where(comment.post.id.eq(post.getId()))
+//                    .fetch();
+//            commentRepository.deleteAll(comments);
+//        }
+//        postRepository.deleteByAuthor(author);
     }
+
 
     @Override
     public ProfileInfo getProfile(long memberId) {
@@ -112,6 +132,21 @@ public class MemberCustomRepositoryImpl implements MemberCustomRepository {
                 .from(member)
                 .where(member.id.in(blockedMemberIds))
                 .fetch();
+    }
+
+    @Override
+    public void deleteDeviceTokenFromMember(Long memberId) {
+        jpaQueryFactory.delete(deviceToken)
+                .where(deviceToken.member.id.eq(memberId))
+                .execute();
+    }
+
+    @Override
+    public void detachReportsFromMember(Long memberId) {
+        jpaQueryFactory.update(report)
+                .set(report.reporter, (Member) null)
+                .where(report.reporter.id.eq(memberId))
+                .execute();
     }
 
 

@@ -28,4 +28,8 @@ public interface MemberCustomRepository {
 
     List<BlockedMember> getBlockedMembers(Member reqMember);
 
+
+    void deleteDeviceTokenFromMember(Long memberId);
+
+    void detachReportsFromMember(Long memberId);
 }
