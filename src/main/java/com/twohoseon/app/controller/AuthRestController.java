@@ -1,5 +1,6 @@
 package com.twohoseon.app.controller;
 
+import com.twohoseon.app.dto.request.member.LogoutRequest;
 import com.twohoseon.app.dto.request.member.TokenRefresh;
 import com.twohoseon.app.dto.response.GeneralResponse;
 import com.twohoseon.app.dto.response.JWTToken;
@@ -50,8 +51,8 @@ public class AuthRestController {
 
     @PostMapping("logout")
     @Operation(summary = "로그아웃", description = "로그아웃")
-    public ResponseEntity<GeneralResponse> logout(HttpServletRequest request) {
-        refreshTokenService.logout(request);
+    public ResponseEntity<GeneralResponse> logout(HttpServletRequest request, @RequestBody LogoutRequest logoutRequest) {
+        refreshTokenService.logout(request, logoutRequest);
         GeneralResponse generalResponse = GeneralResponse.builder()
                 .status(StatusEnum.OK)
                 .message("logout success.")

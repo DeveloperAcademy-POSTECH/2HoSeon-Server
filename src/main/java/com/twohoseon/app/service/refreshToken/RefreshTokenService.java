@@ -1,5 +1,6 @@
 package com.twohoseon.app.service.refreshToken;
 
+import com.twohoseon.app.dto.request.member.LogoutRequest;
 import com.twohoseon.app.dto.response.JWTToken;
 import jakarta.servlet.http.HttpServletRequest;
 
@@ -19,5 +20,5 @@ public interface RefreshTokenService {
 
     JWTToken renewToken(String refreshToken);
 
-    void logout(HttpServletRequest request);
+    void logout(HttpServletRequest request, LogoutRequest logoutRequest);
 }

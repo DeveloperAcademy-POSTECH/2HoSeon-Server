@@ -1,8 +1,10 @@
 package com.twohoseon.app.service.refreshToken;
 
+import com.twohoseon.app.dto.request.member.LogoutRequest;
 import com.twohoseon.app.dto.response.JWTToken;
 import com.twohoseon.app.entity.member.RefreshToken;
 import com.twohoseon.app.exception.InvalidRefreshTokenException;
+import com.twohoseon.app.repository.device.token.DeviceTokenRepository;
 import com.twohoseon.app.repository.member.RefreshTokenRepository;
 import com.twohoseon.app.util.JwtTokenProvider;
 import jakarta.servlet.http.HttpServletRequest;
@@ -26,6 +28,7 @@ import java.time.ZoneId;
 @Service
 @Slf4j
 public class RefreshTokenServiceImpl implements RefreshTokenService {
+    private final DeviceTokenRepository deviceTokenRepository;
     private final RefreshTokenRepository refreshTokenRepository;
     private final JwtTokenProvider jwtTokenProvider;
 
@@ -52,10 +55,12 @@ public class RefreshTokenServiceImpl implements RefreshTokenService {
     }
 
     @Override
-    public void logout(HttpServletRequest request) {
+    public void logout(HttpServletRequest request, LogoutRequest logoutRequest) {
         String accessToken = request.getHeader("Authorization").substring(7);
         RefreshToken refreshToken = refreshTokenRepository.findByAccessToken(accessToken)
                 .orElseThrow(() -> new InvalidRefreshTokenException("Refresh Token does not exist."));
+        deviceTokenRepository.findByToken(logoutRequest.getDeviceToken())
+                .ifPresent(deviceToken -> deviceTokenRepository.delete(deviceToken));
         refreshToken.banRefreshToken();
         refreshTokenRepository.save(refreshToken);
         log.debug("logout request. access token : {}", accessToken);
