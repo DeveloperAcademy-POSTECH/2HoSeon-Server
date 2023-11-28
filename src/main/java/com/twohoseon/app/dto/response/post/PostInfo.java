@@ -35,7 +35,7 @@ public class PostInfo extends ImageDTO {
     AuthorInfo author;
     @Schema(name = "title", type = "String", description = "게시글 제목")
     String title;
-    @Schema(name = "contents", type = "String", description = "게시글 내용")
+    @Schema(name = "contents", type = "String", description = "게시글 내용", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
     String contents;
     @Schema(name = "image", type = "String", description = "게시글 이미지")
     String image = null;
