@@ -300,23 +300,19 @@ public class PostServiceImpl implements PostService {
         Member member = getMemberFromRequest();
         Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new PostNotFoundException());
-        PostSummary originalPost = null;
-        PostInfo reviewPost = null;
+        PostSummary originalPost;
+        PostInfo reviewPost;
         String commentPreview = null;
-        Integer commentCount = null;
+        String commentPreviewImage = null;
+        Integer commentCount;
         originalPost = postRepository.getPostSummaryInReviewDetail(postId);
         reviewPost = postRepository.getReviewDetailByPostId(post.getReview().getId());
         commentCount = postRepository.calculateCommentCountByPostId(reviewPost.getPostId());
         if (commentCount != null) {
             commentPreview = postRepository.getCommentPreviewByPostId(reviewPost.getPostId());
+            commentPreviewImage = postRepository.getCommentPreviewImageByPostId(reviewPost.getPostId());
         }
-        ReviewDetail reviewDetail = ReviewDetail.builder()
-                .originalPost(originalPost)
-                .reviewPost(reviewPost)
-                .isMine(originalPost.getAuthor().getId().equals(member.getId()))
-                .commentCount(commentCount)
-                .commentPreview(commentPreview)
-                .build();
+        ReviewDetail reviewDetail = new ReviewDetail(originalPost, reviewPost, originalPost.getAuthor().getId().equals(member.getId()), commentCount, commentPreview, commentPreviewImage);
         return reviewDetail;
     }
 
@@ -329,20 +325,17 @@ public class PostServiceImpl implements PostService {
         PostSummary originalPost;
         PostInfo reviewPost;
         String commentPreview = null;
+        String commentPreviewImage = null;
         Integer commentCount;
         originalPost = postRepository.getPostSummaryInReviewDetail(post.getId());
         reviewPost = postRepository.getReviewDetailByPostId(post.getReview().getId());
         commentCount = postRepository.calculateCommentCountByPostId(reviewPost.getPostId());
         if (commentCount != null) {
             commentPreview = postRepository.getCommentPreviewByPostId(reviewPost.getPostId());
+            commentPreviewImage = postRepository.getCommentPreviewImageByPostId(reviewPost.getPostId());
         }
-        ReviewDetail reviewDetail = ReviewDetail.builder()
-                .originalPost(originalPost)
-                .reviewPost(reviewPost)
-                .isMine(originalPost.getAuthor().getId().equals(member.getId()))
-                .commentCount(commentCount)
-                .commentPreview(commentPreview)
-                .build();
+        ReviewDetail reviewDetail = new ReviewDetail(originalPost, reviewPost, originalPost.getAuthor().getId().equals(member.getId()), commentCount, commentPreview, commentPreviewImage);
+
         return reviewDetail;
     }
 

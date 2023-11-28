@@ -1,8 +1,8 @@
 package com.twohoseon.app.dto.response.post;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.twohoseon.app.common.ImageDTO;
 import io.swagger.v3.oas.annotations.media.Schema;
-import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 
@@ -16,10 +16,10 @@ import lombok.Getter;
  **/
 @Getter
 @Builder
-@AllArgsConstructor
+
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @Schema(name = "ReviewDetail", description = "리뷰 fetch 정보")
-public class ReviewDetail {
+public class ReviewDetail extends ImageDTO {
     @Schema(name = "originalPost", type = "PostSummary", description = "원본 게시글 정보")
     PostSummary originalPost;
     @Schema(name = "reviewPost", type = "PostInfoDTO", description = "리뷰 게시글 정보")
@@ -30,4 +30,15 @@ public class ReviewDetail {
     Integer commentCount;
     @Schema(name = "commentPreview", type = "String", description = "댓글 미리보기")
     String commentPreview;
+    @Schema(name = "commentPreviewImage", type = "String", description = "댓글 미리보기 이미지")
+    String commentPreviewImage;
+
+    public ReviewDetail(PostSummary originalPost, PostInfo reviewPost, Boolean isMine, Integer commentCount, String commentPreview, String commentPreviewImage) {
+        this.originalPost = originalPost;
+        this.reviewPost = reviewPost;
+        this.isMine = isMine;
+        this.commentCount = commentCount;
+        this.commentPreview = commentPreview;
+        this.commentPreviewImage = generateProfileImageURL(commentPreviewImage);
+    }
 }
