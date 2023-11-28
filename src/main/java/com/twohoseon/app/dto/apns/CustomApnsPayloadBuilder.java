@@ -15,7 +15,7 @@ import java.time.LocalDateTime;
  * @modifyed : $
  **/
 public class CustomApnsPayloadBuilder extends ApnsPayloadBuilder {
-    private final String baseUri = "https:/www.wote.social/images/";
+    private final String baseUri = "https://www.wote.social/images/";
     private final String profileBaseUri = baseUri + "profiles/";
     private final String postBaseUri = baseUri + "posts/";
     private final String reviewBaseUri = baseUri + "reviews/";
