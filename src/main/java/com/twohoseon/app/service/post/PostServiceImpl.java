@@ -264,8 +264,10 @@ public class PostServiceImpl implements PostService {
     public AllReviewFetch fetchAllReviews(VisibilityScope visibilityScope) {
         Member reqMember = getMemberFromRequest();
         ConsumerType consumerType = reqMember.getConsumerType();
+        List<PostSummary> recentReviews = null;
         Pageable pageable = PageRequest.of(0, 5);
-        List<PostSummary> recentReviews = postRepository.findRecentReviews(visibilityScope, reqMember, consumerType);
+        if (consumerType != null)
+            recentReviews = postRepository.findRecentReviews(visibilityScope, reqMember, consumerType);
         List<PostSummary> allReviews = postRepository.findReviews(pageable, reqMember, visibilityScope, ReviewType.ALL);
         List<PostSummary> purchasedReviews = postRepository.findReviews(pageable, reqMember, visibilityScope, ReviewType.PURCHASED);
         List<PostSummary> notPurchasedReviews = postRepository.findReviews(pageable, reqMember, visibilityScope, ReviewType.NOT_PURCHASED);
