@@ -13,9 +13,6 @@ import lombok.Getter;
 @Entity
 @Builder
 @AllArgsConstructor
-@Table(name = "VOTE", uniqueConstraints = {
-        @UniqueConstraint(columnNames = {"voter_id", "post_id"})
-})
 public class Vote {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
