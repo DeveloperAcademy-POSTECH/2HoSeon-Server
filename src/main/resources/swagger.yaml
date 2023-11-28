@@ -111,6 +111,8 @@ paths:
                           description: 수정일
                           example: 2021-05-30T14:00:00.000+00:00
                         contents:
+                          nullable: true
+                          example: 댓글 내용
                           type: string
                         author:
                           type: object
@@ -133,6 +135,14 @@ paths:
                                 - IMPULSE_BUYER
                                 - ADVENTURER
                                 - RISK_AVERSE
+                            isBlocked:
+                              type: boolean
+                              example: false
+                              description: 내가 차단한 사용자 인가
+                            isBaned:
+                              type: boolean
+                              example: false
+                              description: 밴 당한 사용자 인가
                         subComments:
                           type: array
                           items:
