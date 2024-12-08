@@ -11,10 +11,7 @@ import com.twohoseon.app.enums.ConsumerType;
 import com.twohoseon.app.enums.ReviewType;
 import com.twohoseon.app.enums.mypage.MyVoteCategoryType;
 import com.twohoseon.app.enums.post.VisibilityScope;
-import com.twohoseon.app.exception.PermissionDeniedException;
-import com.twohoseon.app.exception.PostNotFoundException;
-import com.twohoseon.app.exception.ReviewExistException;
-import com.twohoseon.app.exception.VoteExistException;
+import com.twohoseon.app.exception.*;
 import com.twohoseon.app.repository.comment.CommentRepository;
 import com.twohoseon.app.repository.post.PostRepository;
 import com.twohoseon.app.service.image.ImageService;
@@ -56,7 +53,9 @@ public class PostServiceImpl implements PostService {
     @Override
     public void createPost(PostRequest postRequest, MultipartFile file) {
         Member author = getMemberFromRequest();
-
+        if (author.getConsumerType() == null) {
+            throw new ConsumerTypeNotFoundException();
+        }
         String image = null;
         if (file != null && !file.isEmpty()) {
             image = imageService.uploadImage(file, "posts");
@@ -165,6 +164,9 @@ public class PostServiceImpl implements PostService {
     @Override
     public void createReview(Long postId, ReviewRequest reviewRequest, MultipartFile file) {
         Member member = getMemberFromRequest();
+        if (member.getConsumerType() == null) {
+            throw new ConsumerTypeNotFoundException();
+        }
         Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new PostNotFoundException());
         if (!post.isAuthor(member))
@@ -361,6 +363,8 @@ public class PostServiceImpl implements PostService {
     @Transactional
     public VoteCounts createVote(Long postId, boolean myChoice) {
         Member member = getMemberFromRequest();
+        if (member.getConsumerType() == null)
+            throw new ConsumerTypeNotFoundException();
         Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new PostNotFoundException());
         if (post.hasVoteFromMember(member)) {

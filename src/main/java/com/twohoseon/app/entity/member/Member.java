@@ -80,6 +80,10 @@ public class Member extends BaseTimeEntity {
     @Column
     private boolean isBaned;
 
+    @Column
+    private int consumerTypeEditCount;
+
+
     public void updateAdditionalUserInfo(String profileImage, String nickname, School school) {
         if (profileImage != null)
             this.profileImage = profileImage;
@@ -91,12 +95,14 @@ public class Member extends BaseTimeEntity {
     }
 
 
-    public boolean isSchoolRegisterable() {
+    public boolean isSchoolRegistrable() {
         return lastSchoolRegisterDate == null || lastSchoolRegisterDate.isBefore(LocalDate.now().minusMonths(6));
     }
 
-    public void setConsumerType(ConsumerType consumerType) {
+    public void updateConsumerType(ConsumerType consumerType) {
+
         this.consumerType = consumerType;
+        this.consumerTypeEditCount++;
     }
 
     protected Member() {

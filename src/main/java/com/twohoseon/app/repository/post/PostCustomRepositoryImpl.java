@@ -129,10 +129,10 @@ public class PostCustomRepositoryImpl implements PostCustomRepository {
         Boolean isVoted = getIsVotedPost(postInfo.getPostId(), memberId);
         postInfo.setVoteCounts(getVoteInfo(postInfo.getPostId()));
         postInfo.setMyChoice(isVoted);
-        if (postInfo.getAuthor().getId() == memberId)
+        if (postInfo.getAuthor().getId().equals(memberId))
             postInfo.setVoteInfoList(getVoteInfoList(postId));
         postInfo.setIsNotified(getIsNotified(postId, memberId));
-        postInfo.setIsMine(postInfo.getAuthor().getId() == memberId);
+        postInfo.setIsMine(postInfo.getAuthor().getId().equals(memberId));
         postInfo.setVoteInfoList(getVoteInfoList(postId));
         return postInfo;
     }
@@ -428,7 +428,7 @@ public class PostCustomRepositoryImpl implements PostCustomRepository {
                         post.postStatus,
                         post.title,
                         post.image,
-                        post.contents.substring(0, 25),
+                        post.contents,
                         post.price,
                         post.isPurchased
                 ))
@@ -591,10 +591,10 @@ public class PostCustomRepositoryImpl implements PostCustomRepository {
             Boolean isVoted = getIsVotedPost(postInfo.getPostId(), memberId);
             postInfo.setVoteCounts(getVoteInfo(postInfo.getPostId()));
             postInfo.setMyChoice(isVoted);
-            if (postInfo.getAuthor().getId() == memberId)
+            if (postInfo.getAuthor().getId().equals(memberId))
                 postInfo.setVoteInfoList(getVoteInfoList(postId));
             postInfo.setIsNotified(getIsNotified(postId, memberId));
-            postInfo.setIsMine(postInfo.getAuthor().getId() == memberId);
+            postInfo.setIsMine(postInfo.getAuthor().getId().equals(memberId));
             postInfo.setVoteInfoList(getVoteInfoList(postId));
 
             commentCount = calculateCommentCountByPostId(postId);

@@ -82,7 +82,7 @@ public class CustomAuthorizationRequestRepository implements AuthorizationReques
     private OAuth2AuthorizationRequest getAuthorizationRequest(HttpServletRequest request) {
         HttpSession session = request.getSession(false);
         OAuth2AuthorizationRequest oAuth2AuthorizationRequest = null;
-        if (session == null) {
+        if (session != null) {
             request.getSession();
             try {
                 oAuth2AuthorizationRequest = (OAuth2AuthorizationRequest) session.getAttribute(this.sessionAttributeName);

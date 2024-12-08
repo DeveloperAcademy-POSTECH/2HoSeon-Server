@@ -36,8 +36,10 @@ public class ProfileInfo extends ImageDTO {
     ConsumerType consumerType;
     @Schema(name = "school", type = "School", description = "학교 정보")
     School school;
+    @Schema(name = "canUpdateConsumerType", type = "boolean", description = "소비 성향 변경 가능 여부")
+    boolean canUpdateConsumerType;
 
-    public ProfileInfo(LocalDateTime createDate, LocalDateTime modifiedDate, LocalDate lastSchoolRegisterDate, String nickname, String profileImage, ConsumerType consumerType, School school) {
+    public ProfileInfo(LocalDateTime createDate, LocalDateTime modifiedDate, LocalDate lastSchoolRegisterDate, String nickname, String profileImage, ConsumerType consumerType, School school, int canUpdateConsumerType) {
         this.createDate = createDate;
         this.modifiedDate = modifiedDate;
         this.lastSchoolRegisterDate = lastSchoolRegisterDate;
@@ -45,6 +47,7 @@ public class ProfileInfo extends ImageDTO {
         this.profileImage = generateProfileImageURL(profileImage);
         this.consumerType = consumerType;
         this.school = school;
+        this.canUpdateConsumerType = canUpdateConsumerType < 2;
     }
 
 }

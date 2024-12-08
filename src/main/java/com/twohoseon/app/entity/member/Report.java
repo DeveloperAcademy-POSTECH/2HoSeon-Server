@@ -24,7 +24,7 @@ import lombok.*;
 @EqualsAndHashCode(of = "id")
 public class Report extends BaseTimeEntity {
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
     private Long id;
 
@@ -37,7 +37,7 @@ public class Report extends BaseTimeEntity {
     @Enumerated(EnumType.STRING)
     @Column(name = "reason", nullable = false)
     private ReportCategory reason;
-    
+
     @ManyToOne(fetch = FetchType.LAZY)
     private Post post;
 

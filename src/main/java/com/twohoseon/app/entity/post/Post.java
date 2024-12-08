@@ -35,7 +35,7 @@ import java.util.Set;
 @Slf4j
 public class Post extends BaseTimeEntity {
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
     private Long id;
 
@@ -83,7 +83,7 @@ public class Post extends BaseTimeEntity {
     @Builder.Default
     private Integer commentCount = 0;
     @Nullable
-    @Column
+    @Column(length = 1500)
     @Comment("외부 링크")
     private String externalURL;
 
@@ -244,8 +244,12 @@ public class Post extends BaseTimeEntity {
     }
 
     public boolean hasVoteFromMember(Member member) {
+        //TODO: 쿼리 최적화가 가능해 보임
         for (Vote vote : votes) {
-            if (vote.getVoter().equals(member))
+            Member voter = vote.getVoter();
+            if (voter == null)
+                continue;
+            else if (voter.equals(member))
                 return true;
         }
         return false;

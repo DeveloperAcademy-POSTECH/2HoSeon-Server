@@ -298,6 +298,12 @@ public class GlobalExceptionHandler {
         log.error("handleBanedMemberException: You are banned from using the service.", ex);
         return ErrorResponse.toResponseEntity(ErrorCode.BANED_MEMBER_ERROR);
     }
+
+    @ExceptionHandler(ConsumerTypeNotFoundException.class)
+    protected ResponseEntity<ErrorResponse> handleConsumerTypeNotFoundException(ConsumerTypeNotFoundException ex) {
+        log.error("handleConsumerTypeNotFoundException: Consumer Type Not Found Exception", ex);
+        return ErrorResponse.toResponseEntity(ErrorCode.CONSUMER_TYPE_NOT_FOUND_ERROR);
+    }
     // ==================================================================================================================
 
     /**

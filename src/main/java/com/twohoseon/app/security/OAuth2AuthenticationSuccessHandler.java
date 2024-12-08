@@ -83,7 +83,7 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
                     .build();
         }
 
-        log.info("jwtToken = {}", token.getAccessToken());
+        log.debug("jwtToken = {}", token.getAccessToken());
 
         //token 발급
         response.setContentType("application/json;charset=UTF-8");

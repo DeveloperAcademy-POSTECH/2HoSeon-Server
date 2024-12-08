@@ -45,4 +45,6 @@ public interface MemberService extends UserDetailsService, CommonService {
     void unblockMember(Long memberId);
 
     List<BlockedMember> getBlockedMembers();
+
+    void detachVoteFromMember();
 }

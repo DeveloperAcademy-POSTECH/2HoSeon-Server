@@ -6,7 +6,8 @@ spring:
     url: ${datasource.prod-url}
 oauth:
   apple:
-    client-id: com.twohosun.TwoHoSun
+    client-id: com.twohosun.wote
+#    client-id: com.twohosun.TwoHoSun
 server:
   ssl:
     key-store: ${ssl.dev.key-store}
@@ -18,3 +19,10 @@ server:
   port: 8443
 file:
   dir: ${app.upload.prod-path}
+logging:
+  level:
+    root: INFO
+    #    org.springframework.security: INFO
+    org.springframework.security: debug
+    org.springframework.web: debug
+    com.twohoseon.app: debug

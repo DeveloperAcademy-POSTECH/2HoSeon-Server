@@ -1,7 +1,6 @@
 package com.twohoseon.app.util;
 
 import com.twohoseon.app.dto.response.JWTToken;
-import com.twohoseon.app.entity.member.RefreshToken;
 import com.twohoseon.app.repository.member.RefreshTokenRepository;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwsHeader;
@@ -92,8 +91,8 @@ public class JwtTokenProvider {
     }
 
     public String getHeaderToken(HttpServletRequest request, String type) {
-        log.info("getHeaderToken", request.getHeader("Authorization"));
-        log.info(request.getHeader("Authorization"));
+        log.debug("getHeaderToken", request.getHeader("Authorization"));
+        log.debug(request.getHeader("Authorization"));
         String result = type.equals("Access") ? request.getHeader("Authorization") : request.getHeader("Refresh_Token");
         if (result != null)
             return result.replace("Bearer ", "");

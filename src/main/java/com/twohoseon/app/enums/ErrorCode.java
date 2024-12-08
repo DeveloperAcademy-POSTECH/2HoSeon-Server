@@ -125,8 +125,10 @@ public enum ErrorCode {
     SCHOOL_UPDATE_RESTRICTION_ERROR(400, "E017", "It has not been 6 months since the school was updated."),
 
     //유저가 서비스 이용이 제한됨
-    BANED_MEMBER_ERROR(403, "E018", "You are banned from using the service.");
+    BANED_MEMBER_ERROR(403, "E018", "You are banned from using the service."),
 
+    //소비 성향을 설정하지 않음
+    CONSUMER_TYPE_NOT_FOUND_ERROR(400, "E019", "Consumer Type Not Found Exception");
 
     /**
      * ******************************* Error Code Constructor ***************************************

@@ -85,7 +85,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                     jwtExceptionHandler(response, ErrorResponse.of(ErrorCode.BANED_MEMBER_ERROR));
                     return;
                 }
-                log.info("ProviderId : ", providerId);
+                log.debug("ProviderId : ", providerId);
 
                 setAuthentication(jwtTokenProvider.getProviderIdFromToken(accessToken));
                 if (skipPath.matches(request)) {
@@ -93,29 +93,29 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                     return;
                 }
                 if (member.getRole() == UserRole.ROLE_ADMIN) {
-                    log.info("ROLE_ADMIN");
+                    log.debug("ROLE_ADMIN");
                 } else if (member.getSchool() == null) {
                     jwtExceptionHandler(response, ErrorResponse.of(ErrorCode.NOT_COMPLETED_SIGNUP_ERROR));
                     return;
                 }
             } catch (SignatureException ex) {
-                log.info("Invalid JWT signature");
+                log.debug("Invalid JWT signature");
                 jwtExceptionHandler(response, ErrorResponse.of(ErrorCode.INVALID_SIGNATURE_ERROR));
                 return;
             } catch (MalformedJwtException ex) {
-                log.info("Invalid JWT token");
+                log.debug("Invalid JWT token");
                 jwtExceptionHandler(response, ErrorResponse.of(ErrorCode.MALFORMED_TOKEN_ERROR));
                 return;
             } catch (ExpiredJwtException ex) {
-                log.info("Expired JWT token");
+                log.debug("Expired JWT token");
                 jwtExceptionHandler(response, ErrorResponse.of(ErrorCode.EXPIRED_TOKEN_ERROR));
                 return;
             } catch (UnsupportedJwtException ex) {
-                log.info("Unsupported JWT token");
+                log.debug("Unsupported JWT token");
                 jwtExceptionHandler(response, ErrorResponse.of(ErrorCode.UNSUPPORTED_TOKEN_ERROR));
                 return;
             } catch (IllegalArgumentException ex) {
-                log.info("JWT claims string is empty");
+                log.debug("JWT claims string is empty");
                 jwtExceptionHandler(response, ErrorResponse.of(ErrorCode.EMPTY_CLAIMS_ERROR));
                 return;
             }

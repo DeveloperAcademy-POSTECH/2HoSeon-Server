@@ -72,7 +72,7 @@ public class MemberServiceImpl implements MemberService {
             }
         }
         if (profileRequest.hasSchool()) {
-            if (!member.isSchoolRegisterable()) {
+            if (!member.isSchoolRegistrable()) {
                 throw new SchoolUpdateRestrictionException();
             }
         }
@@ -110,7 +110,7 @@ public class MemberServiceImpl implements MemberService {
     @Override
     public void setConsumptionTendency(ConsumerTypeRequest consumptionTendencyRequestDTO) {
         Member reqMember = getMemberFromRequest();
-        reqMember.setConsumerType(consumptionTendencyRequestDTO.getConsumerType());
+        reqMember.updateConsumerType(consumptionTendencyRequestDTO.getConsumerType());
         memberRepository.save(reqMember);
         CompletableFuture.runAsync(() -> {
             try {
@@ -167,6 +167,13 @@ public class MemberServiceImpl implements MemberService {
         log.debug(String.valueOf(reqMember.getId()));
         List<BlockedMember> blockedMembers = memberRepository.getBlockedMembers(reqMember);
         return blockedMembers;
+    }
+
+    @Override
+    @Transactional
+    public void detachVoteFromMember() {
+        Member reqMember = getMemberFromRequest();
+        memberRepository.detachVoteFromMember(reqMember.getId());
     }
 
 

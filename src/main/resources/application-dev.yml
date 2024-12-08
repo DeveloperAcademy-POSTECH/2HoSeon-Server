@@ -7,6 +7,11 @@ spring:
     url: ${datasource.dev-url}
     username: ${datasource.dev-username}
     password: ${datasource.dev-password}
+  jpa:
+    properties:
+      hibernate:
+        show_sql: true
+        format_sql: true
 oauth:
   apple:
     client-id: com.twohosun.service
@@ -18,3 +23,9 @@ server:
     key-store-type: ${ssl.dev.key-store-type}
 file:
   dir: ${app.upload.dev-path}
+logging:
+  level:
+    root: info
+    org.springframework.security: debug
+    org.springframework.web: debug
+    com.twohoseon.app: debug

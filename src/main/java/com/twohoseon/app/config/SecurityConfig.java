@@ -37,6 +37,21 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+        String[] permitAllUrlPatterns = {
+                "/login/**", "/oauth2/**", "/auth/**",
+                "/swagger-ui",
+                "/swagger-ui/**",
+                "/api-docs",
+                "/api-docs/**",
+                "/api/auth/**",
+                "/api/profiles/isValidNickname",
+                "/images/**",
+                "/error",
+                "/apple/notification",
+                "/download",
+                "/api/showcase/sunday",
+                "/api/showcase/pin",
+        };
         http.oauth2Login()
                 .tokenEndpoint().accessTokenResponseClient(accessTokenResponseClient)
                 .and()
@@ -54,7 +69,7 @@ public class SecurityConfig {
         http.addFilterBefore(jwtAuthenticationFilter, BasicAuthenticationFilter.class);
 
         http.authorizeHttpRequests()
-                .requestMatchers("/login/**", "/user", "/oauth2/**", "/auth/**", "/h2-console/**", "/swagger-ui", "/swagger-ui/**", "/api-docs", "/api-docs/**", "/api/auth/**", "/api/profiles/isValidNickname", "/images/**", "/error", "/apple/notification").permitAll()
+                .requestMatchers(permitAllUrlPatterns).permitAll()
                 .anyRequest().authenticated();
 
         return http.build();

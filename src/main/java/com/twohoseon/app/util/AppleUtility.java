@@ -62,6 +62,9 @@ public class AppleUtility {
     @Value("${oauth.apple.team-id}")
     String appleTeamId;
 
+    private String currentDir;
+
+
     private String appleClientSecret;
 
     public PublicKey getApplePublicKey(Map<String, String> tokenHeaders, ApplePublicKeyResponse applePublicKeys) throws AuthenticationException, NoSuchAlgorithmException, InvalidKeySpecException {
@@ -80,7 +83,7 @@ public class AppleUtility {
 
     @PostConstruct
     public void loadAppleClientSecret() {
-        try (BufferedReader reader = new BufferedReader(new FileReader("client_secret.txt"))) {
+        try (BufferedReader reader = new BufferedReader(new FileReader("/home/ubuntu/client_secret.txt"))) {
             appleClientSecret = reader.readLine();
         } catch (IOException e) {
             log.error("Error_loadAppleClientSecret : {}-{}", e.getMessage(), e.getCause());
@@ -136,7 +139,7 @@ public class AppleUtility {
                     .compact();
 
             // Save the client secret to a file
-            try (BufferedWriter writer = new BufferedWriter(new FileWriter("client_secret.txt"))) {
+            try (BufferedWriter writer = new BufferedWriter(new FileWriter("/home/ubuntu/client_secret.txt"))) {
                 writer.write(clientSecret);
             } catch (IOException e) {
                 log.error("Error_saveAppleClientSecret : {}-{}", e.getMessage(), e.getCause());
@@ -147,7 +150,7 @@ public class AppleUtility {
         } catch (SchedulerException e) {
             throw new RuntimeException(e);
         }
-        log.info("createAppleClientSecret : {}", clientSecret);
+        log.debug("createAppleClientSecret : {}", clientSecret);
         return clientSecret;
     }
 
